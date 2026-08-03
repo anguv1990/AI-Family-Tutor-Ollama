@@ -1,4 +1,6 @@
-AI Family Tutor — Local-first (Ollama) implementation
+# AI-Family-Tutor-Ollama
+
+AI Family Tutor — local-first Ollama implementation.
 
 This repo contains a Node/TypeScript scaffold for the AI Family Tutor project.
 
