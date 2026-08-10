@@ -320,6 +320,16 @@ Known issues: Session resume/completion endpoints, parent corrections, ambiguous
 Next starting action: Implement persisted session resume and explicit completion behavior test-first.
 ```
 
+```text
+Date: 2026-08-10 (second session)
+Session/day: Planning correction and first full commit of the codebase
+Outcome completed: Reviewed plan.md against the implemented code and resolved the contradictions between plan.md, development-plan.md and architecture.md. Narrowed the MVP to Reception Maths only, replaced typed answers with selection-based entry plus local read-aloud, defined the content model (bank size, re-ask policy, stopping rule, daily cap), added a pilot exit bar and a risk register, and gave every acceptance criterion a verification method. Added CLAUDE.md. Committed and pushed the entire implementation, tests, docs and diagrams to origin/main in four focused commits (f10a25e, 6463551, 2f066ea, 3a43abc).
+Verification run: npm test — 14 tests passed; TypeScript build passed. No code was changed this session, only documentation.
+Decisions made: MVP is Reception Maths only; Year 3 and English are post-pilot. Answer entry is selection-based because Reception is ages 4-5 and a typed-answer MVP may be unusable by its target user; read-aloud (output) is MVP while speech recognition (input) stays deferred. Target at least 20 reviewed templates per skill. Sessions stop at 8 questions, 10 minutes, child choice or exhaustion. Latency budget is 2s deterministic and 5s with a hint. architecture.md is authoritative for the provider contract, so server/model-adapter.ts migrates behind the gateway rather than being extended. Progress is tracked in this log only; the PROGRESS line in plan.md was removed.
+Known issues: Content bank holds 7 templates against a target of 20. Startup config validation covers only PORT. No fake model adapter yet. No admin auth or parent endpoints. No web UI. Session resume and explicit completion are still unimplemented. A stray empty file named 'src' sits in the repo root, untracked and unused.
+Next starting action: Implement persisted session resume and explicit completion test-first — begin with a failing test in tests/session-flow.test.ts that starts a session, answers one question, reopens the database from the same file, and asserts the current question and mastery survive.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text
