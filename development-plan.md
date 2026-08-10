@@ -1,0 +1,353 @@
+# AI Family Tutor — Two-Hours-a-Day Development Plan
+
+This roadmap converts `plan.md` into 30 focused development sessions. Each session is limited to two hours and ends with something that can be demonstrated or verified. The sequence assumes five sessions per week, but the sessions can be completed on any days.
+
+## Desired outcome after 30 sessions (60 hours)
+
+An adult can run a private, local Reception Maths tutoring session in a browser. The child receives reviewed questions read aloud locally, answers by selection rather than free typing, gets safe feedback, and progresses according to persisted mastery. Ollama can vary wording or produce hints, but deterministic answer keys remain responsible for marking. Invalid or unavailable model output produces a tested safe fallback. The parent can review/correct attempts, export data, and permanently delete a child's data.
+
+The MVP is complete when:
+
+- The app runs locally and binds to loopback by default.
+- A Reception Maths session works from start to finish in the web UI.
+- Each child completes a session without an adult operating the input device for them.
+- Questions and marking use adult-reviewed templates and answer keys.
+- Attempts, mastery, and the current question survive an application restart.
+- Model output is schema-validated, safety-screened, cached, and never rendered raw.
+- A fake adapter allows tests to run without Ollama.
+- Parent correction, export, deletion, and retention controls work.
+- A manual backup and restore procedure is documented and rehearsed.
+- Critical automated tests and the MVP acceptance checklist in `plan.md` pass.
+
+## Standard two-hour session
+
+Use the same structure each day:
+
+| Time | Activity |
+|---|---|
+| 0:00–0:10 | Review the previous result, choose today's single outcome, and confirm the working tree. |
+| 0:10–1:30 | Implement the smallest complete vertical change. |
+| 1:30–1:50 | Run tests, a build, and a manual smoke test appropriate to the change. |
+| 1:50–2:00 | Record progress, known issues, and the exact starting point for the next session. |
+
+If a task overruns, preserve a working state and move unfinished optional work to the next session. Do not sacrifice verification to start another feature.
+
+## Week 1 — Establish a trustworthy foundation
+
+### Day 1 — Runnable baseline
+
+**Work:** Install and lock dependencies, correct the source entry point and TypeScript layout, add build/test scripts, and validate required configuration with safe local defaults.
+
+**Achievable outcome:** The service builds and starts with a working `/health` endpoint.
+
+**Exit check:** A clean dependency install followed by the build and health smoke test succeeds.
+
+### Day 2 — Versioned database schema
+
+**Work:** Replace the partial schema with ordered migrations covering schema version, children, skills, templates, sessions, attempts, mastery, cache, and safety/audit events. Add foreign keys and useful indexes.
+
+**Achievable outcome:** A new SQLite database can be created reproducibly from migrations.
+
+**Exit check:** Migration tests create the expected tables and running migrations twice is safe.
+
+### Day 3 — Persistence repositories
+
+**Work:** Add narrow repositories for children, sessions, attempts, templates, and mastery. Use temporary databases in tests and avoid exposing raw database calls to domain logic.
+
+**Achievable outcome:** Core records can be created, read, and updated through typed persistence interfaces.
+
+**Exit check:** Repository tests pass against a fresh temporary database.
+
+### Day 4 — Reception Maths content baseline
+
+**Work:** Define the first adult-reviewable skill map. Start with counting, number recognition, and addition within 5. Add versioned question templates, answer keys, difficulty, and review status. Build towards the target of at least twenty enabled templates per skill across difficulties 1–3, and record each template's source and licence.
+
+**Achievable outcome:** The application has a deterministic question bank large enough that sessions end by the stopping rule rather than by exhaustion.
+
+**Exit check:** Every enabled template has one unambiguous answer, a skill ID, version, review status, and a recorded source/licence; the enabled bank meets the size target.
+
+### Day 5 — Mastery rules
+
+**Work:** Document and implement initial evidence, promotion, demotion, skip, ambiguity, and parent-correction rules. Keep the algorithm simple and deterministic.
+
+**Achievable outcome:** The same sequence of attempts always produces the same mastery state.
+
+**Exit check:** Unit tests cover correct, incorrect, skipped, ambiguous, and corrected attempts plus boundary conditions.
+
+**Week 1 desired outcome:** A tested foundation can store reviewed curriculum content and calculate mastery without using an AI model.
+
+## Week 2 — Prove the deterministic tutoring loop
+
+### Day 6 — Start and resume sessions
+
+**Work:** Implement session creation, child/skill selection, active-session lookup, and completion. Keep child profile data minimal.
+
+**Achievable outcome:** A test client can start, resume, and finish a persisted session.
+
+**Exit check:** Session lifecycle tests pass, including an application restart simulation.
+
+### Day 7 — Submit and mark answers
+
+**Work:** Implement submitted-answer normalization, deterministic comparison to the answer key, attempt recording, and mastery update in one transaction.
+
+**Achievable outcome:** A submitted Reception Maths answer is marked and persisted reliably.
+
+**Exit check:** Duplicate submissions cannot create duplicate mastery changes; correct and incorrect answer tests pass.
+
+### Day 8 — Select the next question
+
+**Work:** Select questions using mastery level, enabled/reviewed status, the re-ask policy (never twice in one session, not within 24 hours), and a bounded difficulty step. Implement the session stopping rule — eight answered questions, ten minutes, the child stopping, or content exhaustion, whichever comes first — and make exhaustion an explicit parent-visible state rather than a silent end.
+
+**Achievable outcome:** Each completed attempt produces a suitable next question, and sessions end deliberately.
+
+**Exit check:** Selection tests prove that disabled, unreviewed, and overly difficult content is not chosen; stopping-rule tests cover each of the four end conditions using a fixed clock.
+
+### Day 9 — Fake model adapter and hints
+
+**Work:** Formalize a provider-neutral adapter interface and implement a scripted fake adapter. Add optional hint generation without allowing the model to mark answers.
+
+**Achievable outcome:** Model-assisted behaviour can be tested deterministically without Ollama.
+
+**Exit check:** Success, timeout, invalid-output, and unavailable-model scenarios are reproducible in tests.
+
+### Day 10 — Backend end-to-end test
+
+**Work:** Connect session start, question selection, answer submission, mastery update, hint fallback, and next-question selection through API endpoints.
+
+**Achievable outcome:** The entire tutoring loop runs through the API.
+
+**Exit check:** One automated end-to-end test completes at least three questions and verifies persisted attempts and mastery.
+
+**Week 2 desired outcome:** The core Reception Maths loop is usable through the API and fully testable without Ollama.
+
+## Week 3 — Add Ollama, structured output, cache, and safety
+
+### Day 11 — Production-ready Ollama adapter
+
+**Work:** Correct non-streaming response handling, normalize Ollama's `response` field, separate adapter options from model options, retain bounded timeout/retry behaviour, and add a health check.
+
+**Achievable outcome:** A pinned local model can generate one hint through the shared adapter contract.
+
+**Exit check:** Adapter contract tests pass and one live local smoke test is recorded when Ollama is available.
+
+### Day 12 — Validated response contract
+
+**Work:** Define versioned schemas for child-facing wording and hints. Parse JSON, reject extra actions/fields, retry once with a repair prompt, and return a deterministic fallback.
+
+**Achievable outcome:** Invalid model text can never reach the child response.
+
+**Exit check:** Tests cover valid JSON, malformed JSON, wrong types, unexpected actions, repair success, and fallback.
+
+### Day 13 — Versioned cache
+
+**Work:** Include provider/model version, prompt hash, model options, template version, schema version, curriculum version, and task in cache keys. Add expiry and explicit invalidation rules.
+
+**Achievable outcome:** Safe repeated hint requests avoid unnecessary model calls without reusing stale content.
+
+**Exit check:** Hit, miss, expiry, version-change, and corrupted-entry tests pass.
+
+### Day 14 — Safety screening
+
+**Work:** Add allow-listed child-view fields/actions and rule-based blocks for links, contact requests, personal-data prompts, unsafe language, and unsupported instructions. Record a redacted event and use a safe fallback.
+
+**Achievable outcome:** Known unsafe outputs are blocked before rendering.
+
+**Exit check:** A table-driven safety test suite passes with both blocked and allowed examples.
+
+### Day 15 — Safe generation pipeline
+
+**Work:** Connect cache, adapter, schema validation, repair, safety screening, fallback, and redacted audit metadata into one gateway used by the session controller.
+
+**Achievable outcome:** All AI-assisted child content follows one tested safe path.
+
+**Exit check:** End-to-end tests prove cache reuse, model failure fallback, invalid schema fallback, and safety blocking.
+
+**Week 3 desired outcome:** Ollama can enhance deterministic tutoring, but model failure or unsafe output cannot break the session or reach the child.
+
+## Week 4 — Deliver the local web experience
+
+### Day 16 — Web application shell
+
+**Work:** Add a minimal responsive local web page, API client, loading/error states, and clear separation between child and parent routes.
+
+**Achievable outcome:** A browser can load the application and show service readiness.
+
+**Exit check:** Production build works and the page is usable at narrow and desktop widths.
+
+### Day 17 — Child session screen
+
+**Work:** Add session start, question display, selection-based answer entry (tap or number pad), input validation, and next-question flow. Prevent accidental double submission. Free typing may be offered as an alternative for the older child, but must not be the only route.
+
+**Achievable outcome:** A child can complete a multi-question session in the browser without typing.
+
+**Exit check:** Manual smoke test completes three questions using touch alone, and a second run completes them using the keyboard alone.
+
+### Day 18 — Feedback and hint experience
+
+**Work:** Show concise correct/try-again feedback, provide a safe hint action, add local text-to-speech read-aloud for prompts and feedback, handle model fallback gracefully, and avoid displaying internal scores or raw errors. Confirm the chosen speech engine runs entirely on-device and records nothing.
+
+**Achievable outcome:** The child receives understandable spoken and visual feedback without model or system details.
+
+**Exit check:** Correct, incorrect, hint, read-aloud, timeout, fallback, and session-complete states are manually verified, and the speech engine's local-only behaviour is recorded.
+
+### Day 19 — Parent overview
+
+**Work:** Add a parent view of sessions, attempts, skill mastery, and safety/fallback events using non-identifying labels where possible.
+
+**Achievable outcome:** An adult can understand recent learning activity and system fallbacks.
+
+**Exit check:** The view matches stored records and exposes no prompt/model internals to the child route.
+
+### Day 20 — UI integration and accessibility pass
+
+**Work:** Add semantic labels, focus handling, readable contrast/type, child-friendly error copy, empty states, and browser-level tests for the critical path.
+
+**Achievable outcome:** The first complete local browser experience is stable enough for adult review.
+
+**Exit check:** The browser critical-path test passes and a keyboard-only manual run is successful.
+
+**Week 4 desired outcome:** An adult-supervised child can complete Reception Maths sessions through a usable local web interface.
+
+## Week 5 — Parent control, privacy, and local access
+
+### Day 21 — Parent corrections
+
+**Work:** Allow an adult to correct an evaluation with a reason. Recalculate mastery deterministically and retain the original result in the audit trail.
+
+**Achievable outcome:** Parent corrections immediately and transparently affect mastery.
+
+**Exit check:** Correction and reversal tests prove that mastery and audit history remain consistent.
+
+### Day 22 — Data export
+
+**Work:** Export a child's profile, sessions, attempts, mastery, corrections, and relevant safety events in a documented local JSON format.
+
+**Achievable outcome:** A parent can inspect and save a complete copy of the child's stored learning data.
+
+**Exit check:** Export contents match the database and exclude cache contents, secrets, and unnecessary logs.
+
+### Day 23 — Permanent deletion
+
+**Work:** Implement confirmed deletion of the child's sessions, attempts, mastery, corrections, and relevant derived records. Define whether shared curriculum/cache records remain.
+
+**Achievable outcome:** A parent can permanently remove a child's stored data.
+
+**Exit check:** Deletion tests verify all in-scope records are gone and unrelated child/content records remain. A multi-child isolation test proves that one child's session, export, and deletion never read or affect the other's data.
+
+### Day 24 — Retention and privacy controls
+
+**Work:** Add configurable retention for completed sessions/audit events, cache clearing, and a parent-visible privacy summary. Confirm that free text and audio are not unnecessarily stored.
+
+**Achievable outcome:** Local data has understandable retention and clearing behaviour.
+
+**Exit check:** Retention tests use a fixed clock and prove only expired in-scope records are removed.
+
+### Day 25 — Network and parent access controls
+
+**Work:** Enforce loopback binding by default. Require an admin secret/session for parent endpoints and for any explicit LAN mode. Document the trusted-home-network assumption.
+
+**Achievable outcome:** The default installation is local-only and parent operations are protected.
+
+**Exit check:** Tests prove parent endpoints reject unauthenticated access and LAN startup fails without required protection.
+
+**Week 5 desired outcome:** Parents can review, correct, export, retain, and delete local learning data with appropriate access controls.
+
+## Week 6 — Benchmark, review, and release the MVP
+
+### Day 26 — Reliability regression suite
+
+**Work:** Close gaps in migration, repository, transaction, configuration, cache, and restart tests. Add temporary-directory isolation and deterministic clocks/randomness where needed.
+
+**Achievable outcome:** Core tests run repeatedly without depending on Ollama or existing local data.
+
+**Exit check:** Clean install, build, and full automated test suite pass twice consecutively.
+
+### Day 27 — Local model benchmark and registry
+
+**Work:** Record the exact model name/digest, quantization, options, hardware, warm/cold latency, failure rate, and memory observations. Confirm low-temperature settings and context limits. Measure against the `plan.md` latency budget: two seconds question-to-next-question on the deterministic path, five seconds when a hint is generated.
+
+**Achievable outcome:** The selected flash model has a reproducible local performance baseline and a pass/fail against the budget.
+
+**Exit check:** Benchmark output and model registry are saved without child data and include an accept/reject decision justified by the latency budget.
+
+### Day 28 — Acceptance and privacy review
+
+**Work:** Walk every MVP acceptance criterion, threat-model assumption, safety fallback, data field, bind address, and parent operation. Record failures as release-blocking or follow-up work.
+
+**Achievable outcome:** The project has an evidence-based release checklist rather than an informal readiness claim.
+
+**Exit check:** Every acceptance criterion has a pass/fail result and reproduction instructions.
+
+### Day 29 — Adult content review and defect fixes
+
+**Work:** Review every enabled question, answer, hint fallback, and child-facing message. Fix the highest-priority acceptance, safety, accessibility, or content issues found on Day 28.
+
+**Achievable outcome:** All enabled initial content is explicitly adult-reviewed and major release blockers are resolved.
+
+**Exit check:** No unreviewed template is selectable and all release-blocking tests pass.
+
+### Day 30 — MVP release candidate
+
+**Work:** Finalize setup, run, test, backup, export, deletion, and troubleshooting documentation. Run a clean-device-style setup and a complete adult-supervised demonstration.
+
+**Achievable outcome:** A repeatable local MVP release candidate is ready for cautious family testing.
+
+**Exit check:** Starting from documented prerequisites, an adult can install, run, complete a session, inspect/correct data, export it, and delete it. The backup procedure is rehearsed end to end, including a restore into a clean location, before any child uses the system.
+
+**Week 6 desired outcome:** A reviewed, documented, and tested local MVP release candidate satisfies the acceptance criteria in `plan.md`.
+
+## Progress tracking
+
+### Development log
+
+```text
+Date: 2026-08-06
+Session/day: Initial vertical slice (Days 1–2 foundation plus thin Days 4–10 path)
+Outcome completed: Reception Maths start -> answer -> deterministic mark -> persisted attempt/mastery -> next question, available through HTTP.
+Verification run: npm test — 6 tests passed; TypeScript build passed.
+Decisions made: Use Node's built-in test runner; require Node >=22; keep answer keys private and keep Ollama out of deterministic marking.
+Known issues: Mastery is currently a simple lifetime correct ratio; promotion/demotion, skips, parent corrections, schema-safe model output, and UI remain future slices.
+Next starting action: Define mastery thresholds test-first and use them in next-question difficulty selection.
+```
+
+```text
+Date: 2026-08-10
+Session/day: Mastery-driven selection vertical slice (Day 5 plus the relevant Day 8 behavior)
+Outcome completed: Versioned new/learning/secure mastery rules, recorded skips, safe v1-to-v2 database migration, expanded reviewed question difficulties, and mastery-driven selection through domain and HTTP layers.
+Verification run: npm test — 14 tests passed; TypeScript build passed.
+Decisions made: Secure requires 5 graded attempts, >=80% correct, and 2 latest correct; secure demotes after 2 consecutive incorrect; skips are stored but ungraded; difficulty targets are 1/2/3 for new/learning/secure.
+Known issues: Session resume/completion endpoints, parent corrections, ambiguous outcomes, schema-safe model output, and UI remain future slices.
+Next starting action: Implement persisted session resume and explicit completion behavior test-first.
+```
+
+At the end of each session, add a short entry using this format:
+
+```text
+Date:
+Session/day:
+Outcome completed:
+Verification run:
+Decisions made:
+Known issues:
+Next starting action:
+```
+
+Use these status labels:
+
+- **Complete:** Exit check passed.
+- **Partial:** A working subset exists, but the exit check did not pass.
+- **Blocked:** Progress requires a specific external decision or dependency.
+- **Deferred:** Intentionally moved outside the MVP.
+
+## Scope protection
+
+Keep these items outside this 60-hour MVP unless all earlier exit checks are complete:
+
+- Year 3 content and English comprehension
+- Speech recognition for answers. Local read-aloud of prompts and feedback is in scope on Day 18; only voice *input* is deferred.
+- Science and VR experiences
+- Cloud model providers, cloud synchronization, or a pro-model escalation route
+- Autonomous tutoring or background tasks
+- Advanced analytics and encrypted backup automation
+
+After Day 30, run the two-week pilot and check it against the pilot exit bar in `plan.md`. Year 3 and English are a separate milestone, planned only once that bar passes.

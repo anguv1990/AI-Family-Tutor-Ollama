@@ -1,0 +1,12 @@
+flowchart LR
+  Child["Child"] --> UI["Tutor web app"]
+  Parent["Parent"] --> UI
+  UI --> Engine["Tutoring engine<br/>questions • hints • mastery"]
+  Engine <--> DB[("Learning progress<br/>SQLite → production database")]
+  Engine --> Gateway["AI gateway<br/>one stable interface"]
+  Gateway -->|"default"| Ollama["Ollama<br/>local model"]
+  Gateway -. "only when enabled" .-> OpenAI["OpenAI / Azure"]
+  Gateway -. "only when enabled" .-> Claude["Anthropic Claude"]
+  Gateway -. "only when enabled" .-> Gemini["Google Vertex AI / Gemini"]
+  Engine --> Safety["Safety + JSON validation"]
+  Safety --> UI
