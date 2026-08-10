@@ -1,0 +1,118 @@
+import assert from 'node:assert/strict';
+import type { AddressInfo } from 'node:net';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import type Database from 'better-sqlite3';
+import type { Server } from 'node:http';
+import { createApp } from '../server/app';
+import { createDatabase } from '../server/database';
+import { TutoringService } from '../server/tutoring-service';
+
+describe('tutoring session API', () => {
+  let database: Database.Database;
+  let server: Server;
+  let baseUrl: string;
+
+  beforeEach(async () => {
+    database = createDatabase(':memory:');
+    const tutor = new TutoringService(database);
+    tutor.seedInitialContent();
+    await new Promise<void>((resolve, reject) => {
+      server = createApp(tutor).listen(0, '127.0.0.1', (error?: Error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+      server.once('error', reject);
+    });
+    const address = server.address() as AddressInfo;
+    baseUrl = `http://127.0.0.1:${address.port}`;
+  });
+
+  afterEach(async () => {
+    const closed = new Promise<void>((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+    server.closeAllConnections();
+    await closed;
+    database.close();
+  });
+
+  it('completes start -> answer -> next question over HTTP', async () => {
+    const startResponse = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-child' }),
+    });
+    assert.equal(startResponse.status, 201);
+    const session = (await startResponse.json()) as {
+      sessionId: string;
+      question: { id: string; prompt: string; correctAnswer?: string };
+    };
+    assert.equal(session.question.prompt, 'What is 1 + 1?');
+    assert.equal(session.question.correctAnswer, undefined);
+
+    const answerResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}/answers`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ questionId: session.question.id, answer: '2' }),
+      },
+    );
+    assert.equal(answerResponse.status, 200);
+    const result = (await answerResponse.json()) as {
+      correct: boolean;
+      mastery: { level: string; score: number };
+      nextQuestion: { id: string; difficulty: number };
+    };
+    assert.equal(result.correct, true);
+    assert.equal(result.mastery.level, 'learning');
+    assert.equal(result.mastery.score, 1);
+    assert.notEqual(result.nextQuestion.id, session.question.id);
+    assert.equal(result.nextQuestion.difficulty, 2);
+  });
+
+  it('records a skipped question without adding graded evidence', async () => {
+    const startResponse = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-skip-child' }),
+    });
+    const session = (await startResponse.json()) as {
+      sessionId: string;
+      question: { id: string };
+    };
+
+    const skipResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}/skip`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ questionId: session.question.id }),
+      },
+    );
+    assert.equal(skipResponse.status, 200);
+    const result = (await skipResponse.json()) as {
+      mastery: { level: string; totalAttempts: number };
+      nextQuestion: { difficulty: number };
+    };
+    assert.deepEqual(result.mastery, {
+      skillId: 'reception.addition-within-5',
+      level: 'new',
+      correctAttempts: 0,
+      totalAttempts: 0,
+      score: 0,
+    });
+    assert.equal(result.nextQuestion.difficulty, 1);
+  });
+
+  it('returns a safe client error for invalid input', async () => {
+    const response = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: '' }),
+    });
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { error: 'invalid_request' });
+  });
+});
