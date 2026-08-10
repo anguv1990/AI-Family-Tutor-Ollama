@@ -330,6 +330,16 @@ Known issues: Content bank holds 7 templates against a target of 20. Startup con
 Next starting action: Implement persisted session resume and explicit completion test-first — begin with a failing test in tests/session-flow.test.ts that starts a session, answers one question, reopens the database from the same file, and asserts the current question and mastery survive.
 ```
 
+```text
+Date: 2026-08-10 (third session)
+Session/day: Day 6 session resume and completion, plus an unplanned child-UI spike
+Outcome completed: (1) Session resume and explicit completion. startSession now resumes a child's open session instead of always creating a new one, and returns `resumed` plus current mastery. Added completeSession with answered/skipped counts, getSession for state lookup, GET /api/sessions/:id and POST /api/sessions/:id/complete. Content exhaustion now records ended_reason 'exhausted' and surfaces a `status` field, so a session no longer ends silently. Migration 3 adds sessions.ended_reason, backfills already-ended sessions to 'exhausted', and indexes the active-session lookup. Closes MVP acceptance criterion 4. (2) A throwaway child UI spike in web/index.html, served by express.static, to test whether a Reception-age child can operate the app at all.
+Verification run: npm test — 29 tests passed (was 14); TypeScript build passed. Manual smoke test against the running dev server confirmed the root serves the UI and a session starts over HTTP. Commits 1a2057d and d9123db pushed to origin/main.
+Decisions made: A child may have only one open session at a time; startSession is therefore safe to call repeatedly and is the resume path. Explicit completion is the "child chooses to stop" arm of the stopping rule only — the 8-question and 10-minute caps remain Day 8 and need a fixed clock. submitAnswer now shares getActiveSession and moveSessionToQuestion with skipQuestion rather than duplicating them. The UI spike taps numbers rather than typing, uses 88px minimum targets, and speaks prompts via speechSynthesis; speech output is treated as safe because it never listens, unlike the still-deferred speech recognition.
+Known issues: OPEN QUESTION, decide before building the real UI — the API marks an answer and advances in one transaction, so there is no retry. A mistap by a four-year-old is recorded as genuine mastery evidence and the question is taken away. Consider retry-before-marking. Also outstanding: content bank holds 7 templates against a target of 20; no fake model adapter; startup config validation covers only PORT; no admin auth or parent endpoints; no Ollama integration; whether speechSynthesis uses an on-device voice is unconfirmed; web/index.html is spike-grade and expected to be thrown away. A stray empty file named 'src' still sits untracked in the repo root.
+Next starting action: Sit both children in front of http://127.0.0.1:3000 and watch four things — do they hit the intended number, does the spoken prompt land or do they ignore it, what do they do after a wrong answer, and do they find Skip unaided. Record what happens in this log before writing any more UI code. If they struggle to both read and hear the prompt, the finding is bigger than the UI and reshapes the content format towards pictures over text.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text
