@@ -105,6 +105,14 @@ describe('tutoring session API', () => {
     assert.equal(result.nextQuestion.difficulty, 1);
   });
 
+  it('serves the child web interface at the root', async () => {
+    const response = await fetch(`${baseUrl}/`);
+
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type') ?? '', /text\/html/);
+    assert.match(await response.text(), /Who is playing\?/);
+  });
+
   it('resumes an active session rather than creating a second one', async () => {
     const start = async () =>
       (await (

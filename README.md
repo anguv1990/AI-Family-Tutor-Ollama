@@ -25,6 +25,12 @@ npm test
 npm run dev
 ```
 
+Then open <http://127.0.0.1:3000> for the child interface.
+
+> The web interface in `web/` is a **spike**, not the real UI. It exists to test
+> one unvalidated assumption — whether a Reception-age child can actually use
+> this — before more is built on top of it. Expect to throw it away.
+
 The service binds to `127.0.0.1:3000` by default. Configuration:
 
 - `HOST` — bind address; defaults to `127.0.0.1`

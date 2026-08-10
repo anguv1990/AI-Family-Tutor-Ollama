@@ -1,10 +1,15 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
+import path from 'node:path';
 import type { TutoringService } from './tutoring-service';
 
 export function createApp(tutor: TutoringService): express.Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '16kb' }));
+
+  // Resolved from the working directory, matching how migrations are located
+  // in database.ts, so the path is the same under ts-node-dev and dist/.
+  app.use(express.static(path.resolve(process.cwd(), 'web')));
 
   app.get('/health', (_request, response) => {
     response.json({ status: 'ok' });
