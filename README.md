@@ -39,12 +39,20 @@ Check service health:
 curl http://127.0.0.1:3000/health
 ```
 
-Start a session:
+Start a session, or resume the child's open one. A child can only have one open
+session at a time, so this is safe to call repeatedly — the `resumed` field in
+the response says which happened.
 
 ```bash
 curl -X POST http://127.0.0.1:3000/api/sessions \
   -H 'content-type: application/json' \
   -d '{"childId":"local-child-1"}'
+```
+
+Read a session's current state, including the question the child is on:
+
+```bash
+curl http://127.0.0.1:3000/api/sessions/SESSION_ID
 ```
 
 Submit an answer using the returned session and question IDs:
@@ -63,6 +71,15 @@ curl -X POST http://127.0.0.1:3000/api/sessions/SESSION_ID/skip \
   -d '{"questionId":"QUESTION_ID"}'
 ```
 
+End a session deliberately and get its summary:
+
+```bash
+curl -X POST http://127.0.0.1:3000/api/sessions/SESSION_ID/complete
+```
+
+Answer and skip responses carry a `status` of `active` or `exhausted`, so running
+out of reviewed content is an explicit state rather than a silent stop.
+
 Mastery uses the documented `new`, `learning`, and `secure` levels. The persisted level selects the target question difficulty. See `docs/mastery-rules.md` for the exact evidence, promotion, demotion, and skip rules.
 
 ## Project plans
@@ -72,4 +89,4 @@ Mastery uses the documented `new`, `learning`, and `secure` levels. The persiste
 
 ## Next vertical slice
 
-Add session resume and explicit completion behavior, including restart tests that prove the current question and mastery survive an application restart.
+A rough browser UI over this API, to test whether a Reception-age child can actually use it. That assumption is currently untested and everything else is built on it.

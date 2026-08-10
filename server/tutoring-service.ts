@@ -31,6 +31,16 @@ type Mastery = {
   score: number;
 };
 
+type EndedReason = 'completed' | 'exhausted';
+
+type SessionStatus = 'active' | EndedReason;
+
+type SessionRow = {
+  child_id: string;
+  current_question_id: string | null;
+  ended_at: string | null;
+};
+
 export class TutoringService {
   constructor(private readonly database: Database.Database) {}
 
@@ -62,15 +72,40 @@ export class TutoringService {
     seed();
   }
 
+  /**
+   * Resumes the child's active session when one exists so that a restart, a
+   * refreshed browser tab or a second device cannot strand progress or leave
+   * two open sessions competing for the same mastery evidence.
+   */
   startSession(input: { childId: string }): {
     sessionId: string;
     childId: string;
     question: PublicQuestion;
+    mastery: Mastery;
+    resumed: boolean;
   } {
     if (!input.childId.trim()) throw new Error('childId is required');
 
-    const sessionId = randomUUID();
     const currentMastery = this.getMastery(input.childId, INITIAL_SKILL_ID);
+    const active = this.findActiveSession(input.childId);
+
+    if (active?.current_question_id) {
+      return {
+        sessionId: active.id,
+        childId: input.childId,
+        question: this.toPublicQuestion(
+          this.getReviewedQuestion(active.current_question_id),
+        ),
+        mastery: currentMastery,
+        resumed: true,
+      };
+    }
+
+    // An active session with no current question has nothing left to ask.
+    // Close it before opening a new one so it cannot linger unreachable.
+    if (active) this.endSession(active.id, 'exhausted');
+
+    const sessionId = randomUUID();
     const question = this.selectNextQuestion(sessionId, currentMastery.level);
     if (!question) throw new Error('No reviewed questions are available');
 
@@ -91,7 +126,80 @@ export class TutoringService {
       sessionId,
       childId: input.childId,
       question: this.toPublicQuestion(question),
+      mastery: currentMastery,
+      resumed: false,
     };
+  }
+
+  getSession(input: { sessionId: string }): {
+    sessionId: string;
+    childId: string;
+    status: SessionStatus;
+    question: PublicQuestion | null;
+    mastery: Mastery;
+  } {
+    const session = this.database
+      .prepare(
+        `SELECT child_id, current_question_id, ended_at, ended_reason
+         FROM sessions WHERE id = ?`,
+      )
+      .get(input.sessionId) as
+      | (SessionRow & { ended_reason: EndedReason | null })
+      | undefined;
+    if (!session) throw new Error('Session not found');
+
+    return {
+      sessionId: input.sessionId,
+      childId: session.child_id,
+      status: session.ended_at ? session.ended_reason ?? 'completed' : 'active',
+      question:
+        !session.ended_at && session.current_question_id
+          ? this.toPublicQuestion(
+              this.getReviewedQuestion(session.current_question_id),
+            )
+          : null,
+      mastery: this.getMastery(session.child_id, INITIAL_SKILL_ID),
+    };
+  }
+
+  completeSession(input: { sessionId: string }): {
+    sessionId: string;
+    endedReason: EndedReason;
+    questionsAnswered: number;
+    questionsSkipped: number;
+    mastery: Mastery;
+  } {
+    const session = this.database
+      .prepare('SELECT child_id, ended_at FROM sessions WHERE id = ?')
+      .get(input.sessionId) as
+      | { child_id: string; ended_at: string | null }
+      | undefined;
+    if (!session || session.ended_at) {
+      throw new Error('Active session not found');
+    }
+
+    return this.database.transaction(() => {
+      this.endSession(input.sessionId, 'completed');
+      const counts = this.database
+        .prepare(
+          `SELECT
+             SUM(CASE WHEN outcome = 'answered' THEN 1 ELSE 0 END) AS answered,
+             SUM(CASE WHEN outcome = 'skipped' THEN 1 ELSE 0 END) AS skipped
+           FROM attempts WHERE session_id = ?`,
+        )
+        .get(input.sessionId) as {
+        answered: number | null;
+        skipped: number | null;
+      };
+
+      return {
+        sessionId: input.sessionId,
+        endedReason: 'completed' as const,
+        questionsAnswered: counts.answered ?? 0,
+        questionsSkipped: counts.skipped ?? 0,
+        mastery: this.getMastery(session.child_id, INITIAL_SKILL_ID),
+      };
+    })();
   }
 
   submitAnswer(input: {
@@ -102,6 +210,7 @@ export class TutoringService {
     correct: boolean;
     mastery: Mastery;
     nextQuestion: PublicQuestion | null;
+    status: SessionStatus;
   } {
     const normalizedAnswer = input.answer.trim();
     if (!normalizedAnswer) throw new Error('answer is required');
@@ -113,19 +222,7 @@ export class TutoringService {
       .get(input.sessionId, input.questionId);
     if (duplicate) throw new Error('This question has already been answered');
 
-    const session = this.database
-      .prepare(
-        `SELECT child_id, current_question_id, ended_at
-         FROM sessions WHERE id = ?`,
-      )
-      .get(input.sessionId) as
-      | { child_id: string; current_question_id: string | null; ended_at: string | null }
-      | undefined;
-    if (!session || session.ended_at) throw new Error('Active session not found');
-    if (session.current_question_id !== input.questionId) {
-      throw new Error('Question is not active for this session');
-    }
-
+    const session = this.getActiveSession(input.sessionId, input.questionId);
     const question = this.getReviewedQuestion(input.questionId);
 
     const correct = normalizedAnswer === question.correct_answer;
@@ -152,19 +249,14 @@ export class TutoringService {
         question.skill_id,
       );
       const next = this.selectNextQuestion(input.sessionId, mastery.level);
-      this.database
-        .prepare(
-          `UPDATE sessions
-           SET current_question_id = ?,
-               ended_at = CASE WHEN ? IS NULL THEN CURRENT_TIMESTAMP ELSE NULL END
-           WHERE id = ?`,
-        )
-        .run(next?.id ?? null, next?.id ?? null, input.sessionId);
+      this.moveSessionToQuestion(input.sessionId, next);
+      const status: SessionStatus = next ? 'active' : 'exhausted';
 
       return {
         correct,
         mastery,
         nextQuestion: next ? this.toPublicQuestion(next) : null,
+        status,
       };
     })();
   }
@@ -172,7 +264,11 @@ export class TutoringService {
   skipQuestion(input: {
     sessionId: string;
     questionId: string;
-  }): { mastery: Mastery; nextQuestion: PublicQuestion | null } {
+  }): {
+    mastery: Mastery;
+    nextQuestion: PublicQuestion | null;
+    status: SessionStatus;
+  } {
     const duplicate = this.database
       .prepare(
         'SELECT 1 FROM attempts WHERE session_id = ? AND template_id = ?',
@@ -202,9 +298,11 @@ export class TutoringService {
       const mastery = this.getMastery(session.child_id, question.skill_id);
       const next = this.selectNextQuestion(input.sessionId, mastery.level);
       this.moveSessionToQuestion(input.sessionId, next);
+      const status: SessionStatus = next ? 'active' : 'exhausted';
       return {
         mastery,
         nextQuestion: next ? this.toPublicQuestion(next) : null,
+        status,
       };
     })();
   }
@@ -233,6 +331,22 @@ export class TutoringService {
       .get(sessionId, targetDifficulty) as QuestionRow | undefined;
   }
 
+  private findActiveSession(
+    childId: string,
+  ): { id: string; current_question_id: string | null } | undefined {
+    return this.database
+      .prepare(
+        `SELECT id, current_question_id
+         FROM sessions
+         WHERE child_id = ? AND ended_at IS NULL
+         ORDER BY started_at DESC, rowid DESC
+         LIMIT 1`,
+      )
+      .get(childId) as
+      | { id: string; current_question_id: string | null }
+      | undefined;
+  }
+
   private getActiveSession(
     sessionId: string,
     questionId: string,
@@ -242,14 +356,22 @@ export class TutoringService {
         `SELECT child_id, current_question_id, ended_at
          FROM sessions WHERE id = ?`,
       )
-      .get(sessionId) as
-      | { child_id: string; current_question_id: string | null; ended_at: string | null }
-      | undefined;
+      .get(sessionId) as SessionRow | undefined;
     if (!session || session.ended_at) throw new Error('Active session not found');
     if (session.current_question_id !== questionId) {
       throw new Error('Question is not active for this session');
     }
     return { child_id: session.child_id };
+  }
+
+  private endSession(sessionId: string, reason: EndedReason): void {
+    this.database
+      .prepare(
+        `UPDATE sessions
+         SET ended_at = CURRENT_TIMESTAMP, ended_reason = ?
+         WHERE id = ? AND ended_at IS NULL`,
+      )
+      .run(reason, sessionId);
   }
 
   private getReviewedQuestion(questionId: string): QuestionRow {
@@ -332,13 +454,9 @@ export class TutoringService {
     next: QuestionRow | undefined,
   ): void {
     this.database
-      .prepare(
-        `UPDATE sessions
-         SET current_question_id = ?,
-             ended_at = CASE WHEN ? IS NULL THEN CURRENT_TIMESTAMP ELSE NULL END
-         WHERE id = ?`,
-      )
-      .run(next?.id ?? null, next?.id ?? null, sessionId);
+      .prepare('UPDATE sessions SET current_question_id = ? WHERE id = ?')
+      .run(next?.id ?? null, sessionId);
+    if (!next) this.endSession(sessionId, 'exhausted');
   }
 
   private toPublicQuestion(question: QuestionRow): PublicQuestion {

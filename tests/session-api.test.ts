@@ -105,6 +105,84 @@ describe('tutoring session API', () => {
     assert.equal(result.nextQuestion.difficulty, 1);
   });
 
+  it('resumes an active session rather than creating a second one', async () => {
+    const start = async () =>
+      (await (
+        await fetch(`${baseUrl}/api/sessions`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ childId: 'api-resume-child' }),
+        })
+      ).json()) as { sessionId: string; resumed: boolean };
+
+    const first = await start();
+    const second = await start();
+
+    assert.equal(first.resumed, false);
+    assert.equal(second.resumed, true);
+    assert.equal(second.sessionId, first.sessionId);
+  });
+
+  it('completes a session over HTTP and reports the reason', async () => {
+    const startResponse = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-complete-child' }),
+    });
+    const session = (await startResponse.json()) as { sessionId: string };
+
+    const completeResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}/complete`,
+      { method: 'POST' },
+    );
+
+    assert.equal(completeResponse.status, 200);
+    const summary = (await completeResponse.json()) as {
+      endedReason: string;
+      questionsAnswered: number;
+    };
+    assert.equal(summary.endedReason, 'completed');
+    assert.equal(summary.questionsAnswered, 0);
+
+    const stateResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}`,
+    );
+    const state = (await stateResponse.json()) as { status: string };
+    assert.equal(state.status, 'completed');
+  });
+
+  it('returns the current session state for resume', async () => {
+    const startResponse = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-state-child' }),
+    });
+    const session = (await startResponse.json()) as {
+      sessionId: string;
+      question: { id: string };
+    };
+
+    const stateResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}`,
+    );
+
+    assert.equal(stateResponse.status, 200);
+    const state = (await stateResponse.json()) as {
+      status: string;
+      question: { id: string; correctAnswer?: string };
+    };
+    assert.equal(state.status, 'active');
+    assert.equal(state.question.id, session.question.id);
+    assert.equal(state.question.correctAnswer, undefined);
+  });
+
+  it('returns a safe client error for an unknown session', async () => {
+    const response = await fetch(`${baseUrl}/api/sessions/does-not-exist`);
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { error: 'invalid_request' });
+  });
+
   it('returns a safe client error for invalid input', async () => {
     const response = await fetch(`${baseUrl}/api/sessions`, {
       method: 'POST',

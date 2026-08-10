@@ -25,6 +25,24 @@ export function createApp(tutor: TutoringService): express.Express {
     }
   });
 
+  app.get('/api/sessions/:sessionId', (request, response, next) => {
+    try {
+      response.json(tutor.getSession({ sessionId: request.params.sessionId }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post('/api/sessions/:sessionId/complete', (request, response, next) => {
+    try {
+      response.json(
+        tutor.completeSession({ sessionId: request.params.sessionId }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
+
   app.post('/api/sessions/:sessionId/answers', (request, response, next) => {
     try {
       if (

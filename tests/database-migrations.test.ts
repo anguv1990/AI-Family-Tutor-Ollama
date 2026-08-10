@@ -40,6 +40,18 @@ describe('database migrations', () => {
          VALUES ('existing-child', 'existing-skill', 1, 1, 1)`,
       )
       .run();
+    legacy
+      .prepare(
+        `INSERT INTO sessions (id, child_id, started_at, ended_at)
+         VALUES ('finished-session', 'existing-child',
+                 CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      )
+      .run();
+    legacy
+      .prepare(
+        `INSERT INTO sessions (id, child_id) VALUES ('open-session', 'existing-child')`,
+      )
+      .run();
     legacy.close();
 
     const upgraded = createDatabase(filename);
@@ -49,6 +61,9 @@ describe('database migrations', () => {
          FROM mastery WHERE child_id = 'existing-child'`,
       )
       .get();
+    const sessions = upgraded
+      .prepare('SELECT id, ended_reason FROM sessions ORDER BY id')
+      .all();
     const versions = upgraded
       .prepare('SELECT version FROM schema_versions ORDER BY version')
       .all();
@@ -59,6 +74,18 @@ describe('database migrations', () => {
       total_attempts: 1,
       level: 'learning',
     });
-    assert.deepEqual(versions, [{ version: 1 }, { version: 2 }]);
+    assert.deepEqual(
+      sessions,
+      [
+        { id: 'finished-session', ended_reason: 'exhausted' },
+        { id: 'open-session', ended_reason: null },
+      ],
+      'already-ended sessions backfill to exhausted; open sessions stay open',
+    );
+    assert.deepEqual(versions, [
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+    ]);
   });
 });

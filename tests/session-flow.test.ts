@@ -132,4 +132,121 @@ describe('Reception Maths tutoring vertical slice', () => {
     assert.equal(latest?.mastery.level, 'secure');
     assert.equal(latest?.nextQuestion?.difficulty, 3);
   });
+
+  it('resumes the active session instead of starting a second one', () => {
+    const first = tutor.startSession({ childId: 'child-resume' });
+    const second = tutor.startSession({ childId: 'child-resume' });
+
+    assert.equal(second.sessionId, first.sessionId);
+    assert.equal(second.resumed, true);
+    assert.equal(second.question.id, first.question.id);
+
+    const sessions = database
+      .prepare('SELECT COUNT(*) AS total FROM sessions WHERE child_id = ?')
+      .get('child-resume') as { total: number };
+    assert.equal(sessions.total, 1);
+  });
+
+  it('resumes at the question the child had not yet answered', () => {
+    const started = tutor.startSession({ childId: 'child-resume-progress' });
+    const answered = tutor.submitAnswer({
+      sessionId: started.sessionId,
+      questionId: started.question.id,
+      answer: '2',
+    });
+
+    const resumed = tutor.startSession({ childId: 'child-resume-progress' });
+
+    assert.equal(resumed.sessionId, started.sessionId);
+    assert.equal(resumed.question.id, answered.nextQuestion?.id);
+    assert.deepEqual(resumed.mastery, answered.mastery);
+  });
+
+  it('completes a session explicitly and refuses further answers', () => {
+    const session = tutor.startSession({ childId: 'child-complete' });
+
+    const summary = tutor.completeSession({ sessionId: session.sessionId });
+
+    assert.equal(summary.endedReason, 'completed');
+    assert.equal(summary.questionsAnswered, 0);
+    assert.throws(
+      () =>
+        tutor.submitAnswer({
+          sessionId: session.sessionId,
+          questionId: session.question.id,
+          answer: '2',
+        }),
+      /active session not found/i,
+    );
+  });
+
+  it('counts only graded answers in the completion summary', () => {
+    const session = tutor.startSession({ childId: 'child-complete-count' });
+    const answered = tutor.submitAnswer({
+      sessionId: session.sessionId,
+      questionId: session.question.id,
+      answer: '2',
+    });
+    tutor.skipQuestion({
+      sessionId: session.sessionId,
+      questionId: answered.nextQuestion!.id,
+    });
+
+    const summary = tutor.completeSession({ sessionId: session.sessionId });
+
+    assert.equal(summary.questionsAnswered, 1);
+    assert.equal(summary.questionsSkipped, 1);
+  });
+
+  it('refuses to complete a session twice', () => {
+    const session = tutor.startSession({ childId: 'child-complete-twice' });
+    tutor.completeSession({ sessionId: session.sessionId });
+
+    assert.throws(
+      () => tutor.completeSession({ sessionId: session.sessionId }),
+      /active session not found/i,
+    );
+  });
+
+  it('starts a fresh session once the previous one was completed', () => {
+    const first = tutor.startSession({ childId: 'child-second-session' });
+    tutor.completeSession({ sessionId: first.sessionId });
+
+    const second = tutor.startSession({ childId: 'child-second-session' });
+
+    assert.notEqual(second.sessionId, first.sessionId);
+    assert.equal(second.resumed, false);
+  });
+
+  it('reports an exhausted session rather than ending silently', () => {
+    const session = tutor.startSession({ childId: 'child-exhaust' });
+
+    let questionId: string | undefined = session.question.id;
+    let status = 'active';
+    while (questionId) {
+      const outcome = tutor.skipQuestion({
+        sessionId: session.sessionId,
+        questionId,
+      });
+      questionId = outcome.nextQuestion?.id;
+      status = outcome.status;
+    }
+
+    assert.equal(status, 'exhausted');
+    const stored = database
+      .prepare('SELECT ended_reason FROM sessions WHERE id = ?')
+      .get(session.sessionId) as { ended_reason: string };
+    assert.equal(stored.ended_reason, 'exhausted');
+  });
+
+  it('reads back the current state of an active session', () => {
+    const session = tutor.startSession({ childId: 'child-lookup' });
+
+    const state = tutor.getSession({ sessionId: session.sessionId });
+
+    assert.equal(state.status, 'active');
+    assert.equal(state.childId, 'child-lookup');
+    assert.equal(state.question?.id, session.question.id);
+    assert.equal('correctAnswer' in (state.question ?? {}), false);
+  });
 });
