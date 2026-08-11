@@ -390,6 +390,16 @@ Known issues: The Year 3 content is machine-verified but not adult-reviewed — 
 Next starting action: Sit the eight-year-old in front of Panda and watch the keypad specifically — is the typed answer readable, is rub-out discoverable, and does the jump in difficulty after one correct answer feel right. Then have an adult read the 84 new Year 3 prompts.
 ```
 
+```text
+Date: 2026-08-11 (fourth session)
+Session/day: Adopting the Modal_data curriculum dataset — Year 2, misconceptions and spaced review
+Outcome completed: (1) Imported all 75 curriculum skills and their 84 prerequisite edges as the curriculum backbone, validated acyclic at load, with a map from each taught skill to the curriculum skills it was built from. Added five Year 2 skills (counting in steps, tens and ones, adding and subtracting to 100, the 2/5/10 tables, fractions of amounts) filling the gap between the two children; the bank went from 147 to 252 templates across three year groups. (2) A wrong answer is now diagnosed: twenty deterministic patterns across every question shape, recorded on the attempt for an adult and answered to the child in words that never contain the answer. (3) Spaced review at 1/3/7/14/30 days replaced the flat 24-hour rule, and session start now chooses due work first, then new work in curriculum teaching order.
+Verification run: npm test — 283 tests passed (was 242). All 252 answer keys re-derived independently from their own prompt text. Live HTTP checks for all three year groups and for wrong-answer help. Eight simulated days of practice confirmed skills rotate and intervals stretch.
+Decisions made: The dataset's README proposes letting a model generate questions inside each skill's bounds; that was rejected against plan.md, which forbids the model being the source of correctness. The dataset supplies curriculum structure only and never an answer key. Measurement, geometry and statistics were left out rather than faked — they need clocks, shapes and charts to ask honestly. Diagnosis runs after marking and can never change a mark. Off-by-one is read as a miscount rather than as multiplying, because for small numbers the two collide and a Reception child has not met multiplication. The review interval follows the trailing run of correct answers, not the overall score, and is derived from evidence so corrections and retention cannot desynchronise it.
+Known issues: The Year 2 content is machine-verified but not adult-reviewed, the same gap as Reception and Year 3, now across 252 templates. Reception skills are not yet mapped to curriculum skill ids, so their teaching order falls back to skill id rather than the prerequisite graph. Measurement, geometry and statistics remain untaught. The English and Science dataset in Modal_data is untouched and out of scope. A gap the tests could not see was found only by a live check: the API validated year groups against its own hardcoded list, so the engine accepted Year 2 while HTTP rejected it — now one list checked in one place.
+Next starting action: Sit both children down again now the daily cap no longer locks them out. Watch what happens after a wrong answer, which is the thing no observation has reached yet, and whether the dots land where the spoken prompt did not.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text
