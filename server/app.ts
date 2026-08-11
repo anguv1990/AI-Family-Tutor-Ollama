@@ -15,14 +15,27 @@ export function createApp(tutor: TutoringService): express.Express {
     response.json({ status: 'ok' });
   });
 
+  app.get('/api/skills', (_request, response, next) => {
+    try {
+      response.json({ skills: tutor.listSkills() });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   app.post('/api/sessions', (request, response, next) => {
     try {
       if (typeof request.body?.childId !== 'string') {
         throw new Error('childId is required');
       }
+      const skillId = request.body?.skillId;
+      if (skillId !== undefined && typeof skillId !== 'string') {
+        throw new Error('skillId must be a string');
+      }
       response.status(201).json(
         tutor.startSession({
           childId: request.body.childId,
+          skillId,
         }),
       );
     } catch (error) {

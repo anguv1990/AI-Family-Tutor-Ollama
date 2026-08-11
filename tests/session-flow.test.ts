@@ -16,6 +16,17 @@ describe('Reception Maths tutoring vertical slice', () => {
 
   afterEach(() => database.close());
 
+  /**
+   * Reads the answer key straight from the bank, so these tests exercise the
+   * flow rather than hard-coding whichever questions the bank happens to serve.
+   */
+  const answerKeyFor = (templateId: string): string =>
+    (
+      database
+        .prepare('SELECT correct_answer FROM content_templates WHERE id = ?')
+        .get(templateId) as { correct_answer: string }
+    ).correct_answer;
+
   it('starts a session with a reviewed question and does not expose its answer', () => {
     const session = tutor.startSession({ childId: 'child-1' });
 
@@ -110,20 +121,13 @@ describe('Reception Maths tutoring vertical slice', () => {
 
   it('promotes to secure and selects difficulty 3 after sufficient evidence', () => {
     let session = tutor.startSession({ childId: 'child-progress' });
-    const answers: Record<string, string> = {
-      'addition-1-plus-1': '2',
-      'addition-2-plus-1': '3',
-      'addition-2-plus-2': '4',
-      'addition-3-plus-1': '4',
-      'addition-3-plus-2': '5',
-    };
 
     let latest;
     for (let attempt = 0; attempt < 5; attempt += 1) {
       latest = tutor.submitAnswer({
         sessionId: session.sessionId,
         questionId: session.question.id,
-        answer: answers[session.question.id],
+        answer: answerKeyFor(session.question.id),
       });
       assert.ok(latest.nextQuestion);
       session = { ...session, question: latest.nextQuestion };
@@ -237,6 +241,95 @@ describe('Reception Maths tutoring vertical slice', () => {
       .prepare('SELECT ended_reason FROM sessions WHERE id = ?')
       .get(session.sessionId) as { ended_reason: string };
     assert.equal(stored.ended_reason, 'exhausted');
+  });
+
+  it('starts a session on a chosen skill and never leaves it', () => {
+    const session = tutor.startSession({
+      childId: 'child-counting',
+      skillId: 'reception.counting-to-10',
+    });
+    assert.equal(session.skillId, 'reception.counting-to-10');
+
+    let question: { id: string; skillId: string } | null = session.question;
+    let served = 0;
+    while (question) {
+      assert.equal(question.skillId, 'reception.counting-to-10');
+      served += 1;
+      question = tutor.skipQuestion({
+        sessionId: session.sessionId,
+        questionId: question.id,
+      }).nextQuestion;
+    }
+
+    // The whole counting bank, and nothing from the other two skills.
+    assert.equal(served, 21);
+  });
+
+  it('keeps mastery separate per skill', () => {
+    const counting = tutor.startSession({
+      childId: 'child-two-skills',
+      skillId: 'reception.counting-to-10',
+    });
+    tutor.submitAnswer({
+      sessionId: counting.sessionId,
+      questionId: counting.question.id,
+      answer: answerKeyFor(counting.question.id),
+    });
+    tutor.completeSession({ sessionId: counting.sessionId });
+
+    const addition = tutor.startSession({
+      childId: 'child-two-skills',
+      skillId: 'reception.addition-within-5',
+    });
+
+    assert.equal(addition.mastery.skillId, 'reception.addition-within-5');
+    assert.equal(addition.mastery.totalAttempts, 0);
+    assert.equal(addition.mastery.level, 'new');
+  });
+
+  it('resumes the skill the session was started with, ignoring a new one', () => {
+    const started = tutor.startSession({
+      childId: 'child-skill-resume',
+      skillId: 'reception.number-recognition',
+    });
+
+    const resumed = tutor.startSession({
+      childId: 'child-skill-resume',
+      skillId: 'reception.addition-within-5',
+    });
+
+    assert.equal(resumed.sessionId, started.sessionId);
+    assert.equal(resumed.skillId, 'reception.number-recognition');
+    assert.equal(resumed.question.id, started.question.id);
+  });
+
+  it('refuses an unknown or disabled skill', () => {
+    assert.throws(
+      () => tutor.startSession({ childId: 'child-bad-skill', skillId: 'nope' }),
+      /skill not found/i,
+    );
+
+    database
+      .prepare("UPDATE skills SET enabled = 0 WHERE id = 'reception.counting-to-10'")
+      .run();
+    assert.throws(
+      () =>
+        tutor.startSession({
+          childId: 'child-off-skill',
+          skillId: 'reception.counting-to-10',
+        }),
+      /skill not found/i,
+    );
+  });
+
+  it('lists the enabled skills with their reviewed question counts', () => {
+    const skills = tutor.listSkills();
+
+    assert.equal(skills.length, 3);
+    for (const skill of skills) {
+      assert.ok(skill.title.trim());
+      assert.ok(skill.questionCount >= 20, `${skill.id}: ${skill.questionCount}`);
+    }
   });
 
   it('reads back the current state of an active session', () => {

@@ -45,14 +45,21 @@ Check service health:
 curl http://127.0.0.1:3000/health
 ```
 
+List the enabled skills and how many reviewed questions each one has:
+
+```bash
+curl http://127.0.0.1:3000/api/skills
+```
+
 Start a session, or resume the child's open one. A child can only have one open
 session at a time, so this is safe to call repeatedly — the `resumed` field in
-the response says which happened.
+the response says which happened. `skillId` is optional and defaults to
+`reception.addition-within-5`; a resumed session keeps the skill it began with.
 
 ```bash
 curl -X POST http://127.0.0.1:3000/api/sessions \
   -H 'content-type: application/json' \
-  -d '{"childId":"local-child-1"}'
+  -d '{"childId":"local-child-1","skillId":"reception.counting-to-10"}'
 ```
 
 Read a session's current state, including the question the child is on:
@@ -85,6 +92,11 @@ curl -X POST http://127.0.0.1:3000/api/sessions/SESSION_ID/complete
 
 Answer and skip responses carry a `status` of `active` or `exhausted`, so running
 out of reviewed content is an explicit state rather than a silent stop.
+
+Questions come from the adult-reviewed bank in `server/content-bank.ts` — three
+Reception Maths skills, at least twenty enabled templates each, every answer a
+whole number from 0 to 10 so it can be tapped rather than typed. A session is
+bound to one skill and selection never crosses into another.
 
 Mastery uses the documented `new`, `learning`, and `secure` levels. The persisted level selects the target question difficulty. See `docs/mastery-rules.md` for the exact evidence, promotion, demotion, and skip rules.
 

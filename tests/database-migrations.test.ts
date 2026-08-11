@@ -62,8 +62,14 @@ describe('database migrations', () => {
       )
       .get();
     const sessions = upgraded
-      .prepare('SELECT id, ended_reason FROM sessions ORDER BY id')
+      .prepare('SELECT id, ended_reason, skill_id FROM sessions ORDER BY id')
       .all();
+    const provenance = upgraded
+      .prepare(
+        `SELECT COUNT(*) AS total FROM content_templates
+         WHERE source = '' OR licence = ''`,
+      )
+      .get();
     const versions = upgraded
       .prepare('SELECT version FROM schema_versions ORDER BY version')
       .all();
@@ -77,15 +83,30 @@ describe('database migrations', () => {
     assert.deepEqual(
       sessions,
       [
-        { id: 'finished-session', ended_reason: 'exhausted' },
-        { id: 'open-session', ended_reason: null },
+        {
+          id: 'finished-session',
+          ended_reason: 'exhausted',
+          skill_id: 'reception.addition-within-5',
+        },
+        {
+          id: 'open-session',
+          ended_reason: null,
+          skill_id: 'reception.addition-within-5',
+        },
       ],
-      'already-ended sessions backfill to exhausted; open sessions stay open',
+      'already-ended sessions backfill to exhausted; open sessions stay open ' +
+        'and every legacy session adopts the original skill',
+    );
+    assert.deepEqual(
+      provenance,
+      { total: 0 },
+      'pre-existing templates are attributed rather than left blank',
     );
     assert.deepEqual(versions, [
       { version: 1 },
       { version: 2 },
       { version: 3 },
+      { version: 4 },
     ]);
   });
 });

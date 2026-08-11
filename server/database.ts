@@ -6,6 +6,7 @@ const migrations = [
   { version: 1, filename: 'create_tables.sql' },
   { version: 2, filename: '002_mastery_levels.sql' },
   { version: 3, filename: '003_session_completion.sql' },
+  { version: 4, filename: '004_content_provenance.sql' },
 ];
 
 export function createDatabase(filename: string): Database.Database {

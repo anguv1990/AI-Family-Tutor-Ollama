@@ -4,8 +4,7 @@ import {
   calculateMastery,
   type MasteryLevel,
 } from './mastery';
-
-const INITIAL_SKILL_ID = 'reception.addition-within-5';
+import { DEFAULT_SKILL_ID, receptionMathsBank } from './content-bank';
 
 type PublicQuestion = {
   id: string;
@@ -37,6 +36,7 @@ type SessionStatus = 'active' | EndedReason;
 
 type SessionRow = {
   child_id: string;
+  skill_id: string;
   current_question_id: string | null;
   ended_at: string | null;
 };
@@ -44,29 +44,51 @@ type SessionRow = {
 export class TutoringService {
   constructor(private readonly database: Database.Database) {}
 
+  /**
+   * Loads the reviewed bank. Re-running it refreshes wording, difficulty,
+   * ordering and provenance, but deliberately never touches `reviewed` or
+   * `enabled` on a template that already exists — an adult who disabled a
+   * question must not have it silently switched back on by a restart.
+   */
   seedInitialContent(): void {
+    const insertSkill = this.database.prepare(
+      `INSERT INTO skills (id, title, curriculum_version, enabled)
+       VALUES (?, ?, ?, 1)
+       ON CONFLICT (id) DO UPDATE SET
+         title = excluded.title,
+         curriculum_version = excluded.curriculum_version`,
+    );
+
+    const insertTemplate = this.database.prepare(
+      `INSERT INTO content_templates
+         (id, skill_id, version, prompt, correct_answer, difficulty,
+          sequence, source, licence, reviewed, enabled)
+       VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, 1, 1)
+       ON CONFLICT (id) DO UPDATE SET
+         prompt = excluded.prompt,
+         correct_answer = excluded.correct_answer,
+         difficulty = excluded.difficulty,
+         sequence = excluded.sequence,
+         source = excluded.source,
+         licence = excluded.licence`,
+    );
+
     const seed = this.database.transaction(() => {
-      this.database
-        .prepare(
-          `INSERT OR IGNORE INTO skills
-             (id, title, curriculum_version, enabled)
-           VALUES (?, ?, ?, 1)`,
-        )
-        .run(INITIAL_SKILL_ID, 'Addition within 5', 'reception-maths-v1');
-
-      const insertTemplate = this.database.prepare(
-        `INSERT OR IGNORE INTO content_templates
-           (id, skill_id, version, prompt, correct_answer, difficulty, reviewed, enabled)
-         VALUES (?, ?, 1, ?, ?, ?, 1, 1)`,
-      );
-
-      insertTemplate.run('addition-1-plus-1', INITIAL_SKILL_ID, 'What is 1 + 1?', '2', 1);
-      insertTemplate.run('addition-2-plus-1', INITIAL_SKILL_ID, 'What is 2 + 1?', '3', 1);
-      insertTemplate.run('addition-2-plus-2', INITIAL_SKILL_ID, 'What is 2 + 2?', '4', 2);
-      insertTemplate.run('addition-3-plus-1', INITIAL_SKILL_ID, 'What is 3 + 1?', '4', 2);
-      insertTemplate.run('addition-3-plus-2', INITIAL_SKILL_ID, 'What is 3 + 2?', '5', 2);
-      insertTemplate.run('addition-4-plus-1', INITIAL_SKILL_ID, 'What is 4 + 1?', '5', 3);
-      insertTemplate.run('addition-5-plus-0', INITIAL_SKILL_ID, 'What is 5 + 0?', '5', 3);
+      for (const skill of receptionMathsBank) {
+        insertSkill.run(skill.id, skill.title, skill.curriculumVersion);
+        for (const template of skill.templates) {
+          insertTemplate.run(
+            template.id,
+            skill.id,
+            template.prompt,
+            template.correctAnswer,
+            template.difficulty,
+            template.sequence,
+            skill.source,
+            skill.licence,
+          );
+        }
+      }
     });
 
     seed();
@@ -77,26 +99,29 @@ export class TutoringService {
    * refreshed browser tab or a second device cannot strand progress or leave
    * two open sessions competing for the same mastery evidence.
    */
-  startSession(input: { childId: string }): {
+  startSession(input: { childId: string; skillId?: string }): {
     sessionId: string;
     childId: string;
+    skillId: string;
     question: PublicQuestion;
     mastery: Mastery;
     resumed: boolean;
   } {
     if (!input.childId.trim()) throw new Error('childId is required');
 
-    const currentMastery = this.getMastery(input.childId, INITIAL_SKILL_ID);
     const active = this.findActiveSession(input.childId);
 
+    // A resumed session keeps the skill it was started with; the caller cannot
+    // switch skill underneath a session that is already running.
     if (active?.current_question_id) {
       return {
         sessionId: active.id,
         childId: input.childId,
+        skillId: active.skill_id,
         question: this.toPublicQuestion(
           this.getReviewedQuestion(active.current_question_id),
         ),
-        mastery: currentMastery,
+        mastery: this.getMastery(input.childId, active.skill_id),
         resumed: true,
       };
     }
@@ -105,8 +130,14 @@ export class TutoringService {
     // Close it before opening a new one so it cannot linger unreachable.
     if (active) this.endSession(active.id, 'exhausted');
 
+    const skillId = this.requireEnabledSkill(input.skillId ?? DEFAULT_SKILL_ID);
+    const currentMastery = this.getMastery(input.childId, skillId);
     const sessionId = randomUUID();
-    const question = this.selectNextQuestion(sessionId, currentMastery.level);
+    const question = this.selectNextQuestion(
+      sessionId,
+      skillId,
+      currentMastery.level,
+    );
     if (!question) throw new Error('No reviewed questions are available');
 
     const create = this.database.transaction(() => {
@@ -115,32 +146,49 @@ export class TutoringService {
         .run(input.childId);
       this.database
         .prepare(
-          `INSERT INTO sessions (id, child_id, current_question_id)
-           VALUES (?, ?, ?)`,
+          `INSERT INTO sessions (id, child_id, skill_id, current_question_id)
+           VALUES (?, ?, ?, ?)`,
         )
-        .run(sessionId, input.childId, question.id);
+        .run(sessionId, input.childId, skillId, question.id);
     });
     create();
 
     return {
       sessionId,
       childId: input.childId,
+      skillId,
       question: this.toPublicQuestion(question),
       mastery: currentMastery,
       resumed: false,
     };
   }
 
+  /** The skills an adult can start a session on, in curriculum order. */
+  listSkills(): Array<{ id: string; title: string; questionCount: number }> {
+    return this.database
+      .prepare(
+        `SELECT s.id, s.title, COUNT(t.id) AS questionCount
+         FROM skills s
+         LEFT JOIN content_templates t
+           ON t.skill_id = s.id AND t.reviewed = 1 AND t.enabled = 1
+         WHERE s.enabled = 1
+         GROUP BY s.id, s.title
+         ORDER BY s.id`,
+      )
+      .all() as Array<{ id: string; title: string; questionCount: number }>;
+  }
+
   getSession(input: { sessionId: string }): {
     sessionId: string;
     childId: string;
+    skillId: string;
     status: SessionStatus;
     question: PublicQuestion | null;
     mastery: Mastery;
   } {
     const session = this.database
       .prepare(
-        `SELECT child_id, current_question_id, ended_at, ended_reason
+        `SELECT child_id, skill_id, current_question_id, ended_at, ended_reason
          FROM sessions WHERE id = ?`,
       )
       .get(input.sessionId) as
@@ -151,6 +199,7 @@ export class TutoringService {
     return {
       sessionId: input.sessionId,
       childId: session.child_id,
+      skillId: session.skill_id,
       status: session.ended_at ? session.ended_reason ?? 'completed' : 'active',
       question:
         !session.ended_at && session.current_question_id
@@ -158,7 +207,7 @@ export class TutoringService {
               this.getReviewedQuestion(session.current_question_id),
             )
           : null,
-      mastery: this.getMastery(session.child_id, INITIAL_SKILL_ID),
+      mastery: this.getMastery(session.child_id, session.skill_id),
     };
   }
 
@@ -170,9 +219,9 @@ export class TutoringService {
     mastery: Mastery;
   } {
     const session = this.database
-      .prepare('SELECT child_id, ended_at FROM sessions WHERE id = ?')
+      .prepare('SELECT child_id, skill_id, ended_at FROM sessions WHERE id = ?')
       .get(input.sessionId) as
-      | { child_id: string; ended_at: string | null }
+      | { child_id: string; skill_id: string; ended_at: string | null }
       | undefined;
     if (!session || session.ended_at) {
       throw new Error('Active session not found');
@@ -197,7 +246,7 @@ export class TutoringService {
         endedReason: 'completed' as const,
         questionsAnswered: counts.answered ?? 0,
         questionsSkipped: counts.skipped ?? 0,
-        mastery: this.getMastery(session.child_id, INITIAL_SKILL_ID),
+        mastery: this.getMastery(session.child_id, session.skill_id),
       };
     })();
   }
@@ -248,7 +297,11 @@ export class TutoringService {
         session.child_id,
         question.skill_id,
       );
-      const next = this.selectNextQuestion(input.sessionId, mastery.level);
+      const next = this.selectNextQuestion(
+        input.sessionId,
+        session.skill_id,
+        mastery.level,
+      );
       this.moveSessionToQuestion(input.sessionId, next);
       const status: SessionStatus = next ? 'active' : 'exhausted';
 
@@ -296,7 +349,11 @@ export class TutoringService {
         );
 
       const mastery = this.getMastery(session.child_id, question.skill_id);
-      const next = this.selectNextQuestion(input.sessionId, mastery.level);
+      const next = this.selectNextQuestion(
+        input.sessionId,
+        session.skill_id,
+        mastery.level,
+      );
       this.moveSessionToQuestion(input.sessionId, next);
       const status: SessionStatus = next ? 'active' : 'exhausted';
       return {
@@ -307,8 +364,14 @@ export class TutoringService {
     })();
   }
 
+  /**
+   * Nearest difficulty to the child's level, within the session's own skill and
+   * never repeating a question already seen in this session. Ties break on the
+   * bank's teaching order, then on ID, so selection is reproducible.
+   */
   private selectNextQuestion(
     sessionId: string,
+    skillId: string,
     level: MasteryLevel,
   ): QuestionRow | undefined {
     const targetDifficulty = { new: 1, learning: 2, secure: 3 }[level];
@@ -318,42 +381,51 @@ export class TutoringService {
                 t.difficulty
          FROM content_templates t
          JOIN skills s ON s.id = t.skill_id
-         WHERE t.reviewed = 1
+         WHERE t.skill_id = ?
+           AND t.reviewed = 1
            AND t.enabled = 1
            AND s.enabled = 1
            AND NOT EXISTS (
              SELECT 1 FROM attempts a
              WHERE a.session_id = ? AND a.template_id = t.id
            )
-         ORDER BY ABS(t.difficulty - ?), t.id
+         ORDER BY ABS(t.difficulty - ?), t.sequence, t.id
          LIMIT 1`,
       )
-      .get(sessionId, targetDifficulty) as QuestionRow | undefined;
+      .get(skillId, sessionId, targetDifficulty) as QuestionRow | undefined;
   }
 
-  private findActiveSession(
-    childId: string,
-  ): { id: string; current_question_id: string | null } | undefined {
+  private requireEnabledSkill(skillId: string): string {
+    const skill = this.database
+      .prepare('SELECT id FROM skills WHERE id = ? AND enabled = 1')
+      .get(skillId) as { id: string } | undefined;
+    if (!skill) throw new Error('Skill not found');
+    return skill.id;
+  }
+
+  private findActiveSession(childId: string):
+    | { id: string; skill_id: string; current_question_id: string | null }
+    | undefined {
     return this.database
       .prepare(
-        `SELECT id, current_question_id
+        `SELECT id, skill_id, current_question_id
          FROM sessions
          WHERE child_id = ? AND ended_at IS NULL
          ORDER BY started_at DESC, rowid DESC
          LIMIT 1`,
       )
       .get(childId) as
-      | { id: string; current_question_id: string | null }
+      | { id: string; skill_id: string; current_question_id: string | null }
       | undefined;
   }
 
   private getActiveSession(
     sessionId: string,
     questionId: string,
-  ): { child_id: string } {
+  ): { child_id: string; skill_id: string } {
     const session = this.database
       .prepare(
-        `SELECT child_id, current_question_id, ended_at
+        `SELECT child_id, skill_id, current_question_id, ended_at
          FROM sessions WHERE id = ?`,
       )
       .get(sessionId) as SessionRow | undefined;
@@ -361,7 +433,7 @@ export class TutoringService {
     if (session.current_question_id !== questionId) {
       throw new Error('Question is not active for this session');
     }
-    return { child_id: session.child_id };
+    return { child_id: session.child_id, skill_id: session.skill_id };
   }
 
   private endSession(sessionId: string, reason: EndedReason): void {
