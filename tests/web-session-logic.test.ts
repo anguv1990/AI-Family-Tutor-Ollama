@@ -108,6 +108,45 @@ describe('child session logic', () => {
     }
   }
 
+  describe('nothing to practise', () => {
+    it('ends warmly when every question is inside its re-ask window', () => {
+      const state = startedSession({
+        status: 'exhausted',
+        sessionId: null,
+        question: null,
+      });
+
+      assert.equal(state.phase, 'ended');
+      assert.equal(state.ending.title, 'You did them all!');
+      assert.equal(state.trouble, null, 'a normal daily state must not look like a fault');
+      assertNoInternals(state, 'exhausted start');
+    });
+
+    it('tells the child they have already practised today', () => {
+      const state = startedSession({
+        status: 'daily_limit',
+        sessionId: null,
+        question: null,
+      });
+
+      assert.equal(state.phase, 'ended');
+      // The daily cap is a wellbeing control, so it must not read as a refusal.
+      assert.equal(state.ending.title, 'You already did today!');
+      assert.notEqual(
+        state.ending.title,
+        'You did them all!',
+        'the cap and an empty bank need different endings — they need different adult responses',
+      );
+      assertNoInternals(state, 'daily limit start');
+    });
+
+    it('offers nothing to tap once the session cannot start', () => {
+      const state = startedSession({ status: 'daily_limit', sessionId: null, question: null });
+      assert.equal(state.command, null);
+      assert.equal(state.question, null);
+    });
+  });
+
   describe('answer options', () => {
     it('offers every whole number from 0 to 10 and nothing else', () => {
       assert.deepEqual(

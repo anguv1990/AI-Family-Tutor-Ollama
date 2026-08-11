@@ -70,6 +70,13 @@ const ENDINGS = Object.freeze({
     title: 'Time to stop!',
     message: 'You played for a long time. Well done.',
   },
+  // Not an ending the child reached by working — they arrived already finished.
+  // It must still sound like an achievement, because to them it is one.
+  daily_limit: {
+    emoji: '⭐',
+    title: 'You already did today!',
+    message: 'Come back tomorrow for more.',
+  },
 });
 
 const DEFAULT_ENDING = ENDINGS.completed;
@@ -301,6 +308,13 @@ export function reduce(state, event) {
         ...state,
         sessionId: response.sessionId || null,
       };
+      // The server answers 200 with a non-active status when there is nothing
+      // to practise: every question is inside its re-ask window, or today's
+      // session has already been used. Both are ordinary, healthy outcomes, so
+      // each gets its own warm ending instead of being read as a failure.
+      if (response.status && response.status !== 'active') {
+        return endedState(started, response.status);
+      }
       // A resumed session is a continuation, not a fresh start: same words a
       // grown-up would use when picking a book back up.
       return askQuestion(started, response.question, response.resumed ? COPY.carryOn : COPY.begin);
