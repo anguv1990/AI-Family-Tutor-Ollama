@@ -33,7 +33,31 @@ An already-secure learner remains secure after one incorrect answer. Two consecu
 
 ## Question selection
 
-The selector first chooses an enabled, adult-reviewed, unanswered question nearest the target difficulty. It uses a stable template-ID order to make the behavior reproducible. If the target difficulty is exhausted during a session, it selects the nearest remaining difficulty.
+The selector chooses the enabled, adult-reviewed question nearest the target difficulty, from within the skill the session was started on. If the target difficulty is exhausted during a session, it selects the nearest remaining difficulty. Ties break on the bank's teaching order (`sequence`) and then on template ID, so selection is reproducible.
+
+A template is not selectable when any of the following holds:
+
+- It is disabled or has not been adult-reviewed, or its skill is disabled.
+- It belongs to a skill other than the session's own.
+- It has already been asked in this session.
+- **Re-ask window.** This child answered or skipped it within the last twenty-four hours. The window is per child and spans sessions, so a template a child met in an earlier sitting does not come straight back in the next one. Skips count: a question the child ducked is one they have already been shown.
+
+If nothing is selectable, that is content exhaustion and the session ends as described below.
+
+## Session stopping rule
+
+A session ends at whichever of these comes first, and the reason is recorded on the session (`sessions.ended_reason`) and reported to the client as its status, so an ending is always visible to an adult rather than silent:
+
+| Reason | Condition |
+| --- | --- |
+| `question_limit` | Eight **answered** questions. Skips do not count towards it — a child who skips has not practised. |
+| `time_limit` | Ten minutes since the session started. |
+| `completed` | The child chose to stop. |
+| `exhausted` | No selectable question remains. |
+
+The answer that meets a limit is still marked and still counts as evidence; only the question that would have followed it is withheld. A session that has already passed the question or time limit is never resumed: it is closed with the reason that stopped it, and a fresh session starts.
+
+Both limits are evaluated against an injectable clock, so the rule is testable at a chosen moment. When a session has passed both, the time limit is the recorded reason, because ten minutes elapsed before the answer that triggered the check.
 
 ## Deferred cases
 

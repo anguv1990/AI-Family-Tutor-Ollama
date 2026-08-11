@@ -343,3 +343,320 @@ describe('Reception Maths tutoring vertical slice', () => {
     assert.equal('correctAnswer' in (state.question ?? {}), false);
   });
 });
+
+describe('session stopping rule', () => {
+  const startOfSession = new Date('2026-08-11T09:00:00Z');
+  let database: Database.Database;
+  let clock: { current: Date };
+  let tutor: TutoringService;
+
+  beforeEach(() => {
+    database = createDatabase(':memory:');
+    clock = { current: startOfSession };
+    tutor = new TutoringService(database, { now: () => clock.current });
+    tutor.seedInitialContent();
+  });
+
+  afterEach(() => database.close());
+
+  const answerKeyFor = (templateId: string): string =>
+    (
+      database
+        .prepare('SELECT correct_answer FROM content_templates WHERE id = ?')
+        .get(templateId) as { correct_answer: string }
+    ).correct_answer;
+
+  const storedSession = (
+    sessionId: string,
+  ): { ended_at: string | null; ended_reason: string | null; current_question_id: string | null } =>
+    database
+      .prepare(
+        `SELECT ended_at, ended_reason, current_question_id
+         FROM sessions WHERE id = ?`,
+      )
+      .get(sessionId) as {
+      ended_at: string | null;
+      ended_reason: string | null;
+      current_question_id: string | null;
+    };
+
+  it('ends the session on the eighth answered question', () => {
+    const session = tutor.startSession({ childId: 'child-eight' });
+
+    let question = session.question;
+    let result!: ReturnType<TutoringService['submitAnswer']>;
+    for (let answered = 0; answered < 8; answered += 1) {
+      result = tutor.submitAnswer({
+        sessionId: session.sessionId,
+        questionId: question.id,
+        answer: answerKeyFor(question.id),
+      });
+      if (result.nextQuestion) question = result.nextQuestion;
+    }
+
+    // The eighth answer is still marked and still counts as evidence; only the
+    // question that would have followed it is withheld.
+    assert.equal(result.correct, true);
+    assert.equal(result.mastery.totalAttempts, 8);
+    assert.equal(result.status, 'question_limit');
+    assert.equal(result.nextQuestion, null);
+
+    const stored = storedSession(session.sessionId);
+    assert.equal(stored.ended_reason, 'question_limit');
+    assert.ok(stored.ended_at);
+    assert.equal(stored.current_question_id, null);
+    assert.equal(
+      tutor.getSession({ sessionId: session.sessionId }).status,
+      'question_limit',
+    );
+  });
+
+  it('does not count skipped questions towards the question limit', () => {
+    const session = tutor.startSession({ childId: 'child-skipper' });
+
+    let question = session.question;
+    for (let skipped = 0; skipped < 5; skipped += 1) {
+      const outcome = tutor.skipQuestion({
+        sessionId: session.sessionId,
+        questionId: question.id,
+      });
+      assert.equal(outcome.status, 'active');
+      question = outcome.nextQuestion!;
+    }
+
+    let result!: ReturnType<TutoringService['submitAnswer']>;
+    for (let answered = 0; answered < 7; answered += 1) {
+      result = tutor.submitAnswer({
+        sessionId: session.sessionId,
+        questionId: question.id,
+        answer: answerKeyFor(question.id),
+      });
+      question = result.nextQuestion!;
+    }
+
+    assert.equal(result.status, 'active', 'five skips plus seven answers');
+
+    const eighth = tutor.submitAnswer({
+      sessionId: session.sessionId,
+      questionId: question.id,
+      answer: answerKeyFor(question.id),
+    });
+    assert.equal(eighth.status, 'question_limit');
+  });
+
+  it('ends the session once ten minutes have elapsed', () => {
+    const session = tutor.startSession({ childId: 'child-clock' });
+
+    clock.current = new Date('2026-08-11T09:09:59Z');
+    const inTime = tutor.submitAnswer({
+      sessionId: session.sessionId,
+      questionId: session.question.id,
+      answer: answerKeyFor(session.question.id),
+    });
+    assert.equal(inTime.status, 'active');
+
+    clock.current = new Date('2026-08-11T09:10:00Z');
+    const result = tutor.submitAnswer({
+      sessionId: session.sessionId,
+      questionId: inTime.nextQuestion!.id,
+      answer: answerKeyFor(inTime.nextQuestion!.id),
+    });
+
+    assert.equal(result.correct, true);
+    assert.equal(result.mastery.totalAttempts, 2, 'the answer is still marked');
+    assert.equal(result.status, 'time_limit');
+    assert.equal(result.nextQuestion, null);
+
+    const stored = storedSession(session.sessionId);
+    assert.equal(stored.ended_reason, 'time_limit');
+    assert.equal(stored.current_question_id, null);
+  });
+
+  it('ends the session on time even when the child only skips', () => {
+    const session = tutor.startSession({ childId: 'child-clock-skip' });
+
+    clock.current = new Date('2026-08-11T09:30:00Z');
+    const result = tutor.skipQuestion({
+      sessionId: session.sessionId,
+      questionId: session.question.id,
+    });
+
+    assert.equal(result.status, 'time_limit');
+    assert.equal(result.nextQuestion, null);
+  });
+
+  it('reports the child stopping and content exhaustion as their own reasons', () => {
+    const chosen = tutor.startSession({ childId: 'child-chose-stop' });
+    assert.equal(
+      tutor.completeSession({ sessionId: chosen.sessionId }).endedReason,
+      'completed',
+    );
+    assert.equal(
+      storedSession(chosen.sessionId).current_question_id,
+      null,
+      'an ended session never still points at an answerable question',
+    );
+
+    // Only one reviewed question left in the whole skill, so the session runs
+    // out of content before either limit can fire.
+    const session = tutor.startSession({
+      childId: 'child-out-of-content',
+      skillId: 'reception.counting-to-10',
+    });
+    database
+      .prepare(
+        `UPDATE content_templates SET enabled = 0
+         WHERE skill_id = 'reception.counting-to-10' AND id != ?`,
+      )
+      .run(session.question.id);
+
+    const result = tutor.skipQuestion({
+      sessionId: session.sessionId,
+      questionId: session.question.id,
+    });
+
+    assert.equal(result.status, 'exhausted');
+    assert.equal(storedSession(session.sessionId).ended_reason, 'exhausted');
+  });
+
+  it('starts a fresh session instead of resuming one past the time limit', () => {
+    const stale = tutor.startSession({ childId: 'child-stale' });
+
+    clock.current = new Date('2026-08-11T09:11:00Z');
+    const fresh = tutor.startSession({ childId: 'child-stale' });
+
+    assert.equal(fresh.resumed, false);
+    assert.notEqual(fresh.sessionId, stale.sessionId);
+    const stored = storedSession(stale.sessionId);
+    assert.equal(stored.ended_reason, 'time_limit');
+    assert.equal(stored.current_question_id, null);
+  });
+
+  it('starts a fresh session instead of resuming one past the question limit', () => {
+    const stale = tutor.startSession({ childId: 'child-stale-count' });
+
+    // Written straight to the table: a session recorded before this rule
+    // existed can hold more answers than the limit now allows.
+    const insert = database.prepare(
+      `INSERT INTO attempts
+         (id, session_id, child_id, template_id, template_version, answer, is_correct)
+       SELECT ?, ?, 'child-stale-count', id, version, correct_answer, 1
+       FROM content_templates
+       WHERE skill_id = 'reception.addition-within-5' AND id != ?
+       ORDER BY sequence LIMIT 1 OFFSET ?`,
+    );
+    for (let index = 0; index < 8; index += 1) {
+      insert.run(`stale-${index}`, stale.sessionId, stale.question.id, index);
+    }
+
+    const fresh = tutor.startSession({ childId: 'child-stale-count' });
+
+    assert.equal(fresh.resumed, false);
+    assert.equal(storedSession(stale.sessionId).ended_reason, 'question_limit');
+  });
+});
+
+describe('question selection', () => {
+  const now = new Date('2026-08-11T09:00:00Z');
+  let database: Database.Database;
+  let tutor: TutoringService;
+
+  beforeEach(() => {
+    database = createDatabase(':memory:');
+    tutor = new TutoringService(database, { now: () => now });
+    tutor.seedInitialContent();
+
+    // A purpose-built skill: every exclusion the selector has to make is one
+    // template, so what it serves says exactly which rule fired.
+    database
+      .prepare(
+        `INSERT INTO skills (id, title, curriculum_version, enabled)
+         VALUES ('test.selection', 'Selection fixture', 'test', 1)`,
+      )
+      .run();
+    const insertTemplate = database.prepare(
+      `INSERT INTO content_templates
+         (id, skill_id, version, prompt, correct_answer, difficulty, sequence,
+          source, licence, reviewed, enabled)
+       VALUES (?, ?, 1, ?, '1', 1, ?, 'test', 'test', ?, ?)`,
+    );
+    const fixtures: Array<[string, string, number, number, number]> = [
+      // id, skill, sequence, reviewed, enabled
+      ['sel-other-skill', 'reception.counting-to-10', -1, 1, 1],
+      ['sel-recent', 'test.selection', 1, 1, 1],
+      ['sel-disabled', 'test.selection', 2, 1, 0],
+      ['sel-unreviewed', 'test.selection', 3, 0, 1],
+      ['sel-stale', 'test.selection', 4, 1, 1],
+      ['sel-b', 'test.selection', 5, 1, 1],
+      ['sel-a', 'test.selection', 5, 1, 1],
+    ];
+    for (const [id, skillId, sequence, reviewed, enabled] of fixtures) {
+      insertTemplate.run(id, skillId, `Fixture ${id}`, sequence, reviewed, enabled);
+    }
+
+    // Yesterday's session for one child only, so the 24-hour window is proven
+    // to be per child and to span sessions rather than per session.
+    database.prepare('INSERT INTO children (id) VALUES (?)').run('sel-child');
+    database
+      .prepare(
+        `INSERT INTO sessions (id, child_id, skill_id, started_at, ended_at, ended_reason)
+         VALUES ('sel-prior', 'sel-child', 'test.selection',
+                 '2026-08-10 07:00:00', '2026-08-10 07:20:00', 'completed')`,
+      )
+      .run();
+    const insertAttempt = database.prepare(
+      `INSERT INTO attempts
+         (id, session_id, child_id, template_id, template_version, answer,
+          is_correct, created_at)
+       VALUES (?, 'sel-prior', 'sel-child', ?, 1, '1', 1, ?)`,
+    );
+    insertAttempt.run('sel-attempt-recent', 'sel-recent', '2026-08-10 23:00:00');
+    insertAttempt.run('sel-attempt-stale', 'sel-stale', '2026-08-10 07:00:00');
+  });
+
+  afterEach(() => database.close());
+
+  it('serves only reviewed, enabled, in-skill templates the child has not just seen', () => {
+    const session = tutor.startSession({
+      childId: 'sel-child',
+      skillId: 'test.selection',
+    });
+
+    const served = [session.question.id];
+    let next = session.question.id;
+    for (;;) {
+      const outcome = tutor.skipQuestion({
+        sessionId: session.sessionId,
+        questionId: next,
+      });
+      if (!outcome.nextQuestion) {
+        assert.equal(outcome.status, 'exhausted');
+        break;
+      }
+      next = outcome.nextQuestion.id;
+      served.push(next);
+    }
+
+    assert.deepEqual(
+      served,
+      ['sel-stale', 'sel-a', 'sel-b'],
+      'sel-recent is inside the 24-hour window, sel-disabled and ' +
+        'sel-unreviewed fail their gates, sel-other-skill is another skill, ' +
+        'sel-stale was attempted 26 hours ago, and the sel-a/sel-b tie on ' +
+        'sequence breaks on template ID',
+    );
+  });
+
+  it('applies the re-ask window per child rather than globally', () => {
+    const other = tutor.startSession({
+      childId: 'sel-other-child',
+      skillId: 'test.selection',
+    });
+
+    assert.equal(
+      other.question.id,
+      'sel-recent',
+      'another child has never seen sel-recent, so the window does not apply',
+    );
+  });
+});
