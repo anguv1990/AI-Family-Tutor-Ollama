@@ -153,13 +153,70 @@ curl http://127.0.0.1:3000/api/parent/children \
   -H "x-admin-secret: $ADMIN_SECRET"
 ```
 
+## Backup and restore
+
+Everything the family owns is one SQLite file. Until encrypted automated
+backups arrive in Phase 3, losing the Mac Mini loses every recorded attempt, so
+back it up **before a child uses the system**:
+
+```bash
+node -e "require('better-sqlite3')(process.env.DB_PATH || './data/tutor.sqlite')
+  .backup('./backups/tutor-'+new Date().toISOString().slice(0,10)+'.sqlite')
+  .then(() => console.log('backup written'))"
+```
+
+Use that rather than `cp` — a plain copy can catch a torn page or miss the
+newest attempts still in the `-wal` file. The full procedure, and a record of
+the rehearsed restore, is in `docs/backup-restore.md`.
+
+## Benchmarking the model
+
+```bash
+npm run benchmark        # writes docs/model-registry.json
+```
+
+Records the model digest, quantization, hardware, warm and cold latency and
+failure rate, and gives an accept/reject verdict against the latency budget in
+`plan.md` (2 s deterministic, 5 s with a hint).
+
+## Troubleshooting
+
+**Hints are generic and never mention the question.** The model is unreachable
+or was too slow, and the deterministic template was served instead — by design.
+Check `ollama list` shows the model in `FLASH_MODEL`, and look at the parent
+page's safety events for the recorded reason. The session itself never depends
+on the model.
+
+**A session will not start and the child sees "You already did today".** The
+daily practice cap. Raise it for that child on the parent page.
+
+**A session will not start and the child sees "You did them all".** Every
+reviewed question for that skill is inside its 24-hour re-ask window. This is
+normal for a small bank; it clears with time, or add reviewed templates.
+
+**The parent page loads without asking for a secret.** `ADMIN_SECRET` is unset
+and you are on loopback. Set it — otherwise anyone using this Mac can export or
+delete a child's data.
+
+**The server refuses to start with an admin-secret error.** `HOST` is not
+loopback, so LAN mode requires `ADMIN_SECRET` of at least 16 characters. This
+is deliberate: see the trusted-home-network section above.
+
+**`npm test` fails immediately after pulling changes.** Run `npm install` — the
+native `better-sqlite3` binding must match your Node version.
+
 ## Project plans
 
 - `plan.md` — MVP scope, architecture constraints, and acceptance criteria
 - `development-plan.md` — 30 two-hour sessions with daily exit checks
+- `docs/acceptance.md` — the recorded pass/fail result for every criterion
+- `docs/mastery-rules.md` — evidence, promotion, demotion and selection rules
 - `docs/privacy-controls.md` — parent access, deletion and retention rules
 - `docs/data-export.md` — the export format
+- `docs/backup-restore.md` — backup procedure and the rehearsal record
 
-## Next vertical slice
+## Next step
 
-A rough browser UI over this API, to test whether a Reception-age child can actually use it. That assumption is currently untested and everything else is built on it.
+Sit both children in front of `http://127.0.0.1:3000` and watch. Whether a
+Reception-age child can use this unaided is the one assumption everything else
+rests on, and it is still untested — see `docs/acceptance.md`.

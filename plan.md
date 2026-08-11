@@ -3,7 +3,7 @@
 Owner: Angu  
 Scope: Private, adult-supervised family MVP for two children
 
-Status: The deterministic Reception Maths loop and versioned mastery rules are implemented and tested. The authoritative, dated progress record is the development log in [`development-plan.md`](development-plan.md#development-log). Update that log rather than duplicating status here.
+Status: The MVP build is complete — deterministic loop, mastery rules, stopping and re-ask rules, AI gateway with safe hints, child UI, and parent control/privacy/access controls. Two release blockers remain and both need an adult rather than more code: a visual browser pass and an adult read-through of the enabled content. See `docs/acceptance.md`. The authoritative, dated progress record is the development log in [`development-plan.md`](development-plan.md#development-log). Update that log rather than duplicating status here.
 
 ## Related documents
 
@@ -65,29 +65,29 @@ Exit condition: each child completes a session without an adult operating the in
 
 ## Phases
 
-### Phase 0 — Environment, content baseline and scaffolding *(in progress)*
+### Phase 0 — Environment, content baseline and scaffolding *(complete)*
 
-- [ ] Install Ollama; download a flash model and record its exact name/digest, quantization, options, hardware, latency and memory benchmark in a local model registry.
-- [x] Define a small, adult-reviewed Reception Maths skill map, question templates, answer keys and mastery thresholds. *Partial: one skill and seven templates exist against a target of twenty.*
-- [x] Scaffold the Node/TypeScript service and SQLite persistence with clean domain, persistence and HTTP boundaries. *Web UI not started.*
-- [ ] Add and validate configuration at startup: `OLLAMA_URL`, `FLASH_MODEL`, bind address and admin secret. *Only `PORT` is validated today.*
-- [x] Bind to loopback by default. *Admin login and the documented trusted-home-network assumption for LAN access are not built.*
+- [x] Install Ollama; download a flash model and record its exact name/digest, quantization, options, hardware, latency and memory benchmark in a local model registry. *`qwen2.5:7b` Q4_K_M; see `docs/model-registry.json` and `npm run benchmark`.*
+- [x] Define a small, adult-reviewed Reception Maths skill map, question templates, answer keys and mastery thresholds. *Three skills, 21 templates each; all 63 answer keys machine-verified. Adult sign-off still outstanding.*
+- [x] Scaffold the Node/TypeScript service and SQLite persistence with clean domain, persistence and HTTP boundaries.
+- [x] Add and validate configuration at startup: `OLLAMA_URL`, `FLASH_MODEL`, bind address and admin secret.
+- [x] Bind to loopback by default, with LAN mode refusing to start without an admin secret and the trusted-home-network assumption documented in the README.
 - [x] Define versioned SQLite migrations for child profile, skill/mastery, session/attempt, content template, cache, safety event and schema version.
-- [ ] Establish a fake-model adapter and test harness so core tutoring behaviour is testable without Ollama.
+- [x] Establish a fake-model adapter and test harness so core tutoring behaviour is testable without Ollama.
 
-### Phase 1 — Prove the loop (Reception Maths) *(in progress)*
+### Phase 1 — Prove the loop (Reception Maths) *(complete pending adult review and the pilot)*
 
 - [x] Implement the minimal deterministic loop: choose a curated question -> child answers -> evaluate -> update mastery -> choose the next suitable item.
 - [x] Use deterministic templates and answer keys for core arithmetic. The model may vary wording or provide hints, but is never the source of correctness.
 - [x] Define mastery behaviour before coding. Recorded in `docs/mastery-rules.md`. Confidence bounds, evidence decay and ambiguous-answer handling are explicitly deferred beyond version 1 and are not Phase 1 work.
-- [ ] Persist session resume and explicit completion so the current question and mastery survive an application restart.
-- [ ] Grow the reviewed content bank to the target size and implement the re-ask and stopping rules.
-- [ ] Implement selection-based answer entry and local read-aloud.
-- [ ] Implement the Ollama adapter behind the gateway contract, and SQLite caching.
-- [ ] Require a versioned JSON response schema for every model output. Reject invalid output, retry once with a repair prompt, then use a safe template fallback; never render raw model text.
-- [ ] Allow-list UI actions and content fields; screen outputs for unsafe content, links, contact requests and personal-data prompts before display.
-- [ ] Record a minimal audit trail: template/version, model/version, safety decision and mastery change. Do not store audio or unnecessary free text.
-- [ ] Document a manual backup and restore procedure and rehearse it before any child uses the system.
+- [x] Persist session resume and explicit completion so the current question and mastery survive an application restart.
+- [x] Grow the reviewed content bank to the target size and implement the re-ask and stopping rules.
+- [x] Implement selection-based answer entry and local read-aloud. *Tap-then-confirm, so a mistap is never recorded as evidence.*
+- [x] Implement the Ollama adapter behind the gateway contract, and SQLite caching.
+- [x] Require a versioned JSON response schema for every model output. Reject invalid output, retry once with a repair prompt, then use a safe template fallback; never render raw model text.
+- [x] Allow-list UI actions and content fields; screen outputs for unsafe content, links, contact requests and personal-data prompts before display. *The model's only output is a hint string; it cannot trigger a UI action.*
+- [x] Record a minimal audit trail: template/version, model/version, safety decision and mastery change. Do not store audio or unnecessary free text.
+- [x] Document a manual backup and restore procedure and rehearse it before any child uses the system. *Rehearsed 2026-08-11; see `docs/backup-restore.md`.*
 
 ### Phase 2 — Year 3 and English *(not started; gated on the pilot exit bar)*
 

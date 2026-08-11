@@ -11,7 +11,7 @@ start session -> receive reviewed question -> submit typed answer
 -> mark from answer key -> persist attempt/mastery -> receive next question
 ```
 
-Ollama/the model is **not** responsible for marking correctness, mastery, promotion/demotion, or question difficulty — those are deterministic and rule-based (see `docs/mastery-rules.md`). Model-assisted hints/wording are a later, not-yet-wired slice.
+Ollama/the model is **not** responsible for marking correctness, mastery, promotion/demotion, or question difficulty — those are deterministic and rule-based (see `docs/mastery-rules.md`). Model-assisted hints are wired (`POST /api/sessions/:id/hint`) but never authoritative: a hint that leaks the answer, fails its schema or trips safety screening is replaced by a deterministic template.
 
 ## Commands
 
@@ -46,7 +46,7 @@ Server config via env vars: `HOST` (default `127.0.0.1`), `PORT` (default `3000`
 - `server/mastery.ts` — pure function `calculateMastery(gradedResults, previousLevel)`. No I/O; this is the place to reason about mastery-rule changes and is directly unit-tested.
 - `server/database.ts` — opens SQLite, enables foreign keys, and runs an in-process migration runner against `db/migrations/*.sql`, tracked via a `schema_versions` table. Migrations are plain `.sql` files with a numeric-version header entry in the `migrations` array in this file — add new migrations there, not just as new files.
 
-**Scaffolded, not-yet-wired path** (model-assisted features, next slice): `server/model-adapter.ts` (Ollama HTTP client with timeout/retry), `server/cache.ts` (separate SQLite handle for prompt-hash caching), `server/session-controller.ts` (`generateQuestion` combining the two). None of these are imported by `app.ts`/`index.ts`/`TutoringService` yet — don't assume they're on the request path.
+**AI slice** (`server/ai/`, live on the request path): `types.ts` is the provider-neutral contract from `architecture.md`; `gateway.ts` validates every model reply against a schema, retries once with a repair instruction, then serves a deterministic fallback, screening output and recording an event on every rejection; `providers/ollama.ts` and `providers/fake.ts` are the two providers; `hint-service.ts` is the only task wired. The gateway opens no database — `server/ai-stores.ts` backs its `CacheStore` and `SafetyEventSink` ports with SQLite. `TutoringService` depends on a narrow `HintPort`, never on this module, so the model can offer a nudge and can never return a mark, a score or a difficulty. `server/model-adapter.ts`, `server/cache.ts` and `server/session-controller.ts` were folded into this and deleted.
 
 **Mastery rules** (`docs/mastery-rules.md`, enforced by `mastery.ts` + `tutoring-service.ts`):
 - Levels: `new` → `learning` → `secure`, mapped to target difficulty 1/2/3.
