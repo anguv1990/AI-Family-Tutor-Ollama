@@ -9,6 +9,7 @@ import {
   DEFAULT_SKILL_ID,
   receptionMathsBank,
   type AnswerEntry,
+  type Visual,
   type YearGroup,
 } from './content-bank';
 import { fallbackHintFor } from './ai/hint-service';
@@ -20,11 +21,14 @@ type PublicQuestion = {
   difficulty: number;
   /** How this skill expects the answer: tapped from 0-10, or typed. */
   answerEntry: AnswerEntry;
+  /** A picture of the question for a child who cannot read it. */
+  visual: Visual | null;
 };
 
 type QuestionRow = {
   id: string;
   skill_id: string;
+  visual?: string | null;
   answer_entry?: AnswerEntry;
   version: number;
   prompt: string;
@@ -85,6 +89,19 @@ export type StartSessionResult = {
  * so three of them is still a short day, and an adult can change it per child.
  */
 export const DEFAULT_DAILY_SESSION_LIMIT = 3;
+
+/**
+ * A malformed picture must never break a question. The child can still answer
+ * from the prompt, so a bad row degrades to no picture rather than to an error.
+ */
+function parseVisual(stored: string | null | undefined): Visual | null {
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as Visual;
+  } catch {
+    return null;
+  }
+}
 
 /** SQLite's own CURRENT_TIMESTAMP format, so stored values stay comparable. */
 export function sqlTimestamp(date: Date): string {
@@ -207,15 +224,16 @@ export class TutoringService {
     const insertTemplate = this.database.prepare(
       `INSERT INTO content_templates
          (id, skill_id, version, prompt, correct_answer, difficulty,
-          sequence, source, licence, reviewed, enabled)
-       VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, 1, 1)
+          sequence, source, licence, visual, reviewed, enabled)
+       VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, ?, 1, 1)
        ON CONFLICT (id) DO UPDATE SET
          prompt = excluded.prompt,
          correct_answer = excluded.correct_answer,
          difficulty = excluded.difficulty,
          sequence = excluded.sequence,
          source = excluded.source,
-         licence = excluded.licence`,
+         licence = excluded.licence,
+         visual = excluded.visual`,
     );
 
     const seed = this.database.transaction(() => {
@@ -237,6 +255,7 @@ export class TutoringService {
             template.sequence,
             skill.source,
             skill.licence,
+            template.visual ? JSON.stringify(template.visual) : null,
           );
         }
       }
@@ -756,7 +775,7 @@ export class TutoringService {
     return this.database
       .prepare(
         `SELECT t.id, t.skill_id, t.version, t.prompt, t.correct_answer,
-                t.difficulty
+                t.difficulty, t.visual
          FROM content_templates t
          JOIN skills s ON s.id = t.skill_id
          WHERE t.skill_id = ?
@@ -858,7 +877,7 @@ export class TutoringService {
   private getReviewedQuestion(questionId: string): QuestionRow {
     const question = this.database
       .prepare(
-        `SELECT id, skill_id, version, prompt, correct_answer, difficulty
+        `SELECT id, skill_id, version, prompt, correct_answer, difficulty, visual
          FROM content_templates
          WHERE id = ? AND reviewed = 1 AND enabled = 1`,
       )
@@ -966,6 +985,7 @@ export class TutoringService {
       prompt: question.prompt,
       difficulty: question.difficulty,
       answerEntry: question.answer_entry ?? this.answerEntryFor(question.skill_id),
+      visual: parseVisual(question.visual),
     };
   }
 

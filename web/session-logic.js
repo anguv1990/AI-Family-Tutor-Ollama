@@ -193,11 +193,44 @@ function toChildQuestion(question) {
   return {
     id: String(question.id),
     prompt: question.prompt,
+    // A picture of the question, for a child who can neither read the prompt
+    // nor is listening to it. Unknown or malformed shapes are dropped rather
+    // than guessed at: no picture is better than a misleading one.
+    visual: toVisual(question.visual),
     // Reception taps a number from a row; Year 3 answers run past ten, so they
     // are typed on a keypad. Anything unrecognised falls back to the tap pad,
     // which is the safer of the two to show by mistake.
     answerEntry: question.answerEntry === 'keypad' ? 'keypad' : 'tap-0-10',
   };
+}
+
+const VISUAL_KINDS = ['groups', 'count', 'sequence', 'numerals'];
+
+function toVisual(visual) {
+  if (!visual || typeof visual !== 'object') return null;
+  if (!VISUAL_KINDS.includes(visual.kind)) return null;
+  const whole = (value) => Number.isInteger(value) && value >= 0 && value <= 10;
+
+  if (visual.kind === 'groups') {
+    return Array.isArray(visual.groups) && visual.groups.every(whole)
+      ? { kind: 'groups', groups: visual.groups.slice() }
+      : null;
+  }
+  if (visual.kind === 'count') {
+    return whole(visual.total) ? { kind: 'count', total: visual.total } : null;
+  }
+  if (visual.kind === 'sequence') {
+    return Array.isArray(visual.shown) && visual.shown.every(whole)
+      ? { kind: 'sequence', shown: visual.shown.slice() }
+      : null;
+  }
+  return Array.isArray(visual.values) && visual.values.every(whole)
+    ? {
+        kind: 'numerals',
+        values: visual.values.slice(),
+        want: visual.want === 'bigger' || visual.want === 'smaller' ? visual.want : null,
+      }
+    : null;
 }
 
 /** A snapshot to come back to if a request fails, without nesting retries. */

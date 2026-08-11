@@ -26,6 +26,7 @@ export const migrations: Migration[] = [
   { version: 7, filename: '007_parent_controls.sql' },
   { version: 8, filename: '008_year_groups.sql' },
   { version: 9, filename: '009_daily_limit_default.sql' },
+  { version: 10, filename: '010_question_visuals.sql' },
 ];
 
 export function createDatabase(filename: string): Database.Database {

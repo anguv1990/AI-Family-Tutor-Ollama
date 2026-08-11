@@ -19,12 +19,38 @@
  *   out of content.
  */
 
+/**
+ * A picture of the question, for a child who can neither read the prompt nor
+ * is listening to it being read.
+ *
+ * The first observed sitting settled this: a four-year-old ignored the spoken
+ * prompt and simply tapped, which means they were guessing. Text plus audio was
+ * two ways of saying the same thing and the child used neither. A picture is a
+ * third way that needs no reading and no sound.
+ *
+ * The prompt text stays exactly as it was — it is what gets read aloud, and
+ * what an adult reviews. The visual is an addition, never a replacement.
+ *
+ *  groups   — countable dots in groups, joined by a plus. 3 + 2 is six dots
+ *             the child can actually count.
+ *  count    — one group of dots to count.
+ *  sequence — a number track with the next place left blank.
+ *  numerals — one or more numerals shown large, for matching or comparing.
+ */
+export type Visual =
+  | { kind: 'groups'; groups: number[] }
+  | { kind: 'count'; total: number }
+  | { kind: 'sequence'; shown: number[] }
+  | { kind: 'numerals'; values: number[]; want?: 'bigger' | 'smaller' };
+
 export type TemplateSeed = {
   id: string;
   prompt: string;
   correctAnswer: string;
   difficulty: 1 | 2 | 3;
   sequence: number;
+  /** Reception only. Year 3 children read the prompt. */
+  visual?: Visual;
 };
 
 export type YearGroup = 'reception' | 'year3';
@@ -67,6 +93,7 @@ const additionTemplates: TemplateSeed[] = ADDITION_PAIRS.map(
       correctAnswer: String(total),
       difficulty: total <= 3 ? 1 : total === 4 ? 2 : 3,
       sequence: index + 1,
+      visual: { kind: 'groups' as const, groups: [a, b] },
     };
   },
 );
@@ -111,6 +138,8 @@ const countingTemplates: TemplateSeed[] = COUNTING_RUNS.map(
       correctAnswer: String(next),
       difficulty,
       sequence: index + 1,
+      // The run itself, with the next place left empty for the child to fill.
+      visual: { kind: 'sequence' as const, shown: [...from] },
     };
   },
 );
@@ -154,6 +183,9 @@ const recognitionTemplates: TemplateSeed[] = [
     correctAnswer: String(value),
     difficulty,
     sequence: index + 1,
+    // The numeral itself, large. A child who cannot read the sentence can
+    // still match the shape, which is exactly the skill being practised.
+    visual: { kind: 'numerals' as const, values: [value] },
   })),
   ...COMPARISONS.map(({ kind, pair, difficulty }, index) => ({
     id: `number-${kind}-${pair[0]}-${pair[1]}`,
@@ -163,6 +195,13 @@ const recognitionTemplates: TemplateSeed[] = [
     ),
     difficulty,
     sequence: RECOGNITION_NUMBERS.length + index + 1,
+    // Both numerals, with an arrow for which one is wanted. The arrow has to
+    // be taught once; the sentence has to be read every time.
+    visual: {
+      kind: 'numerals' as const,
+      values: [...pair],
+      want: kind as 'bigger' | 'smaller',
+    },
   })),
 ];
 

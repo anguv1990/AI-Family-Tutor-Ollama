@@ -225,3 +225,73 @@ describe('reviewed answer keys', () => {
     }
   });
 });
+
+describe('question pictures', () => {
+  const reception = receptionMathsBank.filter((skill) => skill.yearGroup === 'reception');
+
+  it('gives every Reception question a picture', () => {
+    // A four-year-old who can neither read the prompt nor listens to it has
+    // only the picture left. A Reception question without one is unanswerable
+    // except by guessing.
+    for (const skill of reception) {
+      for (const template of skill.templates) {
+        assert.ok(template.visual, `${template.id} has no picture`);
+      }
+    }
+  });
+
+  it('shows a picture that agrees with the answer', () => {
+    // The picture is the question as far as the child is concerned, so a
+    // picture that disagrees with the answer key is worse than none at all.
+    for (const skill of reception) {
+      for (const template of skill.templates) {
+        const visual = template.visual!;
+        const answer = Number(template.correctAnswer);
+
+        if (visual.kind === 'groups') {
+          const total = visual.groups.reduce((sum, group) => sum + group, 0);
+          assert.equal(total, answer, `${template.id}: dots total ${total}, answer ${answer}`);
+        } else if (visual.kind === 'count') {
+          assert.equal(visual.total, answer, template.id);
+        } else if (visual.kind === 'sequence') {
+          const shown = visual.shown;
+          const step = shown.length > 1 ? shown[1] - shown[0] : 1;
+          assert.equal(
+            shown[shown.length - 1] + step,
+            answer,
+            `${template.id}: the track does not lead to ${answer}`,
+          );
+        } else if (visual.want) {
+          const expected =
+            visual.want === 'bigger' ? Math.max(...visual.values) : Math.min(...visual.values);
+          assert.equal(expected, answer, template.id);
+        } else {
+          assert.deepEqual(visual.values, [answer], template.id);
+        }
+      }
+    }
+  });
+
+  it('keeps every picture countable by a small child', () => {
+    for (const skill of reception) {
+      for (const template of skill.templates) {
+        const visual = template.visual!;
+        if (visual.kind === 'groups') {
+          for (const group of visual.groups) {
+            assert.ok(group >= 0 && group <= 10, `${template.id}: a group of ${group} dots`);
+          }
+        }
+      }
+    }
+  });
+
+  it('leaves Year 3 questions to be read', () => {
+    // Pictures are a Reception aid. An eight-year-old reads the question, and
+    // dots for "555 add 278" would be absurd.
+    for (const skill of receptionMathsBank.filter((entry) => entry.yearGroup === 'year3')) {
+      for (const template of skill.templates) {
+        assert.equal(template.visual, undefined, `${template.id} has a picture`);
+      }
+    }
+  });
+});

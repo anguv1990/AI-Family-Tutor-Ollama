@@ -91,6 +91,55 @@
     min-height: 88px;
   }
 
+  /* ---- the picture of the question ------------------------------------
+     A four-year-old ignored the spoken prompt and tapped anyway, so text and
+     audio between them were reaching nobody. Dots can be counted with a
+     finger, which needs no reading and no sound. */
+  .picture {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem 1rem;
+    margin: 0 0 0.6rem;
+    min-height: 4.5rem;
+  }
+
+  .dots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(2.2rem, 2.9rem));
+    gap: 0.35rem;
+    justify-content: center;
+    max-width: 15rem;
+  }
+
+  .dot {
+    width: clamp(2rem, 6vw, 2.8rem);
+    height: clamp(2rem, 6vw, 2.8rem);
+    border-radius: 50%;
+    background: #2f6fd0;
+    border: 3px solid #1b4a91;
+  }
+
+  .op { font-size: clamp(2.2rem, 7vw, 3.2rem); font-weight: 700; }
+
+  .track { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+  .cell {
+    min-width: clamp(3rem, 9vw, 4.2rem);
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.7rem;
+    background: #eef3fb;
+    border: 4px solid #2f6fd0;
+    font-size: clamp(2rem, 7vw, 3rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .cell.blank { border-style: dashed; color: #2f6fd0; }
+
+  .want { font-size: clamp(2rem, 7vw, 3rem); }
+
   /* The answer being typed, shown big so a child can check it before sending. */
   .typed {
     min-height: 1.2em;
@@ -277,6 +326,7 @@
 
     <p class="hint" id="hint" hidden></p>
 
+    <div class="picture" id="picture" hidden></div>
     <p class="typed" id="typed" aria-live="polite" hidden></p>
     <ul class="pad" id="pad" aria-label="Choose your answer"></ul>
     <ul class="pad keys" id="keypad" aria-label="Type your answer" hidden></ul>
@@ -556,6 +606,72 @@ for (const value of answerOptions()) {
   pad.appendChild(item);
 }
 
+const picture = $('picture');
+
+/* Builds the picture with the DOM rather than innerHTML: nothing here is ever
+   built from server text, and it stays that way by construction. */
+function renderPicture(visual) {
+  picture.replaceChildren();
+  picture.hidden = !visual;
+  if (!visual) return;
+
+  const dots = (count) => {
+    const group = document.createElement('div');
+    group.className = 'dots';
+    for (let index = 0; index < count; index += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      group.appendChild(dot);
+    }
+    return group;
+  };
+
+  const symbol = (text, className) => {
+    const node = document.createElement('span');
+    node.className = className;
+    node.textContent = text;
+    return node;
+  };
+
+  if (visual.kind === 'groups') {
+    visual.groups.forEach((count, index) => {
+      if (index > 0) picture.appendChild(symbol('+', 'op'));
+      picture.appendChild(dots(count));
+    });
+    picture.setAttribute('aria-label', `${visual.groups.join(' plus ')} dots`);
+    return;
+  }
+
+  if (visual.kind === 'count') {
+    picture.appendChild(dots(visual.total));
+    picture.setAttribute('aria-label', `${visual.total} dots`);
+    return;
+  }
+
+  if (visual.kind === 'sequence') {
+    const track = document.createElement('div');
+    track.className = 'track';
+    for (const value of visual.shown) track.appendChild(symbol(String(value), 'cell'));
+    // The empty box is the question: this is the one the child fills in.
+    track.appendChild(symbol('?', 'cell blank'));
+    picture.appendChild(track);
+    picture.setAttribute('aria-label', `${visual.shown.join(', ')}, then what?`);
+    return;
+  }
+
+  const track = document.createElement('div');
+  track.className = 'track';
+  if (visual.want) track.appendChild(symbol(visual.want === 'bigger' ? '▲' : '▼', 'want'));
+  for (const value of visual.values) track.appendChild(symbol(String(value), 'cell'));
+  picture.appendChild(track);
+  picture.setAttribute(
+    'aria-label',
+    visual.want
+      ? `Which is ${visual.want}: ${visual.values.join(' or ')}`
+      : `The number ${visual.values.join(' ')}`,
+  );
+}
+
 let lastPhase = null;
 
 function render() {
@@ -566,6 +682,8 @@ function render() {
 
   $('notice').textContent = state.notice || '';
   $('prompt').textContent = state.question ? state.question.prompt : '';
+
+  renderPicture(state.question && state.question.visual);
 
   const typing = state.answerEntry === 'keypad';
   pad.hidden = typing;

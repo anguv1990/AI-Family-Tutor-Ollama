@@ -108,6 +108,52 @@ describe('child session logic', () => {
     }
   }
 
+  describe('question pictures', () => {
+    it('keeps a well-formed picture', () => {
+      const state = startedSession({
+        question: { id: 'q1', prompt: 'What is 3 + 2?', visual: { kind: 'groups', groups: [3, 2] } },
+      });
+      assert.deepEqual(state.question.visual, { kind: 'groups', groups: [3, 2] });
+    });
+
+    it('drops a picture it does not understand rather than guessing', () => {
+      // No picture is better than a misleading one: the child treats it as the
+      // question, so a wrong picture is a wrong question.
+      for (const visual of [
+        { kind: 'spaceship', groups: [1] },
+        { kind: 'groups', groups: 'three' },
+        { kind: 'groups', groups: [1, 99] },
+        { kind: 'count', total: -1 },
+        { kind: 'sequence', shown: [1, null] },
+        null,
+        'dots',
+      ]) {
+        const state = startedSession({
+          question: { id: 'q1', prompt: 'What is 3 + 2?', visual },
+        });
+        assert.equal(state.question.visual, null, `accepted ${JSON.stringify(visual)}`);
+      }
+    });
+
+    it('carries the comparison arrow through', () => {
+      const state = startedSession({
+        question: {
+          id: 'q1',
+          prompt: 'Tap the bigger number. 1 or 3.',
+          visual: { kind: 'numerals', values: [1, 3], want: 'bigger' },
+        },
+      });
+      assert.equal(state.question.visual.want, 'bigger');
+    });
+
+    it('has no picture when the server sends none', () => {
+      const state = startedSession({
+        question: { id: 'q1', prompt: 'What is 555 add 278?', answerEntry: 'keypad' },
+      });
+      assert.equal(state.question.visual, null);
+    });
+  });
+
   describe('keypad entry for Year 3', () => {
     function typingSession() {
       return startedSession({
@@ -352,7 +398,12 @@ describe('child session logic', () => {
       // `answerEntry` is a rendering instruction (tap row or keypad), not
       // information about the child or their progress, and it is never shown as
       // text — the leak check below still covers everything the child can read.
-      assert.deepEqual(Object.keys(state.question).sort(), ['answerEntry', 'id', 'prompt']);
+      assert.deepEqual(Object.keys(state.question).sort(), [
+        'answerEntry',
+        'id',
+        'prompt',
+        'visual',
+      ]);
       assert.equal(state.question.difficulty, undefined);
       assert.equal(state.question.skillId, undefined);
       assert.equal(state.question.correctAnswer, undefined);
