@@ -265,4 +265,65 @@ describe('tutoring session API', () => {
     assert.equal(response.status, 400);
     assert.deepEqual(await response.json(), { error: 'invalid_request' });
   });
+
+  /**
+   * A child who has already practised today, or who has worked through a whole
+   * skill, has done nothing wrong. Answering 4xx would make the UI show a
+   * four-year-old an error for using the app exactly as intended.
+   */
+  it('reports the daily cap as a 200 state rather than an error', async () => {
+    const start = () =>
+      fetch(`${baseUrl}/api/sessions`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ childId: 'api-capped-child' }),
+      });
+
+    const first = await start();
+    assert.equal(first.status, 201);
+    const started = (await first.json()) as {
+      status: string;
+      sessionId: string;
+    };
+    assert.equal(started.status, 'active');
+    await fetch(`${baseUrl}/api/sessions/${started.sessionId}/complete`, {
+      method: 'POST',
+    });
+
+    const second = await start();
+
+    assert.equal(second.status, 200);
+    const body = (await second.json()) as {
+      status: string;
+      sessionId: null;
+      question: null;
+      message: string;
+      mastery: { level: string };
+    };
+    assert.equal(body.status, 'daily_limit');
+    assert.equal(body.sessionId, null);
+    assert.equal(body.question, null);
+    assert.ok(body.message.length > 0);
+    assert.equal(body.mastery.level, 'new');
+  });
+
+  it('reports an empty question bank as a 200 exhausted state', async () => {
+    database.prepare('UPDATE content_templates SET enabled = 0').run();
+
+    const response = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-nothing-child' }),
+    });
+
+    assert.equal(response.status, 200);
+    const body = (await response.json()) as {
+      status: string;
+      question: null;
+      message: string;
+    };
+    assert.equal(body.status, 'exhausted');
+    assert.equal(body.question, null);
+    assert.ok(body.message.length > 0);
+  });
 });

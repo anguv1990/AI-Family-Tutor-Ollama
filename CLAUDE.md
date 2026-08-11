@@ -66,4 +66,12 @@ Tests (`tests/*.test.ts`, compiled to `dist/tests/`) exercise: the service layer
 - `development-plan.md` — day-by-day execution roadmap (30 two-hour sessions with exit checks), and the dated development log. **The log is the single source of truth for progress** — update it there, not in `plan.md`.
 - `architecture.md` — authoritative for the AI gateway and the provider contract (`AiProvider.generateStructured()`). Note it describes the *target* layout (`server/ai/`, `server/domain/`, …); the code is still a flat `server/`, migrating opportunistically.
 
+**Parent, privacy and access controls** (`docs/privacy-controls.md`, `docs/data-export.md`):
+- `server/config.ts` validates configuration at boot and refuses to start a non-loopback bind without a 16+ character `ADMIN_SECRET`.
+- `server/parent-service.ts` owns every adult operation: overview, export, deletion, corrections, per-child settings, retention and the privacy summary. It is wired into `createApp(tutor, { parent, config })`; parent routes are only registered when a `ParentService` is supplied.
+- Parent routes live under `/api/parent`, authenticate an `x-admin-secret` header with `crypto.timingSafeEqual`, and return `401 {error:'unauthorized'}` before any database read so a rejected caller cannot learn whether a child exists.
+- Corrections never overwrite `attempts.is_correct`; they set `corrected_is_correct` and append to `attempt_corrections`. Mastery is a fold over stored evidence, replayed from `new`, so a reversal restores the previous state exactly.
+- Deletion and retention use explicit per-table statements scoped by `child_id` and never rely on `ON DELETE CASCADE`. Deletion deliberately keeps `skills`, `content_templates`, `cache` and `parent_settings`.
+- `startSession` returns `status: 'active' | 'exhausted' | 'daily_limit'`; the last two are ordinary states answered `200`, not errors. A child may start one new session per local day by default (`children.daily_session_limit`), and resuming is never capped.
+
 Read `plan.md`'s Safety and privacy section before touching anything related to LAN binding, data export/deletion, or model/content sourcing — those constraints (loopback-only by default, no audio persistence, adult-reviewed content only) are product requirements, not suggestions.
