@@ -106,6 +106,16 @@ export function createApp(
     }
   });
 
+  // Async, unlike every other route: a hint may cross the model boundary. It
+  // still cannot fail from the child's point of view — the engine guarantees a
+  // deterministic hint when the model is slow, absent or unsafe.
+  app.post('/api/sessions/:sessionId/hint', (request, response, next) => {
+    tutor
+      .requestHint({ sessionId: request.params.sessionId })
+      .then((result) => response.json(result))
+      .catch(next);
+  });
+
   app.post('/api/sessions/:sessionId/skip', (request, response, next) => {
     try {
       if (typeof request.body?.questionId !== 'string') {

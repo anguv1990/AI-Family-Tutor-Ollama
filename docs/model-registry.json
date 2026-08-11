@@ -1,0 +1,53 @@
+{
+  "startedAt": "2026-08-11T13:21:33.679Z",
+  "model": {
+    "model": "qwen2.5:7b",
+    "parameters": "7.6B",
+    "quantization": "Q4_K_M",
+    "architecture": "qwen2",
+    "contextLength": "32768",
+    "digest": "845dbda0ea48",
+    "size": "4.7 GB"
+  },
+  "options": {
+    "temperature": 0.2,
+    "maxOutputTokens": 60,
+    "promptVersion": "hint.2026-08-11.v1"
+  },
+  "hardware": {
+    "platform": "darwin 25.5.0",
+    "arch": "arm64",
+    "cpu": "Apple M4 Pro",
+    "cores": 12,
+    "totalMemoryGb": 24,
+    "nodeVersion": "v24.18.0"
+  },
+  "deterministicPath": {
+    "count": 20,
+    "failures": 0,
+    "failureRate": 0,
+    "coldMs": 0.317459,
+    "warmMedianMs": 0.121541,
+    "warmP95Ms": 0.525959,
+    "warmMaxMs": 0.525959,
+    "budgetMs": 2000,
+    "verdict": "PASS — p95 1ms against a 2000ms budget"
+  },
+  "hintPath": {
+    "count": 8,
+    "failures": 0,
+    "failureRate": 0,
+    "coldMs": 3788.477375,
+    "warmMedianMs": 581.52325,
+    "warmP95Ms": 664.212084,
+    "warmMaxMs": 664.212084,
+    "fallbacks": 0,
+    "budgetMs": 5000,
+    "verdict": "PASS — p95 664ms against a 5000ms budget"
+  },
+  "processMemoryMb": {
+    "before": 50.8,
+    "after": 101.5
+  },
+  "decision": "accept"
+}

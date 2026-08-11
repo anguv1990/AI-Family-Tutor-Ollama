@@ -2,11 +2,26 @@ import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const migrations = [
+type Migration = {
+  version: number;
+  filename: string;
+  /**
+   * Set when the migration rebuilds a table other tables point at. SQLite only
+   * lets foreign key enforcement be switched off outside a transaction, and
+   * without switching it off the DROP TABLE half of a rebuild cascades the
+   * parent's children away. The check afterwards proves nothing was left
+   * dangling, so the relaxation cannot hide a broken migration.
+   */
+  rebuildsTable?: boolean;
+};
+
+const migrations: Migration[] = [
   { version: 1, filename: 'create_tables.sql' },
   { version: 2, filename: '002_mastery_levels.sql' },
   { version: 3, filename: '003_session_completion.sql' },
   { version: 4, filename: '004_content_provenance.sql' },
+  { version: 5, filename: '005_session_limits.sql', rebuildsTable: true },
+  { version: 6, filename: '006_safety_event_detail.sql' },
   { version: 7, filename: '007_parent_controls.sql' },
 ];
 
@@ -35,12 +50,26 @@ export function createDatabase(filename: string): Database.Database {
       'db/migrations',
       migration.filename,
     );
-    database.transaction(() => {
-      database.exec(fs.readFileSync(migrationPath, 'utf8'));
-      database
-        .prepare('INSERT OR IGNORE INTO schema_versions (version) VALUES (?)')
-        .run(migration.version);
-    })();
+    if (migration.rebuildsTable) database.pragma('foreign_keys = OFF');
+    try {
+      database.transaction(() => {
+        database.exec(fs.readFileSync(migrationPath, 'utf8'));
+        database
+          .prepare('INSERT OR IGNORE INTO schema_versions (version) VALUES (?)')
+          .run(migration.version);
+      })();
+
+      if (migration.rebuildsTable) {
+        const violations = database.pragma('foreign_key_check') as unknown[];
+        if (violations.length > 0) {
+          throw new Error(
+            `Migration ${migration.version} left ${violations.length} foreign key violations`,
+          );
+        }
+      }
+    } finally {
+      if (migration.rebuildsTable) database.pragma('foreign_keys = ON');
+    }
   }
 
   return database;

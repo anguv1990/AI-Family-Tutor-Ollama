@@ -8,3 +8,6 @@ data/
 
 # Machine-local Claude Code settings; shared settings belong in .claude/settings.json
 .claude/settings.local.json
+
+# Agent worktrees created by Claude Code; never part of the project history
+.claude/worktrees/
