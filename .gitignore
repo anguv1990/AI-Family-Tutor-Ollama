@@ -1,4 +1,6 @@
-node_modules/
+# No trailing slash: a worktree may leave a node_modules *symlink*, which a
+# directory-only pattern does not match, and it was committed once already.
+node_modules
 dist/
 data/
 *.sqlite
