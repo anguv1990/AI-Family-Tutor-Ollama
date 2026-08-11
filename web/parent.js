@@ -335,6 +335,31 @@ el('save-limit').addEventListener('click', () => {
     .catch(fail);
 });
 
+el('reset-today').addEventListener('click', () => {
+  // Destructive and easy to hit by mistake next to the other controls, so it
+  // asks first and says exactly what it removes.
+  if (
+    !window.confirm(
+      "Delete today's sessions and answers for this child?\n\n" +
+        'Their practice from earlier days is kept, and mastery is recalculated ' +
+        'from what remains. This cannot be undone.',
+    )
+  ) {
+    return;
+  }
+
+  api(`/children/${encodeURIComponent(currentChildId)}/reset-today`, { method: 'POST' })
+    .then((result) => {
+      return loadChild(currentChildId).then(() =>
+        show(
+          `Today reset: ${result.sessionsRemoved} session(s) and ` +
+            `${result.attemptsRemoved} answer(s) removed.`,
+        ),
+      );
+    })
+    .catch(fail);
+});
+
 el('save-year').addEventListener('click', () => {
   api(`/children/${encodeURIComponent(currentChildId)}/settings`, {
     method: 'PUT',

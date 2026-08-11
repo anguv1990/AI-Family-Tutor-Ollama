@@ -139,3 +139,19 @@ The summary never includes the admin secret itself.
 3. Export before deleting anything. Deletion is permanent and there is no undo.
 4. Back the database file up separately; export is a readable copy, not a
    restore path.
+
+## Resetting today
+
+`POST /api/parent/children/:childId/reset-today`, or the **Reset today** button
+on the parent page, deletes the sessions started today for one child and the
+attempts inside them, then recalculates that child's mastery from what remains.
+
+It exists because the daily practice cap counts sittings nobody meant to have —
+a sibling tapping the wrong animal, an adult demonstrating the app, a device
+handed over mid-question — and the only alternatives were to wait until
+tomorrow or to delete the child entirely.
+
+It is destructive and confined to today: practice from any earlier day is
+untouched, and no other child is affected. Because mastery is recalculated,
+the level and the next review date follow the surviving evidence rather than
+remembering answers that no longer exist.

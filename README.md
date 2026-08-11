@@ -134,6 +134,10 @@ through a skill yesterday meets the 24-hour re-ask window, and a child who has
 already had today's session has done nothing wrong. `sessionId` and `question`
 are `null` in those cases.
 
+**Testing the app yourself?** The parent page has a **Reset today** button per
+child, which clears today's sessions so you can run through it again without
+waiting for tomorrow or deleting the child.
+
 Each child may practise three sessions a day by default. Only a session they
 actually answered a question in counts, so an abandoned or reloaded sitting
 costs nothing. Resuming the session they are already in always works, and a

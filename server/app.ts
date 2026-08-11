@@ -285,6 +285,14 @@ function registerParentRoutes(
     },
   );
 
+  parentRouter.post('/children/:childId/reset-today', (request, response, next) => {
+    try {
+      response.json(parent.resetToday(request.params.childId));
+    } catch (error) {
+      next(error);
+    }
+  });
+
   parentRouter.get('/privacy', (_request, response, next) => {
     try {
       response.json(parent.getPrivacySummary());

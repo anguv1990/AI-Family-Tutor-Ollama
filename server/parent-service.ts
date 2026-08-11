@@ -202,6 +202,80 @@ export class ParentService {
     return this.getSettings(childId);
   }
 
+  /**
+   * Clears today's practice for one child: the sessions started today, the
+   * attempts inside them, and the day's usage against the practice cap.
+   *
+   * The cap exists so a four-year-old is not sat down six times in an evening,
+   * but it also counts sittings nobody meant to have — a sibling tapping the
+   * wrong animal, an adult demonstrating the app, a device handed over
+   * mid-question. Without this the only options were to wait until tomorrow or
+   * to delete the child entirely.
+   *
+   * Deliberately destructive and confined to today. Anything practised on an
+   * earlier day is untouched, and mastery is recalculated from what remains so
+   * the level and the review schedule follow the surviving evidence rather than
+   * remembering attempts that no longer exist.
+   */
+  resetToday(childId: string): {
+    childId: string;
+    sessionsRemoved: number;
+    attemptsRemoved: number;
+    skillsRecalculated: string[];
+  } {
+    this.requireChild(childId);
+    const dayStart = sqlTimestamp(this.startOfDay(this.now()));
+
+    return this.database.transaction(() => {
+      const sessions = this.database
+        .prepare(
+          'SELECT id FROM sessions WHERE child_id = ? AND started_at >= ?',
+        )
+        .all(childId, dayStart) as Array<{ id: string }>;
+      const ids = sessions.map((session) => session.id);
+      if (ids.length === 0) {
+        return {
+          childId,
+          sessionsRemoved: 0,
+          attemptsRemoved: 0,
+          skillsRecalculated: [],
+        };
+      }
+
+      const placeholders = ids.map(() => '?').join(', ');
+
+      // Which skills the removed evidence belonged to, read before deleting it.
+      const skills = this.database
+        .prepare(
+          `SELECT DISTINCT t.skill_id AS skillId
+           FROM attempts a
+           JOIN content_templates t ON t.id = a.template_id
+           WHERE a.session_id IN (${placeholders})`,
+        )
+        .all(...ids) as Array<{ skillId: string }>;
+
+      // Deleted explicitly rather than left to ON DELETE CASCADE: a rebuild of
+      // this table has already cascaded further than intended once.
+      const attempts = this.database
+        .prepare(`DELETE FROM attempts WHERE session_id IN (${placeholders})`)
+        .run(...ids);
+      const removed = this.database
+        .prepare(`DELETE FROM sessions WHERE id IN (${placeholders})`)
+        .run(...ids);
+
+      for (const skill of skills) {
+        this.tutor.recalculateMastery(childId, skill.skillId);
+      }
+
+      return {
+        childId,
+        sessionsRemoved: removed.changes,
+        attemptsRemoved: attempts.changes,
+        skillsRecalculated: skills.map((skill) => skill.skillId),
+      };
+    })();
+  }
+
   // ------------------------------------------------------------- corrections
 
   correctAttempt(
@@ -913,6 +987,11 @@ export class ParentService {
 
   private daysBefore(now: Date, days: number): Date {
     return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+  }
+
+  /** Local midnight, matching how the daily practice cap counts a day. */
+  private startOfDay(now: Date): Date {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
   }
 
   private readSetting(key: string): string | null {

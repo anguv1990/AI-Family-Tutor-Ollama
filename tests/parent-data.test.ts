@@ -277,6 +277,83 @@ describe('parent export and deletion', () => {
     );
   });
 
+  it("clears today's practice so a child can start again", () => {
+    // The cap counts sittings nobody meant to have — a sibling tapping the
+    // wrong animal, an adult demonstrating the app — and waiting until
+    // tomorrow was the only way out.
+    const child = 'reset-child';
+    fullHistoryFor(child);
+
+    const before = parent.getSettings(child);
+    assert.ok(before.sessionsToday > 0, 'expected practice to reset');
+
+    const result = parent.resetToday(child);
+
+    assert.ok(result.sessionsRemoved > 0);
+    assert.ok(result.attemptsRemoved > 0);
+    assert.equal(parent.getSettings(child).sessionsToday, 0);
+
+    // And the child can actually practise again, which is the point.
+    const fresh = tutor.startSession({ childId: child });
+    assert.equal(fresh.status, 'active');
+  });
+
+  it("leaves earlier days alone when today is reset", () => {
+    const child = 'reset-history';
+    fullHistoryFor(child);
+
+    // An older sitting, written directly so the fixed test clock stays put.
+    database
+      .prepare(
+        `INSERT INTO sessions (id, child_id, skill_id, started_at, ended_at, ended_reason)
+         VALUES ('older-session', ?, 'reception.addition-within-5',
+                 '2026-08-09 10:00:00', '2026-08-09 10:05:00', 'completed')`,
+      )
+      .run(child);
+
+    const removed = parent.resetToday(child);
+
+    assert.equal(removed.sessionsRemoved, 1, 'only today should go');
+    const remaining = database
+      .prepare('SELECT id FROM sessions WHERE child_id = ?')
+      .all(child) as Array<{ id: string }>;
+    assert.deepEqual(
+      remaining.map((row) => row.id),
+      ['older-session'],
+      "the earlier day's session must survive",
+    );
+  });
+
+  it('recalculates mastery from what survives a reset', () => {
+    const child = 'reset-mastery';
+    fullHistoryFor(child);
+    assert.ok(
+      (parent.getOverview(child) as { mastery: unknown[] }).mastery.length > 0,
+    );
+
+    parent.resetToday(child);
+
+    // Mastery that still counted deleted attempts would overstate the child.
+    const mastery = database
+      .prepare('SELECT total_attempts FROM mastery WHERE child_id = ?')
+      .all(child) as Array<{ total_attempts: number }>;
+    for (const row of mastery) {
+      assert.equal(row.total_attempts, 0, 'mastery still counts deleted attempts');
+    }
+  });
+
+  it('resets one child without touching another', () => {
+    fullHistoryFor('reset-mine');
+    fullHistoryFor('reset-theirs');
+
+    parent.resetToday('reset-mine');
+
+    const theirs = database
+      .prepare('SELECT COUNT(*) AS total FROM sessions WHERE child_id = ?')
+      .get('reset-theirs') as { total: number };
+    assert.equal(theirs.total, 1, "another child's practice was removed");
+  });
+
   it('refuses to read or delete a child that does not exist', () => {
     assert.throws(() => parent.getOverview('nobody'), /child not found/i);
     assert.throws(() => parent.exportChild('nobody'), /child not found/i);
