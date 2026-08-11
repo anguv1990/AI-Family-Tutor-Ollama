@@ -3,308 +3,631 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <title>Tutor</title>
+<link rel="icon" href="data:,">
 <style>
-  /* Spike-grade styling. The only deliberate choices here are the ones under
-     test: tap-target size, contrast and type scale for a 4-5 year old. */
+  /* ---------------------------------------------------------------------
+     Designed for a four-to-five-year-old who cannot reliably read:
+       - every touch target is at least 88px (twice the adult guideline)
+       - body text is never below 20px and the prompt is huge
+       - text/background contrast is at least 7:1 everywhere
+       - nothing depends on colour alone; selection also changes size,
+         border weight and a tick
+     --------------------------------------------------------------------- */
+
+  :root {
+    --ink: #10233f;          /* 14.6:1 on --paper */
+    --ink-soft: #435473;     /*  6.9:1 on --paper */
+    --paper: #f2f6fb;
+    --card: #ffffff;
+    --chosen: #14479e;       /*  9.2:1 against white text */
+    --chosen-shadow: #0b2f6e;
+    --go: #0f7a3d;           /*  4.9:1 against white text, plus a tick glyph */
+    --go-shadow: #0a5a2c;
+    --focus: #b3410b;
+    --lift: #c3d1e4;
+  }
+
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; margin: 0; }
+
+  html { height: 100%; }
+
   body {
-    font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, sans-serif;
-    background: #f4f7fb;
-    color: #12233b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
+    margin: 0;
+    min-height: 100%;
+    padding: 12px 16px 32px;
+    font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 20px;
+    line-height: 1.4;
+    background: var(--paper);
+    color: var(--ink);
     overflow-x: hidden;
   }
-  .screen { display: none; width: 100%; max-width: 760px; text-align: center; }
-  .screen.on { display: block; }
 
-  h1 { font-size: clamp(28px, 6vw, 44px); margin: 0 0 32px; }
+  /* One clear, always-visible focus style for the keyboard-only run. */
+  :focus-visible {
+    outline: 5px solid var(--focus);
+    outline-offset: 4px;
+  }
 
-  .question {
-    font-size: clamp(44px, 11vw, 88px);
-    font-weight: 700;
-    margin: 0 0 8px;
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  [hidden] { display: none !important; }
+
+  h1, h2 {
+    font-size: clamp(30px, 6vw, 46px);
+    line-height: 1.2;
+    margin: 8px 0 28px;
+  }
+
+  .prompt {
+    font-size: clamp(34px, 8vw, 68px);
+    font-weight: 800;
     line-height: 1.15;
+    margin: 8px 0 20px;
   }
+  .prompt:focus { outline: none; }
 
-  .pad {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin: 24px 0;
+  .notice {
+    font-size: clamp(20px, 3.4vw, 26px);
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin: 0 0 4px;
+    min-height: 1.4em;
   }
-  @media (min-width: 560px) { .pad { grid-template-columns: repeat(6, 1fr); } }
 
   button {
     font-family: inherit;
-    font-weight: 700;
-    border: none;
-    border-radius: 18px;
+    font-weight: 800;
+    border: 3px solid transparent;
+    border-radius: 20px;
     cursor: pointer;
     touch-action: manipulation;
+    min-height: 88px;
   }
 
-  /* Minimum 88px square: larger than the 44px adult guideline, because small
-     fingers and imprecise aim are the whole point of this test. */
-  .num {
-    aspect-ratio: 1;
-    min-height: 88px;
-    font-size: clamp(30px, 7vw, 42px);
-    background: #ffffff;
-    color: #12233b;
-    box-shadow: 0 3px 0 #c6d3e4;
+  /* ---- the number pad -------------------------------------------------- */
+
+  .pad {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
   }
-  .num:active { transform: translateY(3px); box-shadow: none; }
+  @media (min-width: 620px) {
+    .pad { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+
+  .num {
+    width: 100%;
+    aspect-ratio: 1;
+    min-width: 88px;
+    min-height: 88px;
+    font-size: clamp(30px, 7vw, 44px);
+    background: var(--card);
+    color: var(--ink);
+    border-color: #d5e0ee;
+    box-shadow: 0 4px 0 var(--lift);
+  }
+  .num:active { transform: translateY(4px); box-shadow: none; }
+
+  .num[aria-pressed="true"] {
+    background: var(--chosen);
+    color: #ffffff;
+    border-color: #06255c;
+    box-shadow: 0 4px 0 var(--chosen-shadow);
+    transform: scale(1.06);
+  }
+
+  /* ---- actions --------------------------------------------------------- */
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: stretch;
+  }
 
   .big {
-    font-size: clamp(24px, 5vw, 34px);
-    padding: 22px 36px;
-    min-height: 88px;
-    background: #2f6fed;
-    color: #fff;
-    box-shadow: 0 4px 0 #1c4fb5;
-    margin: 8px;
+    font-size: clamp(24px, 4.4vw, 32px);
+    padding: 18px 30px;
+    background: var(--card);
+    color: var(--ink);
+    border-color: #ccd9ea;
+    box-shadow: 0 5px 0 var(--lift);
   }
-  .big:active { transform: translateY(4px); box-shadow: none; }
-  .big.child { background: #7b4fd8; box-shadow: 0 4px 0 #5a35a8; }
+  .big:active { transform: translateY(5px); box-shadow: none; }
 
-  .speak {
-    background: #ffd166;
-    color: #4a3200;
-    font-size: 30px;
-    padding: 16px 28px;
-    min-height: 72px;
-    box-shadow: 0 4px 0 #d9a83d;
+  /* The one deliberate, hard-to-miss action that actually sends an answer.
+     It is a separate step from tapping a number, and sits well away from the
+     pad, because an answer cannot be taken back once it is sent. */
+  .send {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto 18px;
+    display: block;
+    font-size: clamp(26px, 5.4vw, 38px);
+    padding: 22px 24px;
+    min-height: 104px;
+    background: var(--go);
+    color: #ffffff;
+    border-color: #073f1e;
+    box-shadow: 0 6px 0 var(--go-shadow);
+  }
+  .send:active { transform: translateY(6px); box-shadow: none; }
+  .send.waiting {
+    background: #e7edf6;
+    color: var(--ink-soft);
+    border-color: #ccd9ea;
+    box-shadow: 0 6px 0 var(--lift);
   }
 
-  .skip {
-    background: transparent;
-    color: #5a6b82;
-    font-size: 20px;
-    padding: 16px 24px;
-    text-decoration: underline;
+  .child { font-size: clamp(26px, 5vw, 36px); padding: 26px 34px; }
+
+  /* Small, out of the way and behind a confirmation, so a child cannot end
+     the session with one stray tap, but an adult can always reach it. */
+  .finish {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    min-height: 56px;
+    font-size: 18px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    background: #e3eaf4;
+    color: #33445f;   /* 8.0:1 on #e3eaf4 */
+    border-color: #c3d1e4;
     box-shadow: none;
   }
 
-  /* Deliberately small and out of the way so a child does not end the session
-     by accident, but reachable by the supervising adult. */
-  .done {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: #e6ecf5;
-    color: #5a6b82;
-    font-size: 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
+  .hint {
+    margin: 0 auto 20px;
+    max-width: 640px;
+    background: #fff5d8;
+    border: 3px solid #d9a83d;
+    border-radius: 20px;
+    padding: 16px 20px;
+    font-size: clamp(21px, 3.6vw, 27px);
+    font-weight: 700;
+    color: #4a3200;   /* 9.6:1 on #fff5d8 */
   }
 
-  .mark { font-size: clamp(90px, 24vw, 160px); line-height: 1; margin: 0; }
-  .verdict { font-size: clamp(26px, 5vw, 38px); font-weight: 700; margin: 12px 0 0; }
-  .muted { color: #5a6b82; font-size: 18px; }
-  .error { color: #b0233a; font-size: 18px; min-height: 24px; margin-top: 12px; }
+  /* ---- feedback, endings, trouble -------------------------------------- */
+
+  .face { font-size: clamp(88px, 22vw, 150px); line-height: 1; margin: 24px 0 0; }
+  .verdict { font-size: clamp(28px, 5.4vw, 40px); font-weight: 800; margin: 8px 0 24px; }
+  .detail { font-size: clamp(21px, 3.6vw, 27px); color: var(--ink-soft); margin: 0 0 28px; }
+
+  .dots { font-size: clamp(40px, 10vw, 72px); letter-spacing: 0.2em; margin-top: 30vh; }
+  .dots span { animation: blink 1.2s infinite; }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dots span { animation: none; opacity: 1; }
+    .num, .big, .send { transition: none; }
+  }
+
+  /* Visually hidden but read by assistive technology. */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>
 </head>
 <body>
 
-<button class="done" id="done" hidden>Finish</button>
+<button type="button" class="finish" id="finish-button" hidden>Finish</button>
 
-<!-- 1. Who is playing. Hard-coded for the spike; two children, per the plan. -->
-<section class="screen on" id="screen-start">
-  <h1>Who is playing?</h1>
-  <button class="big child" data-child="child-a">Child A</button>
-  <button class="big child" data-child="child-b">Child B</button>
-  <p class="error" id="start-error"></p>
-</section>
+<main id="main">
+  <h1 class="sr-only" id="app-title">Maths practice</h1>
 
-<!-- 2. The question, read aloud, answered by tapping a number. -->
-<section class="screen" id="screen-question">
-  <p class="question" id="question-text"></p>
-  <button class="speak" id="hear">&#128266; Hear it</button>
-  <div class="pad" id="pad"></div>
-  <button class="skip" id="skip">Skip this one</button>
-  <p class="error" id="question-error"></p>
-</section>
+  <!-- Live region: every state change is announced once, in child wording. -->
+  <p class="sr-only" id="announce" role="status" aria-live="polite" aria-atomic="true"></p>
 
-<!-- 3. Feedback, then auto-advance. -->
-<section class="screen" id="screen-feedback">
-  <p class="mark" id="mark"></p>
-  <p class="verdict" id="verdict"></p>
-</section>
+  <!-- 1. Who is playing ------------------------------------------------- -->
+  <section id="phase-welcome" aria-labelledby="welcome-heading">
+    <h2 id="welcome-heading">Who is playing?</h2>
+    <div class="row">
+      <button type="button" class="big child" data-child="child-a">🦊 Fox</button>
+      <button type="button" class="big child" data-child="child-b">🐼 Panda</button>
+    </div>
+  </section>
 
-<!-- 4. End of session. -->
-<section class="screen" id="screen-end">
-  <h1 id="end-title"></h1>
-  <p class="muted" id="end-detail"></p>
-  <button class="big" id="again">Start again</button>
-</section>
+  <!-- 2. Waiting --------------------------------------------------------- -->
+  <section id="phase-loading" hidden>
+    <p class="dots" aria-hidden="true"><span>●</span><span>●</span><span>●</span></p>
+  </section>
 
-<script>
-(function () {
-  'use strict';
+  <!-- 3. The question ---------------------------------------------------- -->
+  <section id="phase-question" hidden aria-labelledby="prompt">
+    <p class="notice" id="notice"></p>
+    <h2 class="prompt" id="prompt" tabindex="-1"></h2>
 
-  var state = { sessionId: null, question: null, busy: false };
+    <div class="row" style="margin-bottom: 18px;">
+      <button type="button" class="big" id="hear-button">🔊 Hear it again</button>
+      <button type="button" class="big" id="hint-button">💡 Help me</button>
+    </div>
 
-  function $(id) { return document.getElementById(id); }
+    <p class="hint" id="hint" hidden></p>
 
-  function show(name) {
-    var screens = document.querySelectorAll('.screen');
-    for (var i = 0; i < screens.length; i += 1) screens[i].classList.remove('on');
-    $('screen-' + name).classList.add('on');
-    $('done').hidden = (name !== 'question');
+    <ul class="pad" id="pad" aria-label="Choose your answer"></ul>
+
+    <button type="button" class="send waiting" id="send-button">Pick a number</button>
+
+    <div class="row">
+      <button type="button" class="big" id="skip-button">👉 A different one</button>
+    </div>
+  </section>
+
+  <!-- 4. Feedback -------------------------------------------------------- -->
+  <section id="phase-feedback" hidden>
+    <p class="face" id="feedback-face" aria-hidden="true"></p>
+    <p class="verdict" id="feedback-title"></p>
+    <button type="button" class="big" id="continue-button">Next one 👉</button>
+  </section>
+
+  <!-- 5. Are you finished? ----------------------------------------------- -->
+  <section id="phase-finishing" hidden aria-labelledby="finishing-heading">
+    <h2 id="finishing-heading">Are you finished for today?</h2>
+    <div class="row">
+      <button type="button" class="big child" id="keep-going-button">↩️ Keep going</button>
+      <button type="button" class="big child" id="really-finish-button">👋 All finished</button>
+    </div>
+  </section>
+
+  <!-- 6. The end (any status) -------------------------------------------- -->
+  <section id="phase-ended" hidden aria-labelledby="ending-title">
+    <p class="face" id="ending-face" aria-hidden="true"></p>
+    <h2 id="ending-title"></h2>
+    <p class="detail" id="ending-message"></p>
+    <button type="button" class="big child" id="again-button">🔁 Play again</button>
+  </section>
+
+  <!-- 7. Something went wrong -------------------------------------------- -->
+  <section id="phase-trouble" hidden aria-labelledby="trouble-title">
+    <p class="face" aria-hidden="true">🐛</p>
+    <h2 id="trouble-title"></h2>
+    <p class="detail" id="trouble-message"></p>
+    <button type="button" class="big child" id="retry-button">🔁 Try again</button>
+  </section>
+</main>
+
+<script type="module">
+import {
+  answerOptions,
+  initialState,
+  interpretDigitKey,
+  reduce,
+} from './session-logic.js';
+
+/* ---------------------------------------------------------------------------
+ * This file is deliberately thin: it renders a state, runs the state's command
+ * and dispatches the result back. Every decision about what the child sees
+ * lives in session-logic.js, which is unit-tested under Node.
+ * ------------------------------------------------------------------------- */
+
+const $ = (id) => document.getElementById(id);
+
+const PHASES = ['welcome', 'loading', 'question', 'feedback', 'finishing', 'ended', 'trouble'];
+
+/* --- speech ---------------------------------------------------------------
+ * Output only. `speechSynthesis` speaks text; it never opens a microphone and
+ * never records, so it carries none of the privacy risk that deferred speech
+ * *recognition* does (see plan.md, "Child input and output").
+ *
+ * ON-DEVICE: this app speaks ONLY through a voice whose `localService` flag is
+ * true — the OS voices installed on the machine (on macOS: Daniel, Serena,
+ * Samantha, …), which synthesise on the device. Chrome additionally exposes
+ * remote "Google …" voices with `localService === false`, which synthesise
+ * server-side; `pickLocalVoice()` filters those out, so they are never used
+ * here. If no local voice is available the app stays silent and everything
+ * else keeps working. plan.md asks for local-only behaviour to be recorded:
+ * the policy is enforced by `pickLocalVoice()` below, but the flag is the
+ * browser's own assertion rather than a proof, so an adult should still
+ * confirm on the target machine that the chosen voice still speaks with the
+ * network disconnected before a child uses it.
+ * ------------------------------------------------------------------------ */
+
+const speech = {
+  supported: typeof window.speechSynthesis !== 'undefined',
+  voice: null,
+};
+
+function pickLocalVoice() {
+  if (!speech.supported) return null;
+  let voices = [];
+  try {
+    voices = window.speechSynthesis.getVoices() || [];
+  } catch {
+    return null;
   }
+  const local = voices.filter((voice) => voice.localService === true);
+  if (local.length === 0) return null;
+  return (
+    local.find((voice) => voice.lang === 'en-GB') ||
+    local.find((voice) => voice.lang && voice.lang.startsWith('en')) ||
+    local[0]
+  );
+}
 
-  // Output only. This speaks text; it never listens, so it carries none of the
-  // privacy risk that deferred speech *recognition* does. Whether the chosen
-  // voice is fully on-device still needs confirming before this ships.
-  function speak(text) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    var utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.85;
-    window.speechSynthesis.speak(utterance);
-  }
-
-  function api(path, options) {
-    return fetch(path, options).then(function (response) {
-      if (!response.ok) throw new Error('request failed');
-      return response.json();
-    });
-  }
-
-  function post(path, body) {
-    var options = { method: 'POST' };
-    if (body) {
-      options.headers = { 'content-type': 'application/json' };
-      options.body = JSON.stringify(body);
-    }
-    return api(path, options);
-  }
-
-  function buildPad() {
-    var pad = $('pad');
-    pad.innerHTML = '';
-    for (var n = 0; n <= 10; n += 1) {
-      var button = document.createElement('button');
-      button.className = 'num';
-      button.textContent = String(n);
-      button.setAttribute('aria-label', String(n));
-      button.dataset.value = String(n);
-      pad.appendChild(button);
-    }
-  }
-
-  function askQuestion(question) {
-    state.question = question;
-    $('question-text').textContent = question.prompt;
-    $('question-error').textContent = '';
-    show('question');
-    speak(question.prompt);
-  }
-
-  function endSession(title, detail) {
-    $('end-title').textContent = title;
-    $('end-detail').textContent = detail || '';
-    show('end');
-    speak(title);
-  }
-
-  // Every answered/skipped question routes through here, so "no next question"
-  // is handled in exactly one place.
-  function advance(result) {
-    if (result.nextQuestion) {
-      askQuestion(result.nextQuestion);
-      return;
-    }
-    endSession(
-      'All done!',
-      result.status === 'exhausted'
-        ? 'We have run out of questions for now.'
-        : ''
-    );
-  }
-
-  function afterFeedback(result) {
-    window.setTimeout(function () {
-      state.busy = false;
-      advance(result);
-    }, 1400);
-  }
-
-  function submit(answer) {
-    if (state.busy || !state.question) return;
-    state.busy = true;
-
-    post('/api/sessions/' + state.sessionId + '/answers', {
-      questionId: state.question.id,
-      answer: answer
-    }).then(function (result) {
-      $('mark').textContent = result.correct ? '⭐' : '👍';
-      $('verdict').textContent = result.correct ? 'Yes! Well done.' : 'Good try!';
-      show('feedback');
-      speak(result.correct ? 'Yes! Well done.' : 'Good try!');
-      afterFeedback(result);
-    }).catch(function () {
-      state.busy = false;
-      $('question-error').textContent = 'Something went wrong. Try again.';
-    });
-  }
-
-  function skip() {
-    if (state.busy || !state.question) return;
-    state.busy = true;
-
-    post('/api/sessions/' + state.sessionId + '/skip', {
-      questionId: state.question.id
-    }).then(function (result) {
-      state.busy = false;
-      advance(result);
-    }).catch(function () {
-      state.busy = false;
-      $('question-error').textContent = 'Something went wrong. Try again.';
-    });
-  }
-
-  function start(childId) {
-    $('start-error').textContent = '';
-    post('/api/sessions', { childId: childId }).then(function (session) {
-      state.sessionId = session.sessionId;
-      askQuestion(session.question);
-    }).catch(function () {
-      $('start-error').textContent =
-        'Could not start. Is the server running?';
-    });
-  }
-
-  document.addEventListener('click', function (event) {
-    var target = event.target;
-
-    if (target.dataset && target.dataset.child) start(target.dataset.child);
-    if (target.dataset && target.dataset.value) submit(target.dataset.value);
-    if (target.id === 'skip') skip();
-    if (target.id === 'hear' && state.question) speak(state.question.prompt);
-    if (target.id === 'again') show('start');
-
-    if (target.id === 'done' && state.sessionId) {
-      post('/api/sessions/' + state.sessionId + '/complete').then(function (summary) {
-        endSession(
-          'Session finished',
-          'Answered ' + summary.questionsAnswered +
-          ', skipped ' + summary.questionsSkipped + '.'
-        );
-      }).catch(function () {
-        $('question-error').textContent = 'Could not finish the session.';
-      });
-    }
+if (speech.supported) {
+  speech.voice = pickLocalVoice();
+  window.speechSynthesis.addEventListener('voiceschanged', () => {
+    speech.voice = pickLocalVoice();
   });
+}
 
-  buildPad();
-})();
+function speak(text) {
+  if (!speech.supported || !text) return;
+  if (!speech.voice) speech.voice = pickLocalVoice();
+  if (!speech.voice) return;   // degrade silently, never block the session
+
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = speech.voice;
+    utterance.lang = speech.voice.lang || 'en-GB';
+    utterance.rate = 0.85;   // slow enough for a four-year-old to follow
+    utterance.pitch = 1.05;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    /* Speech is a convenience layer; its failure must never stop the session. */
+  }
+}
+
+/* --- the API ------------------------------------------------------------- */
+
+const params = new URLSearchParams(window.location.search);
+const SKILL_ID = params.get('skill') || undefined;
+
+async function request(path, body) {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body || {}),
+  });
+  if (!response.ok) {
+    // The status is kept so the caller can tell "the server said no" from
+    // "the server is not there"; neither ever reaches the child as a number.
+    const failure = new Error('request_failed');
+    failure.status = response.status;
+    throw failure;
+  }
+  return response.json();
+}
+
+/* Each command maps to one request and one follow-up event. A failure becomes
+   a child-facing "trouble" state, never a code or a stack trace. */
+async function run(command) {
+  switch (command.kind) {
+    case 'start':
+      return {
+        type: 'started',
+        response: await request('/api/sessions', {
+          childId: command.childId,
+          skillId: command.skillId || SKILL_ID,
+        }),
+      };
+    case 'answer':
+      return {
+        type: 'graded',
+        response: await request(`/api/sessions/${command.sessionId}/answers`, {
+          questionId: command.questionId,
+          answer: command.answer,
+        }),
+      };
+    case 'skip':
+      return {
+        type: 'skipped',
+        response: await request(`/api/sessions/${command.sessionId}/skip`, {
+          questionId: command.questionId,
+        }),
+      };
+    case 'complete':
+      return {
+        type: 'finished',
+        response: await request(`/api/sessions/${command.sessionId}/complete`),
+      };
+    case 'hint':
+      // The hint is a bonus, not part of the deterministic loop: if the model
+      // or the route is unavailable the child gets a safe written hint instead.
+      return {
+        type: 'hinted',
+        response: await request(`/api/sessions/${command.sessionId}/hint`),
+      };
+    default:
+      return null;
+  }
+}
+
+/* --- the loop ------------------------------------------------------------ */
+
+let state = initialState();
+let advanceTimer = null;
+
+function dispatch(event) {
+  const next = reduce(state, event);
+  if (next === state) return;
+  state = next;
+
+  // Read everything off the new state before doing anything that could
+  // dispatch again, so one event is always handled exactly once.
+  const { command, speak: line, phase } = state;
+
+  render();
+  if (line) speak(line);
+
+  if (phase === 'feedback') {
+    // Long enough to hear the praise and see the star; the child can also tap
+    // "Next one" straight away. Speech is never on the critical path.
+    window.clearTimeout(advanceTimer);
+    advanceTimer = window.setTimeout(() => {
+      if (state.phase === 'feedback') dispatch({ type: 'continue' });
+    }, 2600);
+  }
+
+  if (command) {
+    run(command)
+      .then((event) => { if (event) dispatch(event); })
+      .catch((error) => {
+        // A hint is optional, so its failure is invisible. A refused start
+        // means there is nothing to ask (every question is inside its re-ask
+        // window), which is an ending, not a retry. Everything else is a
+        // "we can't hear the tutor" screen with one big Try again.
+        if (command.kind === 'hint') dispatch({ type: 'hint-failed' });
+        else if (command.kind === 'start' && error && error.status === 400) dispatch({ type: 'no-questions' });
+        else dispatch({ type: 'failed' });
+      });
+  }
+}
+
+/* --- rendering ----------------------------------------------------------- */
+
+const pad = $('pad');
+for (const value of answerOptions()) {
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'num';
+  button.textContent = value;
+  button.dataset.value = value;
+  button.id = `num-${value}`;
+  button.setAttribute('aria-pressed', 'false');
+  button.setAttribute('aria-label', value);
+  item.appendChild(button);
+  pad.appendChild(item);
+}
+
+let lastPhase = null;
+
+function render() {
+  for (const phase of PHASES) $(`phase-${phase}`).hidden = state.phase !== phase;
+  $('finish-button').hidden = !(state.phase === 'question' || state.phase === 'feedback');
+
+  $('announce').textContent = state.announce || '';
+
+  $('notice').textContent = state.notice || '';
+  $('prompt').textContent = state.question ? state.question.prompt : '';
+
+  for (const button of pad.querySelectorAll('.num')) {
+    button.setAttribute('aria-pressed', String(button.dataset.value === state.selected));
+  }
+
+  const send = $('send-button');
+  const ready = state.selected !== null;
+  send.textContent = ready ? `✔️ Send ${state.selected}` : 'Pick a number';
+  send.classList.toggle('waiting', !ready);
+  send.disabled = state.busy;
+  $('skip-button').disabled = state.busy;
+
+  const hint = $('hint');
+  hint.hidden = !state.hint;
+  hint.textContent = state.hint || '';
+  $('hint-button').disabled = state.hintPending || state.busy;
+
+  if (state.feedback) {
+    $('feedback-face').textContent = state.feedback.emoji;
+    $('feedback-title').textContent = state.feedback.title;
+  }
+
+  if (state.ending) {
+    $('ending-face').textContent = state.ending.emoji;
+    $('ending-title').textContent = state.ending.title;
+    $('ending-message').textContent = state.ending.message;
+  }
+
+  if (state.trouble) {
+    $('trouble-title').textContent = state.trouble.title;
+    $('trouble-message').textContent = state.trouble.message;
+  }
+
+  // Move focus once per phase change so a keyboard or screen-reader user lands
+  // somewhere sensible, without snatching focus while the child is tapping.
+  if (state.phase !== lastPhase) {
+    lastPhase = state.phase;
+    const landing = {
+      question: 'prompt',
+      feedback: 'continue-button',
+      finishing: 'keep-going-button',
+      ended: 'again-button',
+      trouble: 'retry-button',
+    }[state.phase];
+    if (landing) $(landing).focus({ preventScroll: true });
+  }
+}
+
+/* --- input --------------------------------------------------------------- */
+
+document.addEventListener('click', (event) => {
+  const target = event.target.closest('button');
+  if (!target) return;
+
+  if (target.dataset.child) return dispatch({ type: 'start', childId: target.dataset.child, skillId: SKILL_ID });
+  if (target.dataset.value) return dispatch({ type: 'select', value: target.dataset.value });
+
+  switch (target.id) {
+    case 'send-button': return dispatch({ type: 'confirm' });
+    case 'skip-button': return dispatch({ type: 'skip' });
+    case 'hint-button': return dispatch({ type: 'hint' });
+    case 'hear-button': return speak(state.question ? state.question.prompt : '');
+    case 'continue-button': return dispatch({ type: 'continue' });
+    case 'finish-button': return dispatch({ type: 'ask-finish' });
+    case 'keep-going-button': return dispatch({ type: 'cancel-finish' });
+    case 'really-finish-button': return dispatch({ type: 'finish' });
+    case 'retry-button': return dispatch({ type: 'retry' });
+    case 'again-button': return dispatch({ type: 'restart' });
+    default: return undefined;
+  }
+});
+
+let chord = null;
+
+document.addEventListener('keydown', (event) => {
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+  const digit = interpretDigitKey(event.key, chord, Date.now());
+  chord = digit.chord;
+  if (digit.value !== null) {
+    event.preventDefault();
+    dispatch({ type: 'select', value: digit.value });
+    // Pressing a number puts the child (or the adult testing with a keyboard)
+    // one Enter away from sending it, and Enter then lands on a real button
+    // rather than on a global shortcut.
+    if (state.selected === digit.value) $('send-button').focus({ preventScroll: true });
+    return;
+  }
+
+  if (event.key === 'Escape' && state.phase === 'finishing') {
+    return dispatch({ type: 'cancel-finish' });
+  }
+
+  // Enter on a focused button is the button's job; only handle the stray case
+  // where focus is on the page itself, so one key press never means two things.
+  if (event.key === 'Enter' && !(event.target instanceof HTMLButtonElement)) {
+    if (state.phase === 'question') { event.preventDefault(); dispatch({ type: 'confirm' }); }
+    else if (state.phase === 'feedback') { event.preventDefault(); dispatch({ type: 'continue' }); }
+  }
+});
+
+// If a child is named in the URL an adult can skip the chooser entirely.
+const preselected = params.get('child');
+if (preselected) dispatch({ type: 'start', childId: preselected, skillId: SKILL_ID });
+else render();
 </script>
 
 </body>
