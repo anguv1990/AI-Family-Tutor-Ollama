@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parent controls — AI Family Tutor</title>
+    <style>
+      /* Deliberately plain. This page is for an adult reading records, not for
+         a child, so it optimises for density and legibility over character. */
+      :root {
+        color-scheme: light dark;
+        --line: #c9c9c9;
+        --muted: #5a5a5a;
+        --warn: #8a1f11;
+      }
+      body {
+        margin: 0 auto;
+        padding: 1.5rem 1rem 4rem;
+        max-width: 60rem;
+        font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+      h2 { font-size: 1.15rem; margin: 2rem 0 0.5rem; }
+      h3 { font-size: 1rem; margin: 1.25rem 0 0.35rem; }
+      p.lede { color: var(--muted); margin: 0 0 1.5rem; }
+      section[hidden] { display: none; }
+      fieldset { border: 1px solid var(--line); padding: 0.75rem 1rem 1rem; }
+      legend { padding: 0 0.35rem; font-weight: 600; }
+      label { display: inline-block; margin-right: 0.75rem; }
+      input, select, button, textarea {
+        font: inherit;
+        padding: 0.4rem 0.5rem;
+        margin: 0.15rem 0;
+      }
+      input[type="number"] { width: 5rem; }
+      button { cursor: pointer; }
+      table { border-collapse: collapse; width: 100%; margin-top: 0.5rem; }
+      th, td {
+        border-bottom: 1px solid var(--line);
+        padding: 0.35rem 0.5rem;
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.95rem;
+      }
+      th { font-weight: 600; }
+      td.numeric, th.numeric { text-align: right; }
+      .muted { color: var(--muted); }
+      .warn { color: var(--warn); }
+      .row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; }
+      ul.plain { margin: 0.25rem 0 0; padding-left: 1.1rem; }
+      #status {
+        margin: 1rem 0;
+        padding: 0.6rem 0.75rem;
+        border: 1px solid var(--line);
+      }
+      #status[hidden] { display: none; }
+      @media (max-width: 40rem) {
+        table, thead, tbody, th, td, tr { display: block; }
+        thead { display: none; }
+        td { border: none; padding: 0.15rem 0; }
+        tr { border-bottom: 1px solid var(--line); padding: 0.5rem 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Parent controls</h1>
+    <p class="lede">
+      Everything here is stored on this device only. Nothing is sent anywhere.
+    </p>
+
+    <p id="status" hidden></p>
+
+    <fieldset>
+      <legend>Access</legend>
+      <div class="row">
+        <label>
+          Admin secret
+          <input id="secret" type="password" autocomplete="off" />
+        </label>
+        <button id="connect" type="button">Load</button>
+        <button id="forget" type="button">Forget secret</button>
+      </div>
+      <p class="muted" id="access-note">
+        If <code>ADMIN_SECRET</code> is not set and the app is bound to
+        loopback, leave this blank.
+      </p>
+    </fieldset>
+
+    <section id="children-section" hidden>
+      <h2>Children</h2>
+      <table id="children"></table>
+    </section>
+
+    <section id="child-section" hidden>
+      <h2 id="child-heading"></h2>
+
+      <fieldset>
+        <legend>Daily practice limit</legend>
+        <div class="row">
+          <label>
+            Sessions allowed per day
+            <input id="daily-limit" type="number" min="0" max="10" step="1" />
+          </label>
+          <button id="save-limit" type="button">Save</button>
+          <span class="muted" id="limit-note"></span>
+        </div>
+      </fieldset>
+
+      <h3>Skill mastery</h3>
+      <table id="mastery"></table>
+
+      <h3>Sessions</h3>
+      <table id="sessions"></table>
+
+      <h3>Questions and answers</h3>
+      <p class="muted">
+        Correcting an evaluation recalculates mastery straight away. The child's
+        own result is kept, and the correction can be undone.
+      </p>
+      <table id="attempts"></table>
+
+      <h3>Correction history</h3>
+      <table id="corrections"></table>
+
+      <h3>Safety and fallback events</h3>
+      <table id="events"></table>
+
+      <fieldset>
+        <legend>This child's data</legend>
+        <div class="row">
+          <button id="export" type="button">Download JSON export</button>
+          <button id="delete" type="button" class="warn">
+            Permanently delete this child
+          </button>
+        </div>
+        <p class="muted">
+          Deletion removes this child's sessions, answers, corrections, mastery
+          and safety events. Reviewed questions and cached wording are shared
+          and are not this child's data, so they stay.
+        </p>
+      </fieldset>
+    </section>
+
+    <section id="privacy-section" hidden>
+      <h2>Privacy and retention</h2>
+      <div id="privacy"></div>
+
+      <fieldset>
+        <legend>Retention</legend>
+        <div class="row">
+          <label>
+            Keep finished sessions for
+            <input id="session-days" type="number" min="0" max="3650" step="1" />
+            days
+          </label>
+          <label>
+            Keep safety events for
+            <input id="event-days" type="number" min="0" max="3650" step="1" />
+            days
+          </label>
+          <button id="save-retention" type="button">Save</button>
+          <button id="run-retention" type="button">Delete expired now</button>
+        </div>
+        <p class="muted">0 means keep until you delete it yourself.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Cache</legend>
+        <div class="row">
+          <button id="clear-cache" type="button">Clear cached wording</button>
+          <span class="muted">
+            The cache holds generated wording only, never a child's data.
+          </span>
+        </div>
+      </fieldset>
+    </section>
+
+    <script src="parent.js"></script>
+  </body>
+</html>

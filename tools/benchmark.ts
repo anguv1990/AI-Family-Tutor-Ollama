@@ -113,6 +113,8 @@ async function benchmarkDeterministicPath(): Promise<Sample[]> {
 
   const samples: Sample[] = [];
   const started = tutor.startSession({ childId: 'benchmark-synthetic-learner' });
+  const sessionId = started.sessionId;
+  if (!sessionId) throw new Error('no session was available to benchmark');
   let question: { id: string; prompt: string } | null = started.question;
 
   // Deliberately answers wrongly: it keeps mastery low and the session running
@@ -123,7 +125,7 @@ async function benchmarkDeterministicPath(): Promise<Sample[]> {
     samples.push(
       await time(() => {
         const result = tutor.submitAnswer({
-          sessionId: started.sessionId,
+          sessionId,
           questionId: current.id,
           answer: '999',
         });

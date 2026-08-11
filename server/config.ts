@@ -4,7 +4,12 @@
  * A misconfigured tutor should refuse to start rather than fail in front of a
  * four-year-old mid-question. Binding is the sharpest case: plan.md requires
  * loopback by default, so anything wider has to be a deliberate, explicit act.
+ * The app holds a child's learning record and has no user accounts, so anything
+ * that can reach the port can read it — a LAN bind therefore also has to supply
+ * an admin secret, and this module refuses to start without one.
  */
+
+export type ParentAccessMode = 'admin-secret' | 'open-loopback';
 
 export type Config = {
   host: string;
@@ -14,9 +19,31 @@ export type Config = {
   flashModel: string;
   /** True when bound to anything other than loopback. */
   lanMode: boolean;
+  adminSecret: string | null;
+  parentAccess: ParentAccessMode;
 };
 
-const LOOPBACK_HOSTS = new Set(['127.0.0.1', '::1', 'localhost']);
+/** Kept as an alias so parent-facing code reads clearly at its call sites. */
+export type AppConfig = Config;
+
+/** Addresses that only the local machine can reach. */
+const LOOPBACK_HOSTS = new Set([
+  '127.0.0.1',
+  '::1',
+  'localhost',
+  '0:0:0:0:0:0:0:1',
+]);
+
+/**
+ * Long enough that a person on the same home network cannot guess it in a few
+ * thousand tries. It is typed once into a browser, so length costs the parent
+ * almost nothing.
+ */
+export const MINIMUM_ADMIN_SECRET_LENGTH = 16;
+
+export function isLoopbackHost(host: string): boolean {
+  return LOOPBACK_HOSTS.has(host.trim().toLowerCase());
+}
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const host = env.HOST || '127.0.0.1';
@@ -41,12 +68,36 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 
   if (!flashModel.trim()) throw new Error('FLASH_MODEL must not be empty');
 
+  const lanMode = !isLoopbackHost(host);
+  // An empty or whitespace-only value is a mistake, not a secret.
+  const adminSecret = (env.ADMIN_SECRET ?? '').trim() || null;
+
+  if (lanMode && !adminSecret) {
+    throw new Error(
+      `HOST=${host} exposes this service beyond the local machine. ` +
+        'Set ADMIN_SECRET to enable LAN mode, or leave HOST unset to stay ' +
+        'loopback-only.',
+    );
+  }
+
+  if (lanMode && adminSecret && adminSecret.length < MINIMUM_ADMIN_SECRET_LENGTH) {
+    throw new Error(
+      `ADMIN_SECRET must be at least ${MINIMUM_ADMIN_SECRET_LENGTH} characters ` +
+        'to enable LAN mode.',
+    );
+  }
+
   return {
     host,
     port,
     databasePath: env.DB_PATH || './data/tutor.sqlite',
     ollamaUrl,
     flashModel,
-    lanMode: !LOOPBACK_HOSTS.has(host),
+    lanMode,
+    adminSecret,
+    // With no secret set on a loopback bind the only caller is someone already
+    // sitting at this machine, so parent routes stay open. The privacy summary
+    // reports this rather than letting it pass unnoticed.
+    parentAccess: adminSecret ? 'admin-secret' : 'open-loopback',
   };
 }

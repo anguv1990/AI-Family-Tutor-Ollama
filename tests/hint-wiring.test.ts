@@ -20,6 +20,7 @@ describe('hint wiring', () => {
     const tutor = new TutoringService(database);
     tutor.seedInitialContent();
     const session = tutor.startSession({ childId: 'child-a' });
+    assert.ok(session.sessionId, 'a fresh child can always start a session');
 
     const result = await tutor.requestHint({ sessionId: session.sessionId });
 
@@ -41,6 +42,7 @@ describe('hint wiring', () => {
     });
     tutor.seedInitialContent();
     const session = tutor.startSession({ childId: 'child-b' });
+    assert.ok(session.sessionId, 'a fresh child can always start a session');
 
     const result = await tutor.requestHint({ sessionId: session.sessionId });
 
@@ -54,10 +56,12 @@ describe('hint wiring', () => {
     const tutor = new TutoringService(database);
     tutor.seedInitialContent();
     const session = tutor.startSession({ childId: 'child-c' });
-    tutor.completeSession({ sessionId: session.sessionId });
+    assert.ok(session.sessionId, 'a fresh child can always start a session');
+    const sessionId = session.sessionId;
+    tutor.completeSession({ sessionId });
 
     await assert.rejects(
-      () => tutor.requestHint({ sessionId: session.sessionId }),
+      () => tutor.requestHint({ sessionId }),
       /Active session not found/,
     );
     database.close();
@@ -81,6 +85,7 @@ describe('hint wiring', () => {
     const tutor = new TutoringService(database, { hints: new HintService(gateway) });
     tutor.seedInitialContent();
     const session = tutor.startSession({ childId: 'child-d' });
+    assert.ok(session.sessionId, 'a fresh child can always start a session');
 
     const server = createApp(tutor).listen(0, '127.0.0.1');
     await new Promise((resolve) => server.once('listening', resolve));
@@ -115,6 +120,7 @@ describe('hint wiring', () => {
     const tutor = new TutoringService(database, { hints: new HintService(gateway) });
     tutor.seedInitialContent();
     const session = tutor.startSession({ childId: 'child-e' });
+    assert.ok(session.sessionId, 'a fresh child can always start a session');
 
     const result = await tutor.requestHint({ sessionId: session.sessionId });
     assert.equal(result.source, 'fallback');

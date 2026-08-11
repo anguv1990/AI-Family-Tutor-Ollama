@@ -8,6 +8,17 @@ These rules are deterministic. The AI model does not decide correctness, mastery
 - A correct or incorrect answer counts as one graded attempt.
 - A skipped question is recorded for audit purposes but does not count as a graded attempt and does not change the score or mastery level.
 - The score is `correct graded attempts / total graded attempts`.
+- Where an adult has corrected an evaluation, the corrected result is the graded evidence. See *Parent corrections* below.
+
+### Mastery is a fold over the stored evidence
+
+Mastery is recalculated by replaying the child's graded attempts for that skill in order, from `new`, rather than by nudging the previously stored level. The stored level is therefore a pure function of the attempts currently in the database.
+
+This is what makes the rest of the system safe to build on:
+
+- Reversing a parent correction restores exactly the mastery that existed before it, with no dependence on the order in which corrections were applied.
+- Retention that prunes old attempts cannot leave a stored level that the remaining evidence does not support.
+- The same attempts always produce the same level, on any machine, whatever route they took to get there.
 
 ## Levels
 
@@ -59,8 +70,21 @@ The answer that meets a limit is still marked and still counts as evidence; only
 
 Both limits are evaluated against an injectable clock, so the rule is testable at a chosen moment. When a session has passed both, the time limit is the recorded reason, because ten minutes elapsed before the answer that triggered the check.
 
+## Parent corrections
+
+An adult can correct the evaluation of an answered attempt, with a reason. The rules are deterministic and the child's own result is never destroyed.
+
+- **What changes.** The correction is stored on the attempt as `corrected_is_correct`. Mastery for that child and skill is immediately recalculated, treating the corrected value as the graded result. The attempt's own `is_correct` — what the child actually scored at the time — is never overwritten.
+- **What is recorded.** Every correction and every reversal appends a row to `attempt_corrections` holding the action, the child's original result, the value in force after the action, the reason and the timestamp. The trail is append-only: a reversal never edits or deletes the row that applied the correction.
+- **Reversal.** Withdrawing a correction clears `corrected_is_correct` and lets the child's own result stand again. Because mastery is a fold over the stored evidence, this restores the previous mastery exactly, including the level.
+- **What cannot be corrected.** A skipped attempt has no evaluation to correct, so a correction on it is refused. A reason is required; an empty one is refused.
+- **Who may do it.** Corrections are a parent operation and go through the authenticated parent routes described in `docs/privacy-controls.md`.
+
+## Daily session cap
+
+A wellbeing control rather than a mastery rule, but it decides whether evidence can be gathered at all: a child may start at most one **new** session per calendar day (local time) by default, adjustable per child by the parent from 0 to 10. Resuming a session already in progress is always allowed — the cap limits new sittings, not continuity. Reaching it is a normal state (`daily_limit`), never an error.
+
 ## Deferred cases
 
-- Parent corrections will recalculate evidence in the parent-correction slice.
 - Ambiguous answers will require an explicit non-graded outcome before they are supported.
 - Confidence intervals and time-based evidence decay are outside version 1 and require adult review before changing these rules.
