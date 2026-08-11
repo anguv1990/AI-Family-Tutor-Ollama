@@ -17,6 +17,20 @@ describe('Reception Maths tutoring vertical slice', () => {
   afterEach(() => database.close());
 
   /**
+   * Starting a session can legitimately answer "nothing to practise right
+   * now", so every test that expects a question narrows the result once here
+   * rather than asserting non-null at each use.
+   */
+  const startActive = (input: { childId: string; skillId?: string }) => {
+    const result = tutor.startSession(input);
+    assert.ok(
+      result.sessionId && result.question,
+      `expected an active session, got ${result.status}/${result.reason}`,
+    );
+    return { ...result, sessionId: result.sessionId, question: result.question };
+  };
+
+  /**
    * Reads the answer key straight from the bank, so these tests exercise the
    * flow rather than hard-coding whichever questions the bank happens to serve.
    */
@@ -28,7 +42,7 @@ describe('Reception Maths tutoring vertical slice', () => {
     ).correct_answer;
 
   it('starts a session with a reviewed question and does not expose its answer', () => {
-    const session = tutor.startSession({ childId: 'child-1' });
+    const session = startActive({ childId: 'child-1' });
 
     assert.equal(session.childId, 'child-1');
     assert.equal(session.question.skillId, 'reception.addition-within-5');
@@ -37,7 +51,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('marks an answer, persists the attempt, updates mastery, and selects the next question', () => {
-    const session = tutor.startSession({ childId: 'child-1' });
+    const session = startActive({ childId: 'child-1' });
 
     const result = tutor.submitAnswer({
       sessionId: session.sessionId,
@@ -64,7 +78,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('records an incorrect answer and does not award mastery credit', () => {
-    const session = tutor.startSession({ childId: 'child-2' });
+    const session = startActive({ childId: 'child-2' });
 
     const result = tutor.submitAnswer({
       sessionId: session.sessionId,
@@ -79,7 +93,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('rejects a duplicate answer without changing mastery twice', () => {
-    const session = tutor.startSession({ childId: 'child-3' });
+    const session = startActive({ childId: 'child-3' });
     const submission = {
       sessionId: session.sessionId,
       questionId: session.question.id,
@@ -96,7 +110,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('records a skip without changing graded mastery evidence', () => {
-    const session = tutor.startSession({ childId: 'child-skip' });
+    const session = startActive({ childId: 'child-skip' });
 
     const result = tutor.skipQuestion({
       sessionId: session.sessionId,
@@ -120,7 +134,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('promotes to secure and selects difficulty 3 after sufficient evidence', () => {
-    let session = tutor.startSession({ childId: 'child-progress' });
+    let session = startActive({ childId: 'child-progress' });
 
     let latest;
     for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -138,8 +152,8 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('resumes the active session instead of starting a second one', () => {
-    const first = tutor.startSession({ childId: 'child-resume' });
-    const second = tutor.startSession({ childId: 'child-resume' });
+    const first = startActive({ childId: 'child-resume' });
+    const second = startActive({ childId: 'child-resume' });
 
     assert.equal(second.sessionId, first.sessionId);
     assert.equal(second.resumed, true);
@@ -152,14 +166,14 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('resumes at the question the child had not yet answered', () => {
-    const started = tutor.startSession({ childId: 'child-resume-progress' });
+    const started = startActive({ childId: 'child-resume-progress' });
     const answered = tutor.submitAnswer({
       sessionId: started.sessionId,
       questionId: started.question.id,
       answer: '2',
     });
 
-    const resumed = tutor.startSession({ childId: 'child-resume-progress' });
+    const resumed = startActive({ childId: 'child-resume-progress' });
 
     assert.equal(resumed.sessionId, started.sessionId);
     assert.equal(resumed.question.id, answered.nextQuestion?.id);
@@ -167,7 +181,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('completes a session explicitly and refuses further answers', () => {
-    const session = tutor.startSession({ childId: 'child-complete' });
+    const session = startActive({ childId: 'child-complete' });
 
     const summary = tutor.completeSession({ sessionId: session.sessionId });
 
@@ -185,7 +199,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('counts only graded answers in the completion summary', () => {
-    const session = tutor.startSession({ childId: 'child-complete-count' });
+    const session = startActive({ childId: 'child-complete-count' });
     const answered = tutor.submitAnswer({
       sessionId: session.sessionId,
       questionId: session.question.id,
@@ -203,7 +217,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('refuses to complete a session twice', () => {
-    const session = tutor.startSession({ childId: 'child-complete-twice' });
+    const session = startActive({ childId: 'child-complete-twice' });
     tutor.completeSession({ sessionId: session.sessionId });
 
     assert.throws(
@@ -213,17 +227,22 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('starts a fresh session once the previous one was completed', () => {
-    const first = tutor.startSession({ childId: 'child-second-session' });
+    const first = startActive({ childId: 'child-second-session' });
     tutor.completeSession({ sessionId: first.sessionId });
+    // The daily cap is what stops a second session, not the completed one; a
+    // parent who has raised it gets a genuinely new session.
+    database
+      .prepare('UPDATE children SET daily_session_limit = 2 WHERE id = ?')
+      .run('child-second-session');
 
-    const second = tutor.startSession({ childId: 'child-second-session' });
+    const second = startActive({ childId: 'child-second-session' });
 
     assert.notEqual(second.sessionId, first.sessionId);
     assert.equal(second.resumed, false);
   });
 
   it('reports an exhausted session rather than ending silently', () => {
-    const session = tutor.startSession({ childId: 'child-exhaust' });
+    const session = startActive({ childId: 'child-exhaust' });
 
     let questionId: string | undefined = session.question.id;
     let status = 'active';
@@ -244,7 +263,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('starts a session on a chosen skill and never leaves it', () => {
-    const session = tutor.startSession({
+    const session = startActive({
       childId: 'child-counting',
       skillId: 'reception.counting-to-10',
     });
@@ -266,7 +285,15 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('keeps mastery separate per skill', () => {
-    const counting = tutor.startSession({
+    // Two skills in one day is above the default wellbeing cap, so this test
+    // sets the child up the way a parent who wanted both would.
+    database
+      .prepare(
+        `INSERT INTO children (id, daily_session_limit) VALUES (?, 2)
+         ON CONFLICT (id) DO UPDATE SET daily_session_limit = 2`,
+      )
+      .run('child-two-skills');
+    const counting = startActive({
       childId: 'child-two-skills',
       skillId: 'reception.counting-to-10',
     });
@@ -277,7 +304,7 @@ describe('Reception Maths tutoring vertical slice', () => {
     });
     tutor.completeSession({ sessionId: counting.sessionId });
 
-    const addition = tutor.startSession({
+    const addition = startActive({
       childId: 'child-two-skills',
       skillId: 'reception.addition-within-5',
     });
@@ -288,12 +315,12 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('resumes the skill the session was started with, ignoring a new one', () => {
-    const started = tutor.startSession({
+    const started = startActive({
       childId: 'child-skill-resume',
       skillId: 'reception.number-recognition',
     });
 
-    const resumed = tutor.startSession({
+    const resumed = startActive({
       childId: 'child-skill-resume',
       skillId: 'reception.addition-within-5',
     });
@@ -305,7 +332,7 @@ describe('Reception Maths tutoring vertical slice', () => {
 
   it('refuses an unknown or disabled skill', () => {
     assert.throws(
-      () => tutor.startSession({ childId: 'child-bad-skill', skillId: 'nope' }),
+      () => startActive({ childId: 'child-bad-skill', skillId: 'nope' }),
       /skill not found/i,
     );
 
@@ -314,7 +341,7 @@ describe('Reception Maths tutoring vertical slice', () => {
       .run();
     assert.throws(
       () =>
-        tutor.startSession({
+        startActive({
           childId: 'child-off-skill',
           skillId: 'reception.counting-to-10',
         }),
@@ -333,7 +360,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   });
 
   it('reads back the current state of an active session', () => {
-    const session = tutor.startSession({ childId: 'child-lookup' });
+    const session = startActive({ childId: 'child-lookup' });
 
     const state = tutor.getSession({ sessionId: session.sessionId });
 

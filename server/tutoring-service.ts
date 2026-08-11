@@ -41,8 +41,45 @@ type SessionRow = {
   ended_at: string | null;
 };
 
+/** Why a child cannot start practising right now. Neither is an error. */
+export type UnavailableReason = 'no_questions_available' | 'daily_limit_reached';
+
+export type StartSessionResult = {
+  status: 'active' | 'unavailable';
+  reason: UnavailableReason | null;
+  /** Child-facing wording. Never a system message. */
+  message: string | null;
+  /** ISO timestamp the child may start again, when that is knowable. */
+  nextAvailableAt: string | null;
+  sessionId: string | null;
+  childId: string;
+  skillId: string;
+  question: PublicQuestion | null;
+  mastery: Mastery;
+  resumed: boolean;
+};
+
+export const DEFAULT_DAILY_SESSION_LIMIT = 1;
+
+/** SQLite's own CURRENT_TIMESTAMP format, so stored values stay comparable. */
+export function sqlTimestamp(date: Date): string {
+  return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+export type TutoringServiceOptions = {
+  /** Injectable clock. Retention and the daily cap are date arithmetic. */
+  now?: () => Date;
+};
+
 export class TutoringService {
-  constructor(private readonly database: Database.Database) {}
+  private readonly now: () => Date;
+
+  constructor(
+    private readonly database: Database.Database,
+    options: TutoringServiceOptions = {},
+  ) {
+    this.now = options.now ?? (() => new Date());
+  }
 
   /**
    * Loads the reviewed bank. Re-running it refreshes wording, difficulty,
@@ -98,15 +135,13 @@ export class TutoringService {
    * Resumes the child's active session when one exists so that a restart, a
    * refreshed browser tab or a second device cannot strand progress or leave
    * two open sessions competing for the same mastery evidence.
+   *
+   * Two outcomes are deliberately *not* errors: the daily cap being reached,
+   * and there being nothing selectable to ask. Both are ordinary states for a
+   * child who practised earlier — the caller gets `status: 'unavailable'` and
+   * child-facing wording rather than a failure the UI has to dress up.
    */
-  startSession(input: { childId: string; skillId?: string }): {
-    sessionId: string;
-    childId: string;
-    skillId: string;
-    question: PublicQuestion;
-    mastery: Mastery;
-    resumed: boolean;
-  } {
+  startSession(input: { childId: string; skillId?: string }): StartSessionResult {
     if (!input.childId.trim()) throw new Error('childId is required');
 
     const active = this.findActiveSession(input.childId);
@@ -115,6 +150,10 @@ export class TutoringService {
     // switch skill underneath a session that is already running.
     if (active?.current_question_id) {
       return {
+        status: 'active',
+        reason: null,
+        message: null,
+        nextAvailableAt: null,
         sessionId: active.id,
         childId: input.childId,
         skillId: active.skill_id,
@@ -132,28 +171,57 @@ export class TutoringService {
 
     const skillId = this.requireEnabledSkill(input.skillId ?? DEFAULT_SKILL_ID);
     const currentMastery = this.getMastery(input.childId, skillId);
+
+    // The cap limits new sessions only; resumption above has already returned.
+    const cap = this.checkDailySessionLimit(input.childId);
+    if (!cap.allowed) {
+      return this.unavailable(
+        input.childId,
+        skillId,
+        currentMastery,
+        'daily_limit_reached',
+        'That is all the practice for today. See you tomorrow!',
+        cap.nextAvailableAt,
+      );
+    }
+
     const sessionId = randomUUID();
     const question = this.selectNextQuestion(
       sessionId,
       skillId,
       currentMastery.level,
     );
-    if (!question) throw new Error('No reviewed questions are available');
+    if (!question) {
+      return this.unavailable(
+        input.childId,
+        skillId,
+        currentMastery,
+        'no_questions_available',
+        'Nothing new to practise right now. Come back a bit later!',
+        null,
+      );
+    }
 
+    const startedAt = sqlTimestamp(this.now());
     const create = this.database.transaction(() => {
       this.database
         .prepare('INSERT OR IGNORE INTO children (id) VALUES (?)')
         .run(input.childId);
       this.database
         .prepare(
-          `INSERT INTO sessions (id, child_id, skill_id, current_question_id)
-           VALUES (?, ?, ?, ?)`,
+          `INSERT INTO sessions
+             (id, child_id, skill_id, current_question_id, started_at)
+           VALUES (?, ?, ?, ?, ?)`,
         )
-        .run(sessionId, input.childId, skillId, question.id);
+        .run(sessionId, input.childId, skillId, question.id, startedAt);
     });
     create();
 
     return {
+      status: 'active',
+      reason: null,
+      message: null,
+      nextAvailableAt: null,
       sessionId,
       childId: input.childId,
       skillId,
@@ -161,6 +229,85 @@ export class TutoringService {
       mastery: currentMastery,
       resumed: false,
     };
+  }
+
+  private unavailable(
+    childId: string,
+    skillId: string,
+    mastery: Mastery,
+    reason: UnavailableReason,
+    message: string,
+    nextAvailableAt: string | null,
+  ): StartSessionResult {
+    return {
+      status: 'unavailable',
+      reason,
+      message,
+      nextAvailableAt,
+      sessionId: null,
+      childId,
+      skillId,
+      question: null,
+      mastery,
+      resumed: false,
+    };
+  }
+
+  /**
+   * Counts sessions started since midnight *local* time — a family's day ends
+   * at their bedtime, not at UTC midnight — against the child's own limit.
+   */
+  private checkDailySessionLimit(childId: string): {
+    allowed: boolean;
+    startedToday: number;
+    limit: number;
+    nextAvailableAt: string;
+  } {
+    const now = this.now();
+    const dayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+    const nextDay = new Date(dayStart);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const limit = this.getDailySessionLimit(childId);
+    const { total } = this.database
+      .prepare(
+        'SELECT COUNT(*) AS total FROM sessions WHERE child_id = ? AND started_at >= ?',
+      )
+      .get(childId, sqlTimestamp(dayStart)) as { total: number };
+
+    return {
+      allowed: total < limit,
+      startedToday: total,
+      limit,
+      nextAvailableAt: nextDay.toISOString(),
+    };
+  }
+
+  /** The parent-adjustable cap. An unknown child has not practised yet. */
+  getDailySessionLimit(childId: string): number {
+    const row = this.database
+      .prepare('SELECT daily_session_limit FROM children WHERE id = ?')
+      .get(childId) as { daily_session_limit: number } | undefined;
+    return row?.daily_session_limit ?? DEFAULT_DAILY_SESSION_LIMIT;
+  }
+
+  /** Today's usage against the cap, for the parent overview. */
+  getDailySessionUsage(childId: string): {
+    startedToday: number;
+    limit: number;
+    nextAvailableAt: string;
+  } {
+    const { startedToday, limit, nextAvailableAt } =
+      this.checkDailySessionLimit(childId);
+    return { startedToday, limit, nextAvailableAt };
   }
 
   /** The skills an adult can start a session on, in curriculum order. */
@@ -280,8 +427,9 @@ export class TutoringService {
       this.database
         .prepare(
           `INSERT INTO attempts
-             (id, session_id, child_id, template_id, template_version, answer, is_correct)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+             (id, session_id, child_id, template_id, template_version, answer,
+              is_correct, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           randomUUID(),
@@ -291,6 +439,7 @@ export class TutoringService {
           question.version,
           normalizedAnswer,
           correct ? 1 : 0,
+          sqlTimestamp(this.now()),
         );
 
       const mastery = this.recalculateMastery(
@@ -337,8 +486,8 @@ export class TutoringService {
         .prepare(
           `INSERT INTO attempts
              (id, session_id, child_id, template_id, template_version,
-              answer, is_correct, outcome)
-           VALUES (?, ?, ?, ?, ?, '', 0, 'skipped')`,
+              answer, is_correct, outcome, created_at)
+           VALUES (?, ?, ?, ?, ?, '', 0, 'skipped', ?)`,
         )
         .run(
           randomUUID(),
@@ -346,6 +495,7 @@ export class TutoringService {
           session.child_id,
           question.id,
           question.version,
+          sqlTimestamp(this.now()),
         );
 
       const mastery = this.getMastery(session.child_id, question.skill_id);
@@ -440,10 +590,10 @@ export class TutoringService {
     this.database
       .prepare(
         `UPDATE sessions
-         SET ended_at = CURRENT_TIMESTAMP, ended_reason = ?
+         SET ended_at = ?, ended_reason = ?
          WHERE id = ? AND ended_at IS NULL`,
       )
-      .run(reason, sessionId);
+      .run(sqlTimestamp(this.now()), reason, sessionId);
   }
 
   private getReviewedQuestion(questionId: string): QuestionRow {
@@ -481,21 +631,35 @@ export class TutoringService {
     };
   }
 
-  private recalculateMastery(childId: string, skillId: string): Mastery {
-    const previous = this.getMastery(childId, skillId);
+  /**
+   * Mastery is a pure fold over the graded attempts that are currently stored,
+   * replayed from `new` rather than from the stored level. That costs nothing
+   * at this scale and buys the property the parent-correction slice needs: the
+   * level depends only on the evidence, so reversing a correction restores the
+   * previous mastery exactly, and pruning old evidence under retention cannot
+   * leave the stored level disagreeing with what remains.
+   *
+   * `corrected_is_correct` is the adult's judgement where one exists; the
+   * child's original `is_correct` is never overwritten.
+   */
+  recalculateMastery(childId: string, skillId: string): Mastery {
     const results = this.database
       .prepare(
-        `SELECT a.is_correct
+        `SELECT COALESCE(a.corrected_is_correct, a.is_correct) AS is_correct
          FROM attempts a
          JOIN content_templates t ON t.id = a.template_id
          WHERE a.child_id = ? AND t.skill_id = ? AND a.outcome = 'answered'
          ORDER BY a.created_at, a.rowid`,
       )
       .all(childId, skillId) as Array<{ is_correct: number }>;
-    const calculated = calculateMastery(
-      results.map((result) => result.is_correct === 1),
-      previous.level,
-    );
+    const graded = results.map((result) => result.is_correct === 1);
+
+    let previousLevel: MasteryLevel = 'new';
+    let calculated = calculateMastery([], previousLevel);
+    for (let index = 1; index <= graded.length; index += 1) {
+      calculated = calculateMastery(graded.slice(0, index), previousLevel);
+      previousLevel = calculated.level;
+    }
 
     this.database
       .prepare(
