@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/server/index.js",
     "test": "npm run build && node --test dist/tests/*.test.js",
-    "benchmark": "npm run build && node dist/tools/benchmark.js"
+    "benchmark": "npm run build && node dist/tools/benchmark.js",
+    "start:tablet": "npm run build && node --env-file=.env.local dist/server/index.js"
   },
   "dependencies": {
     "express": "^4.18.2",

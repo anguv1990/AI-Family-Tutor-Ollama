@@ -153,6 +153,31 @@ curl http://127.0.0.1:3000/api/parent/children \
   -H "x-admin-secret: $ADMIN_SECRET"
 ```
 
+## Using it on a tablet
+
+A four-year-old cannot work a mouse — it needs two-handed coordination they do
+not have yet. The app is built touch-first (88px targets), so a tablet on the
+home network is the intended way for a Reception child to use it.
+
+```bash
+npm run start:tablet
+```
+
+That reads `.env.local` (not in git), binds to every interface and requires the
+admin secret. Then open `http://<this-mac's-LAN-IP>:3000` on the tablet — find
+the IP with `ipconfig getifaddr en0`.
+
+`ADMIN_SECRET` is the parent password. It guards every `/api/parent/*` route —
+the ones that can export or permanently delete a child's data — and the server
+**refuses to start** on a non-loopback host without one of at least 16
+characters. That refusal is deliberate: binding to the network without it would
+publish a delete button to everyone in the house.
+
+To change it, edit `ADMIN_SECRET` in `.env.local`. There is no other copy, so
+losing it only means picking a new one.
+
+See the trusted-home-network assumption above before using this.
+
 ## Backup and restore
 
 Everything the family owns is one SQLite file. Until encrypted automated

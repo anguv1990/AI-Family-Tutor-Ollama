@@ -13,3 +13,6 @@ data/
 
 # Agent worktrees created by Claude Code; never part of the project history
 .claude/worktrees/
+
+# Machine-local settings; holds the parent admin secret
+.env.local
