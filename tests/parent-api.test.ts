@@ -147,6 +147,39 @@ describe('parent API', () => {
       assert.deepEqual(await real.json(), await fake.json());
     });
 
+    it('lets an adult move a child to another year group', async () => {
+      seedChild('child-moving');
+
+      const response = await call('/api/parent/children/child-moving/settings', {
+        method: 'PUT',
+        secret: ADMIN_SECRET,
+        body: JSON.stringify({ yearGroup: 'year3' }),
+      });
+
+      assert.equal(response.status, 200);
+      const body = (await response.json()) as { yearGroup: string };
+      assert.equal(body.yearGroup, 'year3');
+
+      // The child's next session must follow, or the setting is decorative.
+      const started = tutor.startSession({ childId: 'child-moving' });
+      assert.ok(
+        started.skillId.startsWith('year3.'),
+        `still on ${started.skillId} after being moved`,
+      );
+    });
+
+    it('refuses a year group that is not taught', async () => {
+      seedChild('child-bad-year');
+
+      const response = await call('/api/parent/children/child-bad-year/settings', {
+        method: 'PUT',
+        secret: ADMIN_SECRET,
+        body: JSON.stringify({ yearGroup: 'year9' }),
+      });
+
+      assert.equal(response.status, 400);
+    });
+
     it('rejects a wrong secret and accepts the right one', async () => {
       seedChild('child-2');
 

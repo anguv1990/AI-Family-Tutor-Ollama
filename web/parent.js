@@ -105,6 +105,7 @@ async function loadChildren() {
       { label: 'Child', render: (child) => child.childId },
       { label: 'Sessions', numeric: true, render: (child) => child.sessionCount },
       { label: 'Today', numeric: true, render: (child) => child.sessionsToday },
+      { label: 'Year', render: (child) => child.yearGroup || '' },
       { label: 'Limit', numeric: true, render: (child) => child.dailySessionLimit },
       { label: 'Last session', render: (child) => when(child.lastSessionAt) },
       {
@@ -124,6 +125,7 @@ async function loadChild(childId) {
   el('child-section').hidden = false;
   el('child-heading').textContent = childId;
   el('daily-limit').value = overview.settings.dailySessionLimit;
+  el('year-group').value = overview.settings.yearGroup;
   el('limit-note').textContent =
     `${overview.settings.sessionsToday} started today. ` +
     `Next reset ${when(overview.settings.nextAvailableAt)}.`;
@@ -330,6 +332,16 @@ el('save-limit').addEventListener('click', () => {
   })
     .then(() => loadChild(currentChildId))
     .then(() => show('Daily limit saved.'))
+    .catch(fail);
+});
+
+el('save-year').addEventListener('click', () => {
+  api(`/children/${encodeURIComponent(currentChildId)}/settings`, {
+    method: 'PUT',
+    body: { yearGroup: el('year-group').value },
+  })
+    .then(() => loadChild(currentChildId))
+    .then(() => show('Year group saved. Any session in progress was ended.'))
     .catch(fail);
 });
 

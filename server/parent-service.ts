@@ -34,7 +34,12 @@ export const MAXIMUM_DAILY_SESSION_LIMIT = 10;
 const MAXIMUM_REASON_LENGTH = 500;
 const OVERVIEW_ATTEMPT_LIMIT = 100;
 
-type ChildRow = { id: string; created_at: string; daily_session_limit: number };
+type ChildRow = {
+  id: string;
+  created_at: string;
+  daily_session_limit: number;
+  year_group: string;
+};
 
 type AttemptRow = {
   id: string;
@@ -94,12 +99,12 @@ export class ParentService {
   }> {
     const rows = this.database
       .prepare(
-        `SELECT c.id, c.created_at, c.daily_session_limit,
+        `SELECT c.id, c.created_at, c.daily_session_limit, c.year_group,
                 COUNT(s.id) AS session_count,
                 MAX(s.started_at) AS last_session_at
          FROM children c
          LEFT JOIN sessions s ON s.child_id = c.id
-         GROUP BY c.id, c.created_at, c.daily_session_limit
+         GROUP BY c.id, c.created_at, c.daily_session_limit, c.year_group
          ORDER BY c.id`,
       )
       .all() as Array<
@@ -109,6 +114,7 @@ export class ParentService {
     return rows.map((row) => ({
       childId: row.id,
       createdAt: row.created_at,
+      yearGroup: row.year_group,
       dailySessionLimit: row.daily_session_limit,
       sessionsToday: this.tutor.getDailySessionUsage(row.id).startedToday,
       sessionCount: row.session_count,
@@ -118,6 +124,7 @@ export class ParentService {
 
   getSettings(childId: string): {
     childId: string;
+    yearGroup: string;
     dailySessionLimit: number;
     sessionsToday: number;
     nextAvailableAt: string;
@@ -126,6 +133,7 @@ export class ParentService {
     const usage = this.tutor.getDailySessionUsage(childId);
     return {
       childId: child.id,
+      yearGroup: this.tutor.getYearGroup(child.id),
       dailySessionLimit: child.daily_session_limit,
       sessionsToday: usage.startedToday,
       nextAvailableAt: usage.nextAvailableAt,
@@ -138,23 +146,59 @@ export class ParentService {
    */
   updateSettings(
     childId: string,
-    input: { dailySessionLimit: number },
+    input: { dailySessionLimit?: number; yearGroup?: string },
   ): ReturnType<ParentService['getSettings']> {
     this.requireChild(childId);
-    const limit = input.dailySessionLimit;
-    if (
-      !Number.isInteger(limit) ||
-      limit < 0 ||
-      limit > MAXIMUM_DAILY_SESSION_LIMIT
-    ) {
-      throw new Error(
-        `dailySessionLimit must be a whole number between 0 and ${MAXIMUM_DAILY_SESSION_LIMIT}`,
-      );
+
+    if (input.dailySessionLimit !== undefined) {
+      const limit = input.dailySessionLimit;
+      if (
+        !Number.isInteger(limit) ||
+        limit < 0 ||
+        limit > MAXIMUM_DAILY_SESSION_LIMIT
+      ) {
+        throw new Error(
+          `dailySessionLimit must be a whole number between 0 and ${MAXIMUM_DAILY_SESSION_LIMIT}`,
+        );
+      }
+      this.database
+        .prepare('UPDATE children SET daily_session_limit = ? WHERE id = ?')
+        .run(limit, childId);
     }
 
-    this.database
-      .prepare('UPDATE children SET daily_session_limit = ? WHERE id = ?')
-      .run(limit, childId);
+    // The child's own device cannot change their year group — a stale tab or a
+    // mistyped link would move their curriculum. An adult can, because a child
+    // moves up a year, and because getting it wrong on the first sitting must
+    // not be permanent. Mastery is per skill, so the record already earned in
+    // the old year group is kept, not discarded.
+    if (input.yearGroup !== undefined) {
+      if (!['reception', 'year2', 'year3'].includes(input.yearGroup)) {
+        throw new Error('yearGroup must be reception, year2 or year3');
+      }
+      const before = this.tutor.getYearGroup(childId);
+      if (before !== input.yearGroup) {
+        this.database.transaction(() => {
+          this.database
+            .prepare('UPDATE children SET year_group = ? WHERE id = ?')
+            .run(input.yearGroup, childId);
+
+          // An open session keeps the skill it began with, so leaving one
+          // running would put a child marked Year 3 through Reception
+          // questions until it happened to end. Closing it is the smaller
+          // surprise, and the adult has just asked for this.
+          this.database
+            .prepare(
+              `UPDATE sessions
+               SET ended_at = CURRENT_TIMESTAMP,
+                   ended_reason = 'completed',
+                   current_question_id = NULL
+               WHERE child_id = ? AND ended_at IS NULL`,
+            )
+            .run(childId);
+        })();
+      }
+    }
+
     return this.getSettings(childId);
   }
 

@@ -250,6 +250,7 @@ function registerParentRoutes(
       response.json(
         parent.updateSettings(request.params.childId, {
           dailySessionLimit: request.body?.dailySessionLimit,
+          yearGroup: request.body?.yearGroup,
         }),
       );
     } catch (error) {

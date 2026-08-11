@@ -265,6 +265,18 @@
   }
   .big:active { transform: translateY(5px); box-shadow: none; }
 
+  /* The animal is for the child, who cannot read; the year group is for the
+     adult setting them up, who could not tell the buttons apart. */
+  .child { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+  .child .who { font-size: clamp(24px, 4.4vw, 32px); }
+  .child .year {
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
   /* The one deliberate, hard-to-miss action that actually sends an answer.
      It is a separate step from tapping a number, and sits well away from the
      pad, because an answer cannot be taken back once it is sent. */
@@ -363,9 +375,18 @@
   <section id="phase-welcome" aria-labelledby="welcome-heading">
     <h2 id="welcome-heading">Who is playing?</h2>
     <div class="row">
-      <button type="button" class="big child" data-child="child-a" data-year="reception">🦊 Fox</button>
-      <button type="button" class="big child" data-child="child-b" data-year="year3">🐼 Panda</button>
-      <button type="button" class="big child" data-child="child-c" data-year="year2">🐢 Turtle</button>
+      <button type="button" class="big child" data-child="child-a" data-year="reception">
+        <span class="who">🦊 Fox</span>
+        <span class="year">Reception</span>
+      </button>
+      <button type="button" class="big child" data-child="child-b" data-year="year3">
+        <span class="who">🐼 Panda</span>
+        <span class="year">Year 3</span>
+      </button>
+      <button type="button" class="big child" data-child="child-c" data-year="year2">
+        <span class="who">🐢 Turtle</span>
+        <span class="year">Year 2</span>
+      </button>
     </div>
   </section>
 
@@ -804,7 +825,16 @@ document.addEventListener('click', (event) => {
   const target = event.target.closest('button');
   if (!target) return;
 
-  if (target.dataset.child) return dispatch({ type: 'start', childId: target.dataset.child, skillId: SKILL_ID, yearGroup: target.dataset.year });
+  // The child buttons now wrap two spans, so a tap can land on a child node.
+  const chooser = target.closest ? target.closest('[data-child]') : null;
+  if (chooser) {
+    return dispatch({
+      type: 'start',
+      childId: chooser.dataset.child,
+      skillId: SKILL_ID,
+      yearGroup: chooser.dataset.year,
+    });
+  }
   if (target.dataset.digit) return dispatch({ type: 'digit', value: target.dataset.digit });
   if (target.dataset.rubOut) return dispatch({ type: 'rub-out' });
   if (target.dataset.value) return dispatch({ type: 'select', value: target.dataset.value });

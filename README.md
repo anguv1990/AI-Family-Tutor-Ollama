@@ -152,8 +152,15 @@ Mastery uses the documented `new`, `learning`, and `secure` levels. The persiste
 
 <http://127.0.0.1:3000/parent.html> — a plain adult page for reviewing sessions,
 attempts, mastery and safety events; correcting an evaluation with a reason and
-undoing it again; setting the daily practice limit; exporting a child's data;
-permanently deleting it; setting retention; and clearing the model cache.
+undoing it again; setting a child's year group and daily practice limit;
+exporting a child's data; permanently deleting it; setting retention; and
+clearing the model cache.
+
+Each child on the welcome screen shows the curriculum they are taught, so an
+adult can tell the buttons apart. A child's own device cannot change their year
+group — a stale tab would move their curriculum — but an adult can, from the
+parent page; doing so ends any session in progress, because an open session
+keeps the skill it began with.
 
 ```bash
 curl http://127.0.0.1:3000/api/parent/children \
