@@ -340,6 +340,16 @@ Known issues: OPEN QUESTION, decide before building the real UI — the API mark
 Next starting action: Sit both children in front of http://127.0.0.1:3000 and watch four things — do they hit the intended number, does the spoken prompt land or do they ignore it, what do they do after a wrong answer, and do they find Skip unaided. Record what happens in this log before writing any more UI code. If they struggle to both read and hear the prompt, the finding is bigger than the UI and reshapes the content format towards pictures over text.
 ```
 
+```text
+Date: 2026-08-11
+Session/day: Day 4 content bank and skill binding
+Outcome completed: Replaced the seven-template placeholder with three Reception Maths skills of at least twenty adult-reviewed templates each across difficulties 1-3, every answer a whole number 0-10 so it can be tapped, and every prompt constrained to characters that read aloud cleanly. Added source, licence and teaching `sequence` provenance (migration 4), used sequence as the selection tie-break, and bound each session to one skill at start so selection cannot drift across skills mid-session. Added GET /api/skills.
+Verification run: npm test — 44 tests passed (was 29); TypeScript build passed. Commit 4490349 pushed to origin/main.
+Decisions made: Reseeding refreshes wording, difficulty, ordering and provenance but never re-enables a template an adult disabled. Resuming keeps the original skill; mastery stays per child+skill. Content-bank invariants (bank size, difficulty spread, tappable answers, read-aloud-safe prompts) are enforced by tests rather than by review discipline.
+Known issues: The child-observation session planned as the previous entry's next action was not run; it was deferred in favour of this content work and is now scheduled after the MVP completes. The mistap/retry open question is therefore still open. Also outstanding: stopping rule beyond exhaustion, re-ask window, fake model adapter, Ollama on the request path, parent endpoints, admin auth, real UI. A stray empty file named 'src' still sits untracked in the repo root.
+Next starting action: Complete the remaining MVP slices, then observe both children using the finished product.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text
