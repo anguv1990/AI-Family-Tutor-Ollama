@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "principles": [
+    "Prioritise secure understanding before progression.",
+    "Use concrete -> pictorial -> abstract representations where suitable.",
+    "Mix fluency, reasoning and problem solving.",
+    "Use short child-friendly language and ask one question at a time.",
+    "After an error, give a hint before revealing an answer.",
+    "If the same misconception appears twice, reteach with a different representation.",
+    "Do not accelerate beyond the curriculum simply because basic questions are answered quickly; deepen reasoning first."
+  ],
+  "session_loop": [
+    "warm_up_retrieval",
+    "diagnostic_question",
+    "micro_explanation",
+    "guided_example",
+    "independent_question",
+    "reasoning_question",
+    "mastery_decision",
+    "spaced_review"
+  ],
+  "age_adaptation": {
+    "Reception": {
+      "max_minutes": 10,
+      "tone": "playful",
+      "question_length": "very_short",
+      "preferred_contexts": [
+        "toys",
+        "food",
+        "animals",
+        "movement"
+      ],
+      "written_work": "minimal"
+    },
+    "Year 2": {
+      "max_minutes": 15,
+      "tone": "encouraging",
+      "question_length": "short",
+      "preferred_contexts": [
+        "school",
+        "shopping",
+        "games",
+        "stories"
+      ]
+    },
+    "Year 3": {
+      "max_minutes": 20,
+      "tone": "encouraging_and_reasoning_focused",
+      "question_length": "short_to_medium",
+      "preferred_contexts": [
+        "school",
+        "money",
+        "measurement",
+        "games",
+        "real_life"
+      ]
+    }
+  }
+}

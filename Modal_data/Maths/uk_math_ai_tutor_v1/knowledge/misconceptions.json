@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "misconceptions": [
+    {
+      "skill_id": "R-N-001",
+      "pattern": "skips_or_double_counts",
+      "response": "Slow down; move each object as it is counted."
+    },
+    {
+      "skill_id": "R-N-002",
+      "pattern": "recounts_when_asked_how_many",
+      "response": "Emphasise: the last number tells us how many."
+    },
+    {
+      "skill_id": "R-N-003",
+      "pattern": "always_counts_one_by_one",
+      "response": "Use familiar dice and five-frame patterns."
+    },
+    {
+      "skill_id": "R-N-004",
+      "pattern": "reverses_or_confuses_numerals",
+      "response": "Match numeral, spoken number and concrete set together."
+    },
+    {
+      "skill_id": "R-N-005",
+      "pattern": "judges_by_object_size",
+      "response": "Use equal-sized counters and one-to-one matching."
+    },
+    {
+      "skill_id": "R-N-006",
+      "pattern": "only_recognises_one_split",
+      "response": "Explore all partitions using counters and fingers."
+    },
+    {
+      "skill_id": "R-N-007",
+      "pattern": "counts_all_from_one",
+      "response": "Encourage counting on from the known part."
+    },
+    {
+      "skill_id": "R-N-008",
+      "pattern": "confuses_more_and_less",
+      "response": "Physically add or remove one object."
+    },
+    {
+      "skill_id": "R-P-001",
+      "pattern": "teen_number_sequence_error",
+      "response": "Use a number track and rhythmic counting."
+    },
+    {
+      "skill_id": "R-P-002",
+      "pattern": "uses_visual_size_not_number_value",
+      "response": "Place both numbers on a number track."
+    },
+    {
+      "skill_id": "R-P-003",
+      "pattern": "does_not_link_equal_parts_to_double",
+      "response": "Say '3 and 3 is double 3' while showing symmetry."
+    },
+    {
+      "skill_id": "R-P-004",
+      "pattern": "guesses_even_or_odd_word",
+      "response": "Pair concrete objects; focus on structure before terminology."
+    },
+    {
+      "skill_id": "R-P-005",
+      "pattern": "copies_last_item_only",
+      "response": "Say the repeating unit aloud together."
+    },
+    {
+      "skill_id": "Y2-NPV-002",
+      "pattern": "answers_4",
+      "response": "Represent 47 as 4 tens and 7 ones."
+    },
+    {
+      "skill_id": "Y2-NPV-004",
+      "pattern": "compares_ones_first",
+      "response": "Compare tens before ones."
+    },
+    {
+      "skill_id": "Y2-AS-005",
+      "pattern": "digit_by_digit_without_place_value",
+      "response": "Partition into tens and ones; regroup when needed."
+    },
+    {
+      "skill_id": "Y3-AS-003",
+      "pattern": "regrouping_error",
+      "response": "Use place-value counters and exchange 10 ones for 1 ten."
+    },
+    {
+      "skill_id": "Y3-AS-004",
+      "pattern": "exchange_error",
+      "response": "Use place-value counters and model regrouping across zero carefully."
+    },
+    {
+      "skill_id": "Y3-F-001",
+      "pattern": "larger_denominator_means_larger_fraction",
+      "response": "Use equal wholes partitioned into different numbers of parts."
+    }
+  ]
+}

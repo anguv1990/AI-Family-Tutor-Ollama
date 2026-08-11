@@ -279,13 +279,27 @@ describe('tutoring session API', () => {
         body: JSON.stringify({ childId: 'api-capped-child' }),
       });
 
+    // The cap counts practised sittings, so answering is what spends the day.
+    database
+      .prepare(
+        `INSERT INTO children (id, daily_session_limit) VALUES ('api-capped-child', 1)
+         ON CONFLICT (id) DO UPDATE SET daily_session_limit = 1`,
+      )
+      .run();
+
     const first = await start();
     assert.equal(first.status, 201);
     const started = (await first.json()) as {
       status: string;
       sessionId: string;
+      question: { id: string };
     };
     assert.equal(started.status, 'active');
+    await fetch(`${baseUrl}/api/sessions/${started.sessionId}/answers`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ questionId: started.question.id, answer: '0' }),
+    });
     await fetch(`${baseUrl}/api/sessions/${started.sessionId}/complete`, {
       method: 'POST',
     });
@@ -298,13 +312,16 @@ describe('tutoring session API', () => {
       sessionId: null;
       question: null;
       message: string;
-      mastery: { level: string };
+      mastery: { level: string; totalAttempts: number };
     };
     assert.equal(body.status, 'daily_limit');
     assert.equal(body.sessionId, null);
     assert.equal(body.question, null);
     assert.ok(body.message.length > 0);
-    assert.equal(body.mastery.level, 'new');
+    // The capped response still reports real mastery, so a parent looking at
+    // the day can see what was practised before the cap stopped it.
+    assert.equal(body.mastery.level, 'learning');
+    assert.equal(body.mastery.totalAttempts, 1);
   });
 
   it('reports an empty question bank as a 200 exhausted state', async () => {

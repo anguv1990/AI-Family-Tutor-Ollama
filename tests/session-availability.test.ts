@@ -91,11 +91,32 @@ describe('session availability', () => {
     assert.ok(later.question);
   });
 
-  it('caps a child at one new session a day and says when the next one is', () => {
-    const first = tutor.startSession({ childId: 'child-capped' });
-    assert.equal(first.status, 'active');
-    assert.ok(first.sessionId);
-    tutor.completeSession({ sessionId: first.sessionId });
+  /** Sets a child's cap the way the parent page does, before they have played. */
+  function setLimit(childId: string, limit: number) {
+    database
+      .prepare(
+        `INSERT INTO children (id, daily_session_limit) VALUES (?, ?)
+         ON CONFLICT (id) DO UPDATE SET daily_session_limit = excluded.daily_session_limit`,
+      )
+      .run(childId, limit);
+  }
+
+  /** Practises one whole session: the cap only counts sittings with real work in them. */
+  function practiseOneSession(childId: string) {
+    const started = tutor.startSession({ childId });
+    assert.ok(started.sessionId && started.question, 'expected a session to practise');
+    tutor.submitAnswer({
+      sessionId: started.sessionId,
+      questionId: started.question.id,
+      answer: '0',
+    });
+    tutor.completeSession({ sessionId: started.sessionId });
+    return started;
+  }
+
+  it('caps a child at their daily limit and says when the next one is', () => {
+    setLimit('child-capped', 1);
+    practiseOneSession('child-capped');
 
     const second = tutor.startSession({ childId: 'child-capped' });
 
@@ -119,10 +140,31 @@ describe('session availability', () => {
     assert.equal(resumed.sessionId, first.sessionId);
   });
 
+  it('does not spend the day on a session the child never answered', () => {
+    // A tab reload, a curious tap on the wrong name, or a sitting abandoned
+    // before the first answer is not practice, and must not use up the day.
+    setLimit('child-untouched', 1);
+    const abandoned = tutor.startSession({ childId: 'child-untouched' });
+    assert.ok(abandoned.sessionId);
+    tutor.completeSession({ sessionId: abandoned.sessionId });
+
+    const second = tutor.startSession({ childId: 'child-untouched' });
+
+    assert.equal(second.status, 'active', 'an unanswered session must not count');
+    assert.ok(second.question);
+  });
+
+  it('allows more than one sitting a day by default', () => {
+    // The first observed sitting with a real child ended in "come back
+    // tomorrow" after a single session, which is why the default moved to 3.
+    practiseOneSession('child-default-limit');
+    const second = tutor.startSession({ childId: 'child-default-limit' });
+    assert.equal(second.status, 'active');
+  });
+
   it('lifts the cap when the local day rolls over', () => {
-    const first = tutor.startSession({ childId: 'child-tomorrow' });
-    assert.ok(first.sessionId);
-    tutor.completeSession({ sessionId: first.sessionId });
+    setLimit('child-tomorrow', 1);
+    practiseOneSession('child-tomorrow');
     assert.equal(
       tutor.startSession({ childId: 'child-tomorrow' }).status,
       'daily_limit',
@@ -145,7 +187,12 @@ describe('session availability', () => {
     for (let session = 0; session < 3; session += 1) {
       const started = tutor.startSession({ childId: 'child-extra' });
       assert.equal(started.status, 'active', `session ${session + 1}`);
-      assert.ok(started.sessionId);
+      assert.ok(started.sessionId && started.question);
+      tutor.submitAnswer({
+        sessionId: started.sessionId,
+        questionId: started.question.id,
+        answer: '0',
+      });
       tutor.completeSession({ sessionId: started.sessionId });
     }
 

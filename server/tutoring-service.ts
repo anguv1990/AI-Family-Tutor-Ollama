@@ -75,7 +75,16 @@ export type StartSessionResult = {
   resumed: boolean;
 };
 
-export const DEFAULT_DAILY_SESSION_LIMIT = 1;
+/**
+ * Sessions a child may practise per day before the cap stops them.
+ *
+ * plan.md set this to 1 as a wellbeing control for a four-year-old. In real
+ * use that proved wrong in both directions: one interrupted sitting used up
+ * the whole day, and a child who wanted to carry on was told to come back
+ * tomorrow. A session is already bounded at eight questions or ten minutes,
+ * so three of them is still a short day, and an adult can change it per child.
+ */
+export const DEFAULT_DAILY_SESSION_LIMIT = 3;
 
 /** SQLite's own CURRENT_TIMESTAMP format, so stored values stay comparable. */
 export function sqlTimestamp(date: Date): string {
@@ -328,8 +337,11 @@ export class TutoringService {
 
     const create = this.database.transaction(() => {
       this.database
-        .prepare('INSERT OR IGNORE INTO children (id) VALUES (?)')
-        .run(input.childId);
+        .prepare(
+          `INSERT INTO children (id, daily_session_limit) VALUES (?, ?)
+           ON CONFLICT (id) DO NOTHING`,
+        )
+        .run(input.childId, DEFAULT_DAILY_SESSION_LIMIT);
       this.database
         .prepare(
           `INSERT INTO sessions
@@ -404,9 +416,21 @@ export class TutoringService {
     nextDay.setDate(nextDay.getDate() + 1);
 
     const limit = this.getDailySessionLimit(childId);
+
+    // Only sessions the child actually practised in count against the cap.
+    // Counting every row meant a tab reload, a curious tap on the wrong name,
+    // or a sitting abandoned before the first answer used up the whole day —
+    // the child had not practised, so nothing should have been spent.
     const { total } = this.database
       .prepare(
-        'SELECT COUNT(*) AS total FROM sessions WHERE child_id = ? AND started_at >= ?',
+        `SELECT COUNT(*) AS total
+         FROM sessions s
+         WHERE s.child_id = ?
+           AND s.started_at >= ?
+           AND EXISTS (
+             SELECT 1 FROM attempts a
+             WHERE a.session_id = s.id AND a.outcome = 'answered'
+           )`,
       )
       .get(childId, sqlTimestamp(dayStart)) as { total: number };
 
@@ -475,10 +499,11 @@ export class TutoringService {
   private ensureChild(childId: string, yearGroup?: YearGroup): void {
     this.database
       .prepare(
-        `INSERT INTO children (id, year_group) VALUES (?, ?)
+        `INSERT INTO children (id, year_group, daily_session_limit)
+         VALUES (?, ?, ?)
          ON CONFLICT (id) DO NOTHING`,
       )
-      .run(childId, yearGroup ?? 'reception');
+      .run(childId, yearGroup ?? 'reception', DEFAULT_DAILY_SESSION_LIMIT);
   }
 
   /** The child's recorded year group, defaulting to reception for a new child. */

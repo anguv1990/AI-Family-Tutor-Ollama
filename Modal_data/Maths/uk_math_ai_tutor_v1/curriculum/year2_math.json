@@ -1,0 +1,1163 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "subject": "Mathematics",
+  "skills": [
+    {
+      "id": "Y2-NPV-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Counting",
+      "learning_objective": "Count forwards and backwards in steps of 2, 3, 5 and 10 from appropriate starting points.",
+      "prerequisites": [
+        "R-P-001"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "multiple",
+        "count"
+      ],
+      "examples": [
+        {
+          "prompt": "Continue: 15, 20, 25, ...",
+          "answer": "30"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "steps": [
+          2,
+          3,
+          5,
+          10
+        ],
+        "max": 100
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-NPV-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Tens and ones",
+      "learning_objective": "Recognise the place value of each digit in a two-digit number.",
+      "prerequisites": [
+        "R-N-007"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "tens",
+        "ones",
+        "place value"
+      ],
+      "examples": [
+        {
+          "prompt": "In 47, what is the value of 4?",
+          "answer": "40"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "answers_4",
+          "response": "Represent 47 as 4 tens and 7 ones."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "formats": [
+          "base10",
+          "partition",
+          "digit_value"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-NPV-003",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Partitioning",
+      "learning_objective": "Compose and decompose two-digit numbers in standard and varied ways.",
+      "prerequisites": [
+        "Y2-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "partition",
+        "compose"
+      ],
+      "examples": [
+        {
+          "prompt": "Complete: 63 = 50 + __",
+          "answer": "13"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "formats": [
+          "standard_partition",
+          "nonstandard_partition"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-NPV-004",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Compare and order",
+      "learning_objective": "Compare and order numbers from 0 to 100 using <, > and =.",
+      "prerequisites": [
+        "Y2-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "greater",
+        "less",
+        "equal"
+      ],
+      "examples": [
+        {
+          "prompt": "Which is greater: 58 or 85?",
+          "answer": "85"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "compares_ones_first",
+          "response": "Compare tens before ones."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          0,
+          100
+        ],
+        "formats": [
+          "pair_compare",
+          "order_3_numbers"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-NPV-005",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Number line",
+      "learning_objective": "Locate two-digit numbers and identify previous/next multiples of 10.",
+      "prerequisites": [
+        "Y2-NPV-004"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Between which tens does 47 lie?",
+          "answer": "40 and 50"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "formats": [
+          "number_line",
+          "bounding_tens"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-NPV-006",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Read and write numbers",
+      "learning_objective": "Read and write numbers to at least 100 in numerals and words.",
+      "prerequisites": [
+        "Y2-NPV-002"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Write seventy-two as a numeral.",
+          "answer": "72"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          100
+        ],
+        "formats": [
+          "words_to_digits",
+          "digits_to_words"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Facts to 20",
+      "learning_objective": "Recall and use addition and subtraction facts to 20.",
+      "prerequisites": [
+        "R-N-007"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "13 + 7 = ?",
+          "answer": "20"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          20
+        ],
+        "formats": [
+          "addition",
+          "subtraction",
+          "missing_number"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Related facts",
+      "learning_objective": "Derive and use related facts up to 100.",
+      "prerequisites": [
+        "Y2-AS-001",
+        "Y2-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "If 7 + 3 = 10, what is 70 + 30?",
+          "answer": "100"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "scaling": [
+          10
+        ],
+        "formats": [
+          "fact_family",
+          "scaled_fact"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-003",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental addition",
+      "learning_objective": "Add a two-digit number and ones or tens mentally.",
+      "prerequisites": [
+        "Y2-AS-001",
+        "Y2-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "46 + 20 = ?",
+          "answer": "66"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "addends": [
+          "1_digit",
+          "multiple_of_10"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-004",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental subtraction",
+      "learning_objective": "Subtract ones or tens from a two-digit number mentally.",
+      "prerequisites": [
+        "Y2-AS-001",
+        "Y2-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "72 - 30 = ?",
+          "answer": "42"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "subtrahends": [
+          "1_digit",
+          "multiple_of_10"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-005",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Two two-digit numbers",
+      "learning_objective": "Add and subtract two two-digit numbers using efficient representations and methods.",
+      "prerequisites": [
+        "Y2-AS-003",
+        "Y2-AS-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "34 + 27 = ?",
+          "answer": "61"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "digit_by_digit_without_place_value",
+          "response": "Partition into tens and ones; regroup when needed."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          10,
+          99
+        ],
+        "formats": [
+          "partition",
+          "number_line",
+          "written"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-006",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Inverse and missing numbers",
+      "learning_objective": "Use inverse relationships and solve missing-number equations.",
+      "prerequisites": [
+        "Y2-AS-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "__ + 18 = 30",
+          "answer": "12"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          100
+        ],
+        "formats": [
+          "missing_addend",
+          "missing_subtrahend",
+          "inverse_check"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-AS-007",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Word problems",
+      "learning_objective": "Solve one- and two-step addition/subtraction problems in context.",
+      "prerequisites": [
+        "Y2-AS-003",
+        "Y2-AS-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Mia has 28 stickers and gets 15 more. How many now?",
+          "answer": "43"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "contexts": [
+          "toys",
+          "books",
+          "fruit",
+          "points",
+          "money"
+        ],
+        "steps": [
+          1,
+          2
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-MD-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Equal groups",
+      "learning_objective": "Understand multiplication as equal groups and repeated addition.",
+      "prerequisites": [
+        "Y2-NPV-001"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "3 bags have 4 apples each. How many apples?",
+          "answer": "12"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "groups": [
+          2,
+          3,
+          4,
+          5,
+          10
+        ],
+        "formats": [
+          "objects",
+          "arrays",
+          "story"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-MD-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "2, 5 and 10 tables",
+      "learning_objective": "Recall and use multiplication and division facts for 2, 5 and 10.",
+      "prerequisites": [
+        "Y2-MD-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "5 × 6 = ?",
+          "answer": "30"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "tables": [
+          2,
+          5,
+          10
+        ],
+        "multipliers": [
+          1,
+          12
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-MD-003",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Division as grouping/sharing",
+      "learning_objective": "Interpret division as sharing and grouping.",
+      "prerequisites": [
+        "Y2-MD-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "20 counters are shared equally between 5 children. How many each?",
+          "answer": "4"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "divisors": [
+          2,
+          5,
+          10
+        ],
+        "formats": [
+          "sharing",
+          "grouping"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-MD-004",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Commutativity and inverse",
+      "learning_objective": "Use commutativity of multiplication and inverse relationship with division.",
+      "prerequisites": [
+        "Y2-MD-002",
+        "Y2-MD-003"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "If 4 × 5 = 20, give a related division fact.",
+          "answer": "20 ÷ 5 = 4 or 20 ÷ 4 = 5"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "fact_family",
+          "missing_number"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-F-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Unit fractions",
+      "learning_objective": "Recognise, find, name and write 1/2, 1/3 and 1/4 of shapes, lengths, sets and quantities.",
+      "prerequisites": [
+        "Y2-MD-003"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "What is 1/2 of 10?",
+          "answer": "5"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "fractions": [
+          "1/2",
+          "1/3",
+          "1/4"
+        ],
+        "formats": [
+          "shape",
+          "set",
+          "quantity"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-F-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Non-unit fractions",
+      "learning_objective": "Recognise and find 2/4 and 3/4, and connect 2/4 with 1/2.",
+      "prerequisites": [
+        "Y2-F-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Shade 3/4 of 8 counters. How many are shaded?",
+          "answer": "6"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "fractions": [
+          "2/4",
+          "3/4"
+        ],
+        "formats": [
+          "shape",
+          "quantity",
+          "equivalence"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-M-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Length and height",
+      "learning_objective": "Choose and use standard units to estimate and measure length/height; compare and order.",
+      "prerequisites": [],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Which is a sensible unit for a pencil: cm or m?",
+          "answer": "cm"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "units": [
+          "cm",
+          "m"
+        ],
+        "formats": [
+          "choose_unit",
+          "compare",
+          "simple_measure"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-M-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Mass, capacity and temperature",
+      "learning_objective": "Measure and compare mass, capacity and temperature using standard units.",
+      "prerequisites": [],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Which unit suits a bag of flour: g or kg?",
+          "answer": "kg"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "units": [
+          "g",
+          "kg",
+          "ml",
+          "l",
+          "°C"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-M-003",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Money",
+      "learning_objective": "Recognise coins/notes, combine amounts and solve simple money problems including change.",
+      "prerequisites": [
+        "Y2-AS-005"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "An item costs 65p. You pay £1. How much change?",
+          "answer": "35p"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "currency": "GBP",
+        "max_pence": 200,
+        "formats": [
+          "make_amount",
+          "total",
+          "change"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-M-004",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Time",
+      "learning_objective": "Tell and write time to five minutes, including quarter past/to, and compare durations.",
+      "prerequisites": [
+        "R-P-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "What time is 15 minutes after 3:20?",
+          "answer": "3:35"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "interval_minutes": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "formats": [
+          "clock_reading",
+          "duration",
+          "sequence"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-G-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "2D and 3D shapes",
+      "learning_objective": "Identify and describe properties of common 2D and 3D shapes.",
+      "prerequisites": [],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "How many vertices does a rectangle have?",
+          "answer": "4"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "name",
+          "properties",
+          "sort"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-G-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Symmetry",
+      "learning_objective": "Identify vertical lines of symmetry in simple shapes.",
+      "prerequisites": [
+        "Y2-G-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Does a square have a vertical line of symmetry?",
+          "answer": "Yes"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "shapes": [
+          "square",
+          "rectangle",
+          "triangle",
+          "circle"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-G-003",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Position and direction",
+      "learning_objective": "Use mathematical language for position, direction, rotation and turns.",
+      "prerequisites": [],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Make a quarter turn clockwise from facing north. Which direction now?",
+          "answer": "east"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "turns": [
+          "quarter",
+          "half",
+          "three-quarter"
+        ],
+        "directions": [
+          "clockwise",
+          "anticlockwise"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-S-001",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Statistics",
+      "topic": "Tables and charts",
+      "learning_objective": "Interpret and construct simple pictograms, tally charts, block diagrams and tables.",
+      "prerequisites": [
+        "Y2-NPV-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "A pictogram shows 1 symbol = 2 apples. 4 symbols represent how many apples?",
+          "answer": "8"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "scales": [
+          1,
+          2,
+          5
+        ],
+        "formats": [
+          "pictogram",
+          "tally",
+          "block",
+          "table"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y2-S-002",
+      "stage": "Year 2",
+      "subject": "Mathematics",
+      "domain": "Statistics",
+      "topic": "Ask and answer questions",
+      "learning_objective": "Use charts/tables to compare categories and find totals/differences.",
+      "prerequisites": [
+        "Y2-S-001",
+        "Y2-AS-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Red has 12 votes and blue has 8. How many more votes for red?",
+          "answer": "4"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "difference",
+          "total",
+          "most_least"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    }
+  ]
+}

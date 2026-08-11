@@ -7,7 +7,10 @@ import { createApp } from '../server/app';
 import { loadConfig, MINIMUM_ADMIN_SECRET_LENGTH } from '../server/config';
 import { createDatabase } from '../server/database';
 import { ParentService } from '../server/parent-service';
-import { TutoringService } from '../server/tutoring-service';
+import {
+  DEFAULT_DAILY_SESSION_LIMIT,
+  TutoringService,
+} from '../server/tutoring-service';
 
 const ADMIN_SECRET = 'a-long-enough-parent-secret';
 
@@ -156,7 +159,7 @@ describe('parent API', () => {
         children: Array<{ childId: string; dailySessionLimit: number }>;
       };
       assert.deepEqual(body.children.map((child) => child.childId), ['child-2']);
-      assert.equal(body.children[0].dailySessionLimit, 1);
+      assert.equal(body.children[0].dailySessionLimit, DEFAULT_DAILY_SESSION_LIMIT);
     });
 
     it('shows sessions, attempts, mastery and events without model internals', async () => {
@@ -178,7 +181,7 @@ describe('parent API', () => {
       assert.equal(overview.events.length, 1);
       assert.equal(overview.events[0].eventType, 'fallback_used');
       assert.equal(overview.events[0].sessionNumber, 1);
-      assert.equal(overview.settings.dailySessionLimit, 1);
+      assert.equal(overview.settings.dailySessionLimit, DEFAULT_DAILY_SESSION_LIMIT);
       assert.equal(overview.settings.sessionsToday, 1);
       assert.deepEqual(overview.totals, {
         sessions: 1,

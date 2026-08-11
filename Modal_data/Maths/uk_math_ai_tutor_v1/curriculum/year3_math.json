@@ -1,0 +1,1369 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "subject": "Mathematics",
+  "skills": [
+    {
+      "id": "Y3-NPV-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Counting in multiples",
+      "learning_objective": "Count from 0 in multiples of 4, 8, 50 and 100.",
+      "prerequisites": [
+        "Y2-NPV-001"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Continue: 0, 50, 100, 150, ...",
+          "answer": "200"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "steps": [
+          4,
+          8,
+          50,
+          100
+        ],
+        "max": 1000
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Hundreds tens ones",
+      "learning_objective": "Recognise the place value of each digit in a three-digit number.",
+      "prerequisites": [
+        "Y2-NPV-002"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "What is the value of 7 in 472?",
+          "answer": "70"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "formats": [
+          "digit_value",
+          "base10"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Compose/decompose",
+      "learning_objective": "Compose and decompose three-digit numbers using standard and non-standard partitioning.",
+      "prerequisites": [
+        "Y3-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Complete: 356 = 200 + __ + 6",
+          "answer": "150"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "formats": [
+          "standard_partition",
+          "nonstandard_partition"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "10/100 more or less",
+      "learning_objective": "Find 10 or 100 more or less than a given number.",
+      "prerequisites": [
+        "Y3-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "100 less than 684 is?",
+          "answer": "584"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "changes": [
+          -100,
+          -10,
+          10,
+          100
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-005",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Compare and order to 1000",
+      "learning_objective": "Compare and order numbers up to 1000.",
+      "prerequisites": [
+        "Y3-NPV-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Order smallest to largest: 405, 450, 354.",
+          "answer": "354, 405, 450"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          1000
+        ],
+        "formats": [
+          "compare",
+          "order"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-006",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Number line and estimation",
+      "learning_objective": "Locate three-digit numbers and identify neighbouring multiples of 10 and 100.",
+      "prerequisites": [
+        "Y3-NPV-005"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Which hundreds does 638 lie between?",
+          "answer": "600 and 700"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "formats": [
+          "bounding_10",
+          "bounding_100",
+          "estimate_position"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-NPV-007",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Number and Place Value",
+      "topic": "Read/write to 1000",
+      "learning_objective": "Read and write numbers up to 1000 in numerals and words.",
+      "prerequisites": [
+        "Y3-NPV-002"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Write 708 in words.",
+          "answer": "seven hundred and eight"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          1000
+        ],
+        "formats": [
+          "digits_to_words",
+          "words_to_digits"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Fluent facts",
+      "learning_objective": "Develop automatic recall of addition/subtraction facts within 20.",
+      "prerequisites": [
+        "Y2-AS-001"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "17 - 9 = ?",
+          "answer": "8"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          0,
+          20
+        ],
+        "timed_optional": true
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental calculations",
+      "learning_objective": "Add/subtract ones, tens and hundreds to/from three-digit numbers.",
+      "prerequisites": [
+        "Y3-NPV-004",
+        "Y3-AS-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "346 + 50 = ?",
+          "answer": "396"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "changes": [
+          "1_digit",
+          "multiple_10",
+          "multiple_100"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Column addition",
+      "learning_objective": "Add numbers with up to three digits using formal written methods when appropriate.",
+      "prerequisites": [
+        "Y3-AS-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Calculate 268 + 157.",
+          "answer": "425"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "regrouping_error",
+          "response": "Use place-value counters and exchange 10 ones for 1 ten."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "formats": [
+          "column",
+          "partition"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Column subtraction",
+      "learning_objective": "Subtract numbers with up to three digits using formal written methods when appropriate.",
+      "prerequisites": [
+        "Y3-AS-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Calculate 503 - 278.",
+          "answer": "225"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "exchange_error",
+          "response": "Use place-value counters and model regrouping across zero carefully."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          100,
+          999
+        ],
+        "formats": [
+          "column",
+          "partition"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-005",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Estimate and inverse",
+      "learning_objective": "Estimate answers and use inverse operations to check calculations.",
+      "prerequisites": [
+        "Y3-AS-003",
+        "Y3-AS-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Is 398 + 203 closer to 500, 600 or 700?",
+          "answer": "600"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "estimate",
+          "inverse_check"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-AS-006",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Addition and Subtraction",
+      "topic": "Problem solving",
+      "learning_objective": "Solve multi-step addition and subtraction problems with missing numbers and context.",
+      "prerequisites": [
+        "Y3-AS-003",
+        "Y3-AS-004"
+      ],
+      "difficulty": 5,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "A library has 365 books and buys 148 more, then gives away 76. How many now?",
+          "answer": "437"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "steps": [
+          1,
+          2
+        ],
+        "contexts": [
+          "money",
+          "distance",
+          "books",
+          "scores"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-MD-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Tables",
+      "learning_objective": "Recall multiplication and division facts for 3, 4 and 8, while maintaining 2, 5 and 10.",
+      "prerequisites": [
+        "Y2-MD-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "8 × 7 = ?",
+          "answer": "56"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "tables": [
+          2,
+          3,
+          4,
+          5,
+          8,
+          10
+        ],
+        "multipliers": [
+          1,
+          12
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-MD-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Fact families and multiples",
+      "learning_objective": "Use multiplication/division fact families and recognise multiples.",
+      "prerequisites": [
+        "Y3-MD-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "If 6 × 8 = 48, what is 48 ÷ 8?",
+          "answer": "6"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "fact_family",
+          "is_multiple"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-MD-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Scaling by place value",
+      "learning_objective": "Apply known multiplication/division facts to multiples of 10.",
+      "prerequisites": [
+        "Y3-MD-001",
+        "Y3-NPV-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "If 3 × 4 = 12, what is 30 × 4?",
+          "answer": "120"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "scale": [
+          10
+        ],
+        "formats": [
+          "multiply",
+          "divide"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-MD-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Two-digit by one-digit",
+      "learning_objective": "Calculate two-digit by one-digit multiplication using mental and written methods.",
+      "prerequisites": [
+        "Y3-MD-003"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "23 × 4 = ?",
+          "answer": "92"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "two_digit": [
+          10,
+          99
+        ],
+        "one_digit": [
+          2,
+          8
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-MD-005",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Multiplication and Division",
+      "topic": "Division with remainders foundation",
+      "learning_objective": "Solve grouping/sharing problems, interpreting any remainder in context.",
+      "prerequisites": [
+        "Y3-MD-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "26 apples are packed in bags of 4. How many full bags and how many left?",
+          "answer": "6 full bags, 2 left"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "divisors": [
+          2,
+          3,
+          4,
+          5,
+          8,
+          10
+        ],
+        "formats": [
+          "grouping",
+          "sharing"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-F-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Unit fractions",
+      "learning_objective": "Understand unit fractions as equal parts of a whole and as numbers.",
+      "prerequisites": [
+        "Y2-F-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Which is larger: 1/3 or 1/5?",
+          "answer": "1/3"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "larger_denominator_means_larger_fraction",
+          "response": "Use equal wholes partitioned into different numbers of parts."
+        }
+      ],
+      "question_generation": {
+        "denominators": [
+          2,
+          3,
+          4,
+          5,
+          8,
+          10
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-F-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Fractions of quantities",
+      "learning_objective": "Find unit and non-unit fractions of sets and quantities.",
+      "prerequisites": [
+        "Y3-F-001",
+        "Y3-MD-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "What is 3/4 of 20?",
+          "answer": "15"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "denominators": [
+          2,
+          3,
+          4,
+          5,
+          8,
+          10
+        ],
+        "formats": [
+          "quantity",
+          "set"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-F-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Equivalent fractions",
+      "learning_objective": "Recognise and show simple equivalent fractions using diagrams.",
+      "prerequisites": [
+        "Y3-F-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Complete: 1/2 = __/4",
+          "answer": "2/4"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "fraction_wall",
+          "missing_numerator",
+          "diagram"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-F-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Compare/order fractions",
+      "learning_objective": "Compare and order fractions with the same denominator and simple related fractions.",
+      "prerequisites": [
+        "Y3-F-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Order: 2/5, 4/5, 1/5.",
+          "answer": "1/5, 2/5, 4/5"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "same_denominator",
+          "unit_fraction"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-F-005",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Fractions",
+      "topic": "Add/subtract fractions",
+      "learning_objective": "Add and subtract fractions with the same denominator within one whole.",
+      "prerequisites": [
+        "Y3-F-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "2/7 + 3/7 = ?",
+          "answer": "5/7"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "denominators": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-M-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Length",
+      "learning_objective": "Measure, compare, add and subtract lengths using m, cm and mm; use simple equivalents.",
+      "prerequisites": [
+        "Y2-M-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "How many centimetres are in 2 metres?",
+          "answer": "200 cm"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "units": [
+          "mm",
+          "cm",
+          "m"
+        ],
+        "formats": [
+          "convert_simple",
+          "compare",
+          "problem"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-M-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Mass and capacity",
+      "learning_objective": "Measure, compare, add and subtract mass and capacity using kg/g and l/ml.",
+      "prerequisites": [
+        "Y2-M-002"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "1 kg = how many grams?",
+          "answer": "1000 g"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "units": [
+          "g",
+          "kg",
+          "ml",
+          "l"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-M-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Money",
+      "learning_objective": "Add/subtract money and give change using £ and p in practical contexts.",
+      "prerequisites": [
+        "Y2-M-003",
+        "Y3-AS-003"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "A toy costs £3.75. You pay £5. What change?",
+          "answer": "£1.25"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "currency": "GBP",
+        "max_pounds": 20,
+        "formats": [
+          "total",
+          "difference",
+          "change"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-M-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Time",
+      "learning_objective": "Tell/read time from analogue and 12/24-hour digital clocks; compare durations; know key time facts.",
+      "prerequisites": [
+        "Y2-M-004"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "What is 45 minutes after 14:20?",
+          "answer": "15:05"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "analogue",
+          "12_hour",
+          "24_hour",
+          "duration"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-M-005",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Measurement",
+      "topic": "Perimeter",
+      "learning_objective": "Measure and calculate the perimeter of simple 2D shapes.",
+      "prerequisites": [
+        "Y3-M-001"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "A rectangle is 5 cm by 3 cm. What is its perimeter?",
+          "answer": "16 cm"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "shapes": [
+          "rectangle",
+          "square",
+          "simple_polygon"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-G-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Shape properties",
+      "learning_objective": "Draw and recognise 2D/3D shapes and describe their properties.",
+      "prerequisites": [
+        "Y2-G-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "How many faces does a cube have?",
+          "answer": "6"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "name",
+          "properties",
+          "sort"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-G-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Angles as turns",
+      "learning_objective": "Recognise angles as a measure of a turn and identify right angles.",
+      "prerequisites": [
+        "Y2-G-003"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Is a quarter turn a right angle?",
+          "answer": "Yes"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "turn",
+          "corner",
+          "identify_right_angle"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-G-003",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Compare angles",
+      "learning_objective": "Identify whether angles are greater than or less than a right angle.",
+      "prerequisites": [
+        "Y3-G-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "An angle is wider than a square corner. Is it greater or less than a right angle?",
+          "answer": "greater"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "visual_description",
+          "classification"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-G-004",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Geometry",
+      "topic": "Parallel and perpendicular",
+      "learning_objective": "Identify horizontal, vertical, parallel and perpendicular lines.",
+      "prerequisites": [
+        "Y3-G-002"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Two lines meet to make a right angle. They are...",
+          "answer": "perpendicular"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "identify",
+          "sort",
+          "real_world"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-S-001",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Statistics",
+      "topic": "Charts and tables",
+      "learning_objective": "Interpret and present data using bar charts, pictograms and tables.",
+      "prerequisites": [
+        "Y2-S-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "A bar chart uses 5 units per square. A bar is 6 squares high. What value?",
+          "answer": "30"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "scales": [
+          1,
+          2,
+          5,
+          10
+        ],
+        "formats": [
+          "bar_chart",
+          "pictogram",
+          "table"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "Y3-S-002",
+      "stage": "Year 3",
+      "subject": "Mathematics",
+      "domain": "Statistics",
+      "topic": "Solve data problems",
+      "learning_objective": "Use scaled charts/tables to solve one- and two-step comparison, total and difference questions.",
+      "prerequisites": [
+        "Y3-S-001",
+        "Y3-AS-006"
+      ],
+      "difficulty": 4,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [],
+      "examples": [
+        {
+          "prompt": "Cats: 25, dogs: 40. How many more dogs than cats?",
+          "answer": "15"
+        }
+      ],
+      "misconceptions": [],
+      "question_generation": {
+        "formats": [
+          "difference",
+          "sum",
+          "two_step"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    }
+  ]
+}

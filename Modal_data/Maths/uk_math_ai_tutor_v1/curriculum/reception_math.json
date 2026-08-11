@@ -1,0 +1,656 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "subject": "Mathematics",
+  "skills": [
+    {
+      "id": "R-N-001",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Stable counting",
+      "learning_objective": "Count objects accurately to 5 and then beyond, matching one number word to each object.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "count",
+        "how many"
+      ],
+      "examples": [
+        {
+          "prompt": "Put 4 toy cars in a line. Touch each car and count them.",
+          "answer": "4"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "skips_or_double_counts",
+          "response": "Slow down; move each object as it is counted."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          5
+        ],
+        "formats": [
+          "objects",
+          "sounds",
+          "movements"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-002",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Cardinality",
+      "learning_objective": "Understand that the last number said tells how many objects are in the set.",
+      "prerequisites": [
+        "R-N-001"
+      ],
+      "difficulty": 1,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "altogether",
+        "how many"
+      ],
+      "examples": [
+        {
+          "prompt": "Count 5 buttons. Without counting again, how many are there?",
+          "answer": "5"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "recounts_when_asked_how_many",
+          "response": "Emphasise: the last number tells us how many."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          5
+        ],
+        "formats": [
+          "objects",
+          "pictures"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-003",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Subitising",
+      "learning_objective": "Recognise small quantities without counting, especially to 5.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "notice",
+        "pattern"
+      ],
+      "examples": [
+        {
+          "prompt": "Show a dot pattern of 4 for two seconds. How many dots?",
+          "answer": "4"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "always_counts_one_by_one",
+          "response": "Use familiar dice and five-frame patterns."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          5
+        ],
+        "formats": [
+          "dots",
+          "fingers",
+          "five-frame"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-004",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Numeral recognition",
+      "learning_objective": "Recognise and match numerals to quantities to 10.",
+      "prerequisites": [
+        "R-N-001",
+        "R-N-002"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "number",
+        "numeral"
+      ],
+      "examples": [
+        {
+          "prompt": "Which numeral matches a group of 7 counters?",
+          "answer": "7"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "reverses_or_confuses_numerals",
+          "response": "Match numeral, spoken number and concrete set together."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          0,
+          10
+        ],
+        "formats": [
+          "match",
+          "multiple_choice"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-005",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Comparison",
+      "learning_objective": "Compare two quantities using more, fewer and equal.",
+      "prerequisites": [
+        "R-N-002"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "more",
+        "fewer",
+        "equal",
+        "same"
+      ],
+      "examples": [
+        {
+          "prompt": "One plate has 4 grapes and one has 6. Which has more?",
+          "answer": "6-grape plate"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "judges_by_object_size",
+          "response": "Use equal-sized counters and one-to-one matching."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          10
+        ],
+        "formats": [
+          "objects",
+          "story"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-006",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Composition to 5",
+      "learning_objective": "Understand that numbers to 5 can be made from smaller parts.",
+      "prerequisites": [
+        "R-N-003"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "part",
+        "whole"
+      ],
+      "examples": [
+        {
+          "prompt": "5 bears are split into 2 red and 3 blue. What parts make 5?",
+          "answer": "2 and 3"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "only_recognises_one_split",
+          "response": "Explore all partitions using counters and fingers."
+        }
+      ],
+      "question_generation": {
+        "target_range": [
+          2,
+          5
+        ],
+        "formats": [
+          "part_part_whole",
+          "hide_and_reveal"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-007",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "Composition to 10",
+      "learning_objective": "Explore different ways to compose numbers to 10.",
+      "prerequisites": [
+        "R-N-006"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "make",
+        "altogether",
+        "part"
+      ],
+      "examples": [
+        {
+          "prompt": "You need 8 cubes. You have 5 red cubes. How many blue cubes could complete 8?",
+          "answer": "3"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "counts_all_from_one",
+          "response": "Encourage counting on from the known part."
+        }
+      ],
+      "question_generation": {
+        "target_range": [
+          6,
+          10
+        ],
+        "formats": [
+          "ten-frame",
+          "story",
+          "missing_part"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-N-008",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Number",
+      "topic": "One more / one less",
+      "learning_objective": "Find one more and one less than numbers within 10.",
+      "prerequisites": [
+        "R-N-004"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "one more",
+        "one less"
+      ],
+      "examples": [
+        {
+          "prompt": "You have 6 apples and get one more. How many now?",
+          "answer": "7"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "confuses_more_and_less",
+          "response": "Physically add or remove one object."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          10
+        ],
+        "formats": [
+          "objects",
+          "number_track",
+          "story"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-P-001",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Numerical Patterns",
+      "topic": "Counting sequence",
+      "learning_objective": "Verbally count beyond 20 and notice the repeating structure of the counting system.",
+      "prerequisites": [
+        "R-N-004"
+      ],
+      "difficulty": 2,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "before",
+        "after"
+      ],
+      "examples": [
+        {
+          "prompt": "Continue: 16, 17, 18, ...",
+          "answer": "19, 20, 21"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "teen_number_sequence_error",
+          "response": "Use a number track and rhythmic counting."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          0,
+          30
+        ],
+        "formats": [
+          "continue_sequence",
+          "missing_number"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-P-002",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Numerical Patterns",
+      "topic": "Number order",
+      "learning_objective": "Compare numbers and locate them in order.",
+      "prerequisites": [
+        "R-N-005",
+        "R-P-001"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "before",
+        "after",
+        "between"
+      ],
+      "examples": [
+        {
+          "prompt": "Which comes first when counting: 8 or 5?",
+          "answer": "5"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "uses_visual_size_not_number_value",
+          "response": "Place both numbers on a number track."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          0,
+          10
+        ],
+        "formats": [
+          "order",
+          "number_track"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-P-003",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Numerical Patterns",
+      "topic": "Pairs and doubles",
+      "learning_objective": "Explore doubles and equal groups within 10.",
+      "prerequisites": [
+        "R-N-006"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "double",
+        "same"
+      ],
+      "examples": [
+        {
+          "prompt": "Show 3 fingers on each hand. How many altogether?",
+          "answer": "6"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "does_not_link_equal_parts_to_double",
+          "response": "Say '3 and 3 is double 3' while showing symmetry."
+        }
+      ],
+      "question_generation": {
+        "facts": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            5,
+            10
+          ]
+        ],
+        "formats": [
+          "fingers",
+          "dots",
+          "objects"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-P-004",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Numerical Patterns",
+      "topic": "Odd/even foundations",
+      "learning_objective": "Notice when quantities can or cannot be paired equally.",
+      "prerequisites": [
+        "R-P-003"
+      ],
+      "difficulty": 3,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "pair",
+        "left over"
+      ],
+      "examples": [
+        {
+          "prompt": "Can 6 socks be put into pairs with none left over?",
+          "answer": "Yes"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "guesses_even_or_odd_word",
+          "response": "Pair concrete objects; focus on structure before terminology."
+        }
+      ],
+      "question_generation": {
+        "range": [
+          1,
+          10
+        ],
+        "formats": [
+          "pairing",
+          "objects"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    },
+    {
+      "id": "R-P-005",
+      "stage": "Reception",
+      "subject": "Mathematics",
+      "domain": "Numerical Patterns",
+      "topic": "Patterns",
+      "learning_objective": "Copy, continue and create simple repeating patterns.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "teaching_sequence": [
+        "concrete",
+        "pictorial",
+        "abstract"
+      ],
+      "vocabulary": [
+        "repeat",
+        "pattern"
+      ],
+      "examples": [
+        {
+          "prompt": "Continue: red, blue, red, blue, ...",
+          "answer": "red"
+        }
+      ],
+      "misconceptions": [
+        {
+          "pattern": "copies_last_item_only",
+          "response": "Say the repeating unit aloud together."
+        }
+      ],
+      "question_generation": {
+        "formats": [
+          "AB",
+          "AAB",
+          "ABB"
+        ],
+        "materials": [
+          "colour",
+          "shape",
+          "movement"
+        ]
+      },
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "require_reasoning_check": true
+      }
+    }
+  ]
+}

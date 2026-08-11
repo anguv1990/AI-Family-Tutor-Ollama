@@ -1,0 +1,894 @@
+{
+  "schema_version": "1.0",
+  "nodes": [
+    {
+      "id": "R-N-001",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Stable counting"
+    },
+    {
+      "id": "R-N-002",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Cardinality"
+    },
+    {
+      "id": "R-N-003",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Subitising"
+    },
+    {
+      "id": "R-N-004",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Numeral recognition"
+    },
+    {
+      "id": "R-N-005",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Comparison"
+    },
+    {
+      "id": "R-N-006",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Composition to 5"
+    },
+    {
+      "id": "R-N-007",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "Composition to 10"
+    },
+    {
+      "id": "R-N-008",
+      "stage": "Reception",
+      "domain": "Number",
+      "topic": "One more / one less"
+    },
+    {
+      "id": "R-P-001",
+      "stage": "Reception",
+      "domain": "Numerical Patterns",
+      "topic": "Counting sequence"
+    },
+    {
+      "id": "R-P-002",
+      "stage": "Reception",
+      "domain": "Numerical Patterns",
+      "topic": "Number order"
+    },
+    {
+      "id": "R-P-003",
+      "stage": "Reception",
+      "domain": "Numerical Patterns",
+      "topic": "Pairs and doubles"
+    },
+    {
+      "id": "R-P-004",
+      "stage": "Reception",
+      "domain": "Numerical Patterns",
+      "topic": "Odd/even foundations"
+    },
+    {
+      "id": "R-P-005",
+      "stage": "Reception",
+      "domain": "Numerical Patterns",
+      "topic": "Patterns"
+    },
+    {
+      "id": "Y2-NPV-001",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Counting"
+    },
+    {
+      "id": "Y2-NPV-002",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Tens and ones"
+    },
+    {
+      "id": "Y2-NPV-003",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Partitioning"
+    },
+    {
+      "id": "Y2-NPV-004",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Compare and order"
+    },
+    {
+      "id": "Y2-NPV-005",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Number line"
+    },
+    {
+      "id": "Y2-NPV-006",
+      "stage": "Year 2",
+      "domain": "Number and Place Value",
+      "topic": "Read and write numbers"
+    },
+    {
+      "id": "Y2-AS-001",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Facts to 20"
+    },
+    {
+      "id": "Y2-AS-002",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Related facts"
+    },
+    {
+      "id": "Y2-AS-003",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental addition"
+    },
+    {
+      "id": "Y2-AS-004",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental subtraction"
+    },
+    {
+      "id": "Y2-AS-005",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Two two-digit numbers"
+    },
+    {
+      "id": "Y2-AS-006",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Inverse and missing numbers"
+    },
+    {
+      "id": "Y2-AS-007",
+      "stage": "Year 2",
+      "domain": "Addition and Subtraction",
+      "topic": "Word problems"
+    },
+    {
+      "id": "Y2-MD-001",
+      "stage": "Year 2",
+      "domain": "Multiplication and Division",
+      "topic": "Equal groups"
+    },
+    {
+      "id": "Y2-MD-002",
+      "stage": "Year 2",
+      "domain": "Multiplication and Division",
+      "topic": "2, 5 and 10 tables"
+    },
+    {
+      "id": "Y2-MD-003",
+      "stage": "Year 2",
+      "domain": "Multiplication and Division",
+      "topic": "Division as grouping/sharing"
+    },
+    {
+      "id": "Y2-MD-004",
+      "stage": "Year 2",
+      "domain": "Multiplication and Division",
+      "topic": "Commutativity and inverse"
+    },
+    {
+      "id": "Y2-F-001",
+      "stage": "Year 2",
+      "domain": "Fractions",
+      "topic": "Unit fractions"
+    },
+    {
+      "id": "Y2-F-002",
+      "stage": "Year 2",
+      "domain": "Fractions",
+      "topic": "Non-unit fractions"
+    },
+    {
+      "id": "Y2-M-001",
+      "stage": "Year 2",
+      "domain": "Measurement",
+      "topic": "Length and height"
+    },
+    {
+      "id": "Y2-M-002",
+      "stage": "Year 2",
+      "domain": "Measurement",
+      "topic": "Mass, capacity and temperature"
+    },
+    {
+      "id": "Y2-M-003",
+      "stage": "Year 2",
+      "domain": "Measurement",
+      "topic": "Money"
+    },
+    {
+      "id": "Y2-M-004",
+      "stage": "Year 2",
+      "domain": "Measurement",
+      "topic": "Time"
+    },
+    {
+      "id": "Y2-G-001",
+      "stage": "Year 2",
+      "domain": "Geometry",
+      "topic": "2D and 3D shapes"
+    },
+    {
+      "id": "Y2-G-002",
+      "stage": "Year 2",
+      "domain": "Geometry",
+      "topic": "Symmetry"
+    },
+    {
+      "id": "Y2-G-003",
+      "stage": "Year 2",
+      "domain": "Geometry",
+      "topic": "Position and direction"
+    },
+    {
+      "id": "Y2-S-001",
+      "stage": "Year 2",
+      "domain": "Statistics",
+      "topic": "Tables and charts"
+    },
+    {
+      "id": "Y2-S-002",
+      "stage": "Year 2",
+      "domain": "Statistics",
+      "topic": "Ask and answer questions"
+    },
+    {
+      "id": "Y3-NPV-001",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Counting in multiples"
+    },
+    {
+      "id": "Y3-NPV-002",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Hundreds tens ones"
+    },
+    {
+      "id": "Y3-NPV-003",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Compose/decompose"
+    },
+    {
+      "id": "Y3-NPV-004",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "10/100 more or less"
+    },
+    {
+      "id": "Y3-NPV-005",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Compare and order to 1000"
+    },
+    {
+      "id": "Y3-NPV-006",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Number line and estimation"
+    },
+    {
+      "id": "Y3-NPV-007",
+      "stage": "Year 3",
+      "domain": "Number and Place Value",
+      "topic": "Read/write to 1000"
+    },
+    {
+      "id": "Y3-AS-001",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Fluent facts"
+    },
+    {
+      "id": "Y3-AS-002",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Mental calculations"
+    },
+    {
+      "id": "Y3-AS-003",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Column addition"
+    },
+    {
+      "id": "Y3-AS-004",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Column subtraction"
+    },
+    {
+      "id": "Y3-AS-005",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Estimate and inverse"
+    },
+    {
+      "id": "Y3-AS-006",
+      "stage": "Year 3",
+      "domain": "Addition and Subtraction",
+      "topic": "Problem solving"
+    },
+    {
+      "id": "Y3-MD-001",
+      "stage": "Year 3",
+      "domain": "Multiplication and Division",
+      "topic": "Tables"
+    },
+    {
+      "id": "Y3-MD-002",
+      "stage": "Year 3",
+      "domain": "Multiplication and Division",
+      "topic": "Fact families and multiples"
+    },
+    {
+      "id": "Y3-MD-003",
+      "stage": "Year 3",
+      "domain": "Multiplication and Division",
+      "topic": "Scaling by place value"
+    },
+    {
+      "id": "Y3-MD-004",
+      "stage": "Year 3",
+      "domain": "Multiplication and Division",
+      "topic": "Two-digit by one-digit"
+    },
+    {
+      "id": "Y3-MD-005",
+      "stage": "Year 3",
+      "domain": "Multiplication and Division",
+      "topic": "Division with remainders foundation"
+    },
+    {
+      "id": "Y3-F-001",
+      "stage": "Year 3",
+      "domain": "Fractions",
+      "topic": "Unit fractions"
+    },
+    {
+      "id": "Y3-F-002",
+      "stage": "Year 3",
+      "domain": "Fractions",
+      "topic": "Fractions of quantities"
+    },
+    {
+      "id": "Y3-F-003",
+      "stage": "Year 3",
+      "domain": "Fractions",
+      "topic": "Equivalent fractions"
+    },
+    {
+      "id": "Y3-F-004",
+      "stage": "Year 3",
+      "domain": "Fractions",
+      "topic": "Compare/order fractions"
+    },
+    {
+      "id": "Y3-F-005",
+      "stage": "Year 3",
+      "domain": "Fractions",
+      "topic": "Add/subtract fractions"
+    },
+    {
+      "id": "Y3-M-001",
+      "stage": "Year 3",
+      "domain": "Measurement",
+      "topic": "Length"
+    },
+    {
+      "id": "Y3-M-002",
+      "stage": "Year 3",
+      "domain": "Measurement",
+      "topic": "Mass and capacity"
+    },
+    {
+      "id": "Y3-M-003",
+      "stage": "Year 3",
+      "domain": "Measurement",
+      "topic": "Money"
+    },
+    {
+      "id": "Y3-M-004",
+      "stage": "Year 3",
+      "domain": "Measurement",
+      "topic": "Time"
+    },
+    {
+      "id": "Y3-M-005",
+      "stage": "Year 3",
+      "domain": "Measurement",
+      "topic": "Perimeter"
+    },
+    {
+      "id": "Y3-G-001",
+      "stage": "Year 3",
+      "domain": "Geometry",
+      "topic": "Shape properties"
+    },
+    {
+      "id": "Y3-G-002",
+      "stage": "Year 3",
+      "domain": "Geometry",
+      "topic": "Angles as turns"
+    },
+    {
+      "id": "Y3-G-003",
+      "stage": "Year 3",
+      "domain": "Geometry",
+      "topic": "Compare angles"
+    },
+    {
+      "id": "Y3-G-004",
+      "stage": "Year 3",
+      "domain": "Geometry",
+      "topic": "Parallel and perpendicular"
+    },
+    {
+      "id": "Y3-S-001",
+      "stage": "Year 3",
+      "domain": "Statistics",
+      "topic": "Charts and tables"
+    },
+    {
+      "id": "Y3-S-002",
+      "stage": "Year 3",
+      "domain": "Statistics",
+      "topic": "Solve data problems"
+    }
+  ],
+  "edges": [
+    {
+      "from": "R-N-001",
+      "to": "R-N-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-001",
+      "to": "R-N-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-002",
+      "to": "R-N-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-002",
+      "to": "R-N-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-003",
+      "to": "R-N-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-006",
+      "to": "R-N-007",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-004",
+      "to": "R-N-008",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-004",
+      "to": "R-P-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-005",
+      "to": "R-P-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-P-001",
+      "to": "R-P-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-006",
+      "to": "R-P-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-P-003",
+      "to": "R-P-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-P-001",
+      "to": "Y2-NPV-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-007",
+      "to": "Y2-NPV-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-NPV-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-NPV-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-004",
+      "to": "Y2-NPV-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-NPV-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-N-007",
+      "to": "Y2-AS-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-001",
+      "to": "Y2-AS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-AS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-001",
+      "to": "Y2-AS-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-AS-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-001",
+      "to": "Y2-AS-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y2-AS-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-003",
+      "to": "Y2-AS-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-004",
+      "to": "Y2-AS-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-001",
+      "to": "Y2-AS-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-003",
+      "to": "Y2-AS-007",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-004",
+      "to": "Y2-AS-007",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-001",
+      "to": "Y2-MD-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-001",
+      "to": "Y2-MD-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-001",
+      "to": "Y2-MD-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-002",
+      "to": "Y2-MD-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-003",
+      "to": "Y2-MD-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-003",
+      "to": "Y2-F-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-F-001",
+      "to": "Y2-F-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-005",
+      "to": "Y2-M-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-P-001",
+      "to": "Y2-M-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-G-001",
+      "to": "Y2-G-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-001",
+      "to": "Y2-S-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-S-001",
+      "to": "Y2-S-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-004",
+      "to": "Y2-S-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-001",
+      "to": "Y3-NPV-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y3-NPV-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-002",
+      "to": "Y3-NPV-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-002",
+      "to": "Y3-NPV-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-002",
+      "to": "Y3-NPV-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-005",
+      "to": "Y3-NPV-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-002",
+      "to": "Y3-NPV-007",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-AS-001",
+      "to": "Y3-AS-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-004",
+      "to": "Y3-AS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-001",
+      "to": "Y3-AS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-002",
+      "to": "Y3-AS-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-002",
+      "to": "Y3-AS-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-003",
+      "to": "Y3-AS-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-004",
+      "to": "Y3-AS-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-003",
+      "to": "Y3-AS-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-004",
+      "to": "Y3-AS-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-MD-002",
+      "to": "Y3-MD-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-MD-001",
+      "to": "Y3-MD-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-MD-001",
+      "to": "Y3-MD-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-NPV-002",
+      "to": "Y3-MD-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-MD-003",
+      "to": "Y3-MD-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-MD-002",
+      "to": "Y3-MD-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-F-001",
+      "to": "Y3-F-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-F-001",
+      "to": "Y3-F-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-MD-002",
+      "to": "Y3-F-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-F-001",
+      "to": "Y3-F-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-F-001",
+      "to": "Y3-F-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-F-004",
+      "to": "Y3-F-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-M-001",
+      "to": "Y3-M-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-M-002",
+      "to": "Y3-M-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-M-003",
+      "to": "Y3-M-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-003",
+      "to": "Y3-M-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-M-004",
+      "to": "Y3-M-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-M-001",
+      "to": "Y3-M-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-G-001",
+      "to": "Y3-G-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-G-003",
+      "to": "Y3-G-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-G-002",
+      "to": "Y3-G-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-G-002",
+      "to": "Y3-G-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-S-001",
+      "to": "Y3-S-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-S-001",
+      "to": "Y3-S-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-AS-006",
+      "to": "Y3-S-002",
+      "type": "prerequisite"
+    }
+  ],
+  "cross_stage_examples": [
+    {
+      "from": "R-N-007",
+      "to": "Y2-AS-001",
+      "reason": "composition of number supports number bonds"
+    },
+    {
+      "from": "Y2-NPV-002",
+      "to": "Y3-NPV-002",
+      "reason": "two-digit place value extends to hundreds"
+    },
+    {
+      "from": "Y2-MD-002",
+      "to": "Y3-MD-001",
+      "reason": "known 2,5,10 facts support 3,4,8 tables"
+    }
+  ]
+}

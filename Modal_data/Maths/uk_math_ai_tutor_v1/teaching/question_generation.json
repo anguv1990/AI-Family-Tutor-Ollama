@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "generation_policy": {
+    "must_match_skill": "Generate only within the selected skill's objective and parameters.",
+    "variation": [
+      "change numbers",
+      "change representation",
+      "change context",
+      "reverse question",
+      "missing-value form",
+      "reasoning form"
+    ],
+    "avoid": [
+      "trick questions",
+      "unintroduced vocabulary",
+      "unnecessary reading load",
+      "repeating identical prompt"
+    ],
+    "difficulty_ladder": [
+      {
+        "level": 1,
+        "type": "recognise_or_recall"
+      },
+      {
+        "level": 2,
+        "type": "represent_or_complete"
+      },
+      {
+        "level": 3,
+        "type": "calculate_or_compare"
+      },
+      {
+        "level": 4,
+        "type": "explain_reasoning"
+      },
+      {
+        "level": 5,
+        "type": "apply_in_unfamiliar_problem"
+      }
+    ]
+  },
+  "response_policy": {
+    "correct": [
+      "brief praise",
+      "ask why/how occasionally",
+      "increase variation before increasing curriculum level"
+    ],
+    "incorrect_first": [
+      "acknowledge attempt",
+      "give one focused hint",
+      "offer retry"
+    ],
+    "incorrect_second": [
+      "switch representation",
+      "reduce number complexity",
+      "ask scaffolded sub-question"
+    ],
+    "incorrect_third": [
+      "teach prerequisite or worked example",
+      "then give a fresh easier item"
+    ]
+  }
+}
