@@ -170,3 +170,30 @@ describe('Ollama provider', () => {
     assert.deepEqual(await down.healthCheck(), { available: false, detail: 'unavailable' });
   });
 });
+
+describe('model residency', () => {
+  it('asks Ollama to keep the model loaded between hints', async () => {
+    const { fetchImpl, calls } = stubFetch(() =>
+      jsonResponse({ message: { content: '{"hint":"Count on."}' } }),
+    );
+    const provider = new OllamaProvider({ fetchImpl, keepAlive: '45m' });
+
+    await provider.generateStructured(REQUEST);
+
+    const body = JSON.parse(String(calls[0].init.body)) as { keep_alive: string };
+    // A cold load costs ~3.8s of a 5s budget on the target hardware, and a
+    // child asking for help after a pause is exactly when eviction would bite.
+    assert.equal(body.keep_alive, '45m');
+  });
+
+  it('keeps the model resident by default', async () => {
+    const { fetchImpl, calls } = stubFetch(() =>
+      jsonResponse({ message: { content: '{"hint":"Count on."}' } }),
+    );
+
+    await new OllamaProvider({ fetchImpl }).generateStructured(REQUEST);
+
+    const body = JSON.parse(String(calls[0].init.body)) as { keep_alive: string };
+    assert.ok(body.keep_alive, 'a default that unloads the model would breach the hint budget');
+  });
+});

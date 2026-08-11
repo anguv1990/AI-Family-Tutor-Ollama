@@ -22,6 +22,16 @@ export type OllamaProviderOptions = {
   /** Retries *after* the first attempt. */
   retries?: number;
   backoffMs?: number;
+  /**
+   * How long Ollama keeps the model resident after a call, in its own duration
+   * format ('30m', '1h', 0 to unload immediately).
+   *
+   * Measured on an M4 Pro with qwen2.5:7b: a warm hint takes ~580ms, a cold one
+   * ~3.8s against a 5s budget. A child asking for a hint after a quiet spell is
+   * exactly when the model would have been evicted, so keeping it resident is
+   * what keeps the budget honest rather than merely satisfied in a benchmark.
+   */
+  keepAlive?: string | number;
   /** Injectable for tests; defaults to global fetch and real timers. */
   fetchImpl?: typeof fetch;
   sleep?: (ms: number) => Promise<void>;
@@ -45,6 +55,7 @@ export class OllamaProvider implements AiProvider {
   private readonly timeoutMs: number;
   private readonly retries: number;
   private readonly backoffMs: number;
+  private readonly keepAlive: string | number;
   private readonly fetchImpl: typeof fetch;
   private readonly sleep: (ms: number) => Promise<void>;
 
@@ -54,6 +65,7 @@ export class OllamaProvider implements AiProvider {
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.retries = options.retries ?? 1;
     this.backoffMs = options.backoffMs ?? 200;
+    this.keepAlive = options.keepAlive ?? process.env.OLLAMA_KEEP_ALIVE ?? '30m';
     this.fetchImpl = options.fetchImpl ?? ((...args) => fetch(...args));
     this.sleep = options.sleep ?? ((ms) => new Promise((resolve) => setTimeout(resolve, ms)));
   }
@@ -64,6 +76,7 @@ export class OllamaProvider implements AiProvider {
       stream: false,
       // Ollama's JSON mode still needs the shape spelled out in the prompt.
       format: 'json',
+      keep_alive: this.keepAlive,
       messages: [
         ...request.messages,
         {
