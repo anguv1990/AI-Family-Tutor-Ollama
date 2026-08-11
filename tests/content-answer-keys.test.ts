@@ -16,6 +16,20 @@ import { receptionMathsBank } from '../server/content-bank';
  * otherwise this suite quietly stops covering the bank as it grows.
  */
 
+const FRACTION_WORDS: Record<string, [number, number]> = {
+  'one half': [1, 2],
+  'one third': [1, 3],
+  'one quarter': [1, 4],
+  'one fifth': [1, 5],
+  'one eighth': [1, 8],
+  'one tenth': [1, 10],
+  'two thirds': [2, 3],
+  'three quarters': [3, 4],
+  'two fifths': [2, 5],
+  'three tenths': [3, 10],
+  'five eighths': [5, 8],
+};
+
 const WORD_NUMBERS: Record<string, number> = {
   zero: 0,
   one: 1,
@@ -61,6 +75,66 @@ function deriveAnswer(prompt: string): Derivation | undefined {
     return { answer: WORD_NUMBERS[named[1]], shape: 'named-number' };
   }
 
+  const times = prompt.match(/^What is (\d+) times (\d+)\?$/);
+  if (times) {
+    return { answer: Number(times[1]) * Number(times[2]), shape: 'times-table' };
+  }
+
+  const wordSum = prompt.match(/^What is (\d+) (add|subtract) (\d+)\?$/);
+  if (wordSum) {
+    const left = Number(wordSum[1]);
+    const right = Number(wordSum[3]);
+    const answer = wordSum[2] === 'add' ? left + right : left - right;
+    // A Year 3 subtraction that goes below zero is a content error, not a
+    // stretch: the programme of study has not introduced negative numbers.
+    assert.ok(answer >= 0, `"${prompt}" has a negative answer`);
+    return { answer, shape: `word-${wordSum[2]}` };
+  }
+
+  const step = prompt.match(/^What is (10|100) (more|less) than (\d+)\?$/);
+  if (step) {
+    const delta = Number(step[1]) * (step[2] === 'more' ? 1 : -1);
+    return { answer: Number(step[3]) + delta, shape: 'place-value-step' };
+  }
+
+  const digit = prompt.match(/^In the number (\d+), which digit is in the (ones|tens|hundreds) column\?$/);
+  if (digit) {
+    const value = Number(digit[1]);
+    const place = digit[2];
+    const answer =
+      place === 'ones'
+        ? value % 10
+        : place === 'tens'
+          ? Math.floor(value / 10) % 10
+          : Math.floor(value / 100) % 10;
+    return { answer, shape: 'place-value-digit' };
+  }
+
+  const ordering = prompt.match(/^Which number is (larger|smaller), (\d+) or (\d+)\?$/);
+  if (ordering) {
+    const left = Number(ordering[2]);
+    const right = Number(ordering[3]);
+    assert.notEqual(left, right, `"${prompt}" compares a number with itself`);
+    return {
+      answer: ordering[1] === 'larger' ? Math.max(left, right) : Math.min(left, right),
+      shape: 'ordering',
+    };
+  }
+
+  const fraction = prompt.match(/^What is ([a-z ]+) of (\d+)\?$/);
+  if (fraction && fraction[1] in FRACTION_WORDS) {
+    const [numerator, denominator] = FRACTION_WORDS[fraction[1]];
+    const amount = Number(fraction[2]);
+    // A fraction of an amount that is not whole would make the child type a
+    // remainder or a decimal, which Year 3 has not met yet.
+    assert.equal(
+      amount % denominator,
+      0,
+      `"${prompt}" does not divide into a whole number`,
+    );
+    return { answer: (amount / denominator) * numerator, shape: 'fraction-of-amount' };
+  }
+
   const comparison = prompt.match(/^Tap the (bigger|smaller) number\. (\d+) or (\d+)\.$/);
   if (comparison) {
     const left = Number(comparison[2]);
@@ -101,13 +175,21 @@ describe('reviewed answer keys', () => {
     assert.deepEqual(wrong, [], 'answer keys that disagree with their prompt');
   });
 
-  it('keeps every answer tappable on the 0-10 pad', () => {
-    for (const template of templates) {
-      const answer = Number(template.correctAnswer);
-      assert.ok(
-        Number.isInteger(answer) && answer >= 0 && answer <= 10,
-        `${template.id} answers ${template.correctAnswer}, which the child cannot tap`,
-      );
+  it('keeps every answer enterable by the way its skill is answered', () => {
+    for (const skill of receptionMathsBank) {
+      for (const template of skill.templates) {
+        const answer = Number(template.correctAnswer);
+        assert.ok(
+          Number.isInteger(answer) && answer >= 0,
+          `${template.id} answers ${template.correctAnswer}, which is not a whole number`,
+        );
+        if (skill.answerEntry === 'tap-0-10') {
+          assert.ok(
+            answer <= 10,
+            `${template.id} answers ${answer}, which is not on the 0-10 tap pad`,
+          );
+        }
+      }
     }
   });
 
@@ -127,7 +209,18 @@ describe('reviewed answer keys', () => {
     const shapes = new Set(
       templates.map((template) => deriveAnswer(template.prompt)?.shape).filter(Boolean),
     );
-    for (const expected of ['addition', 'count-on', 'count-back', 'named-number']) {
+    for (const expected of [
+      'addition',
+      'count-on',
+      'count-back',
+      'named-number',
+      'times-table',
+      'word-add',
+      'word-subtract',
+      'place-value-step',
+      'place-value-digit',
+      'fraction-of-amount',
+    ]) {
       assert.ok(shapes.has(expected), `no ${expected} questions are under review`);
     }
   });

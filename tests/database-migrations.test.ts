@@ -5,6 +5,15 @@ import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
 import Database from 'better-sqlite3';
 import { createDatabase } from '../server/database';
+import { migrations } from '../server/database';
+
+/**
+ * Derived from the migration set rather than written out, so adding a
+ * migration does not silently require editing an unrelated assertion.
+ */
+function expectedVersions(): Array<{ version: number }> {
+  return migrations.map((migration) => ({ version: migration.version }));
+}
 
 describe('database migrations', () => {
   const temporaryDirectories: string[] = [];
@@ -102,15 +111,7 @@ describe('database migrations', () => {
       { total: 0 },
       'pre-existing templates are attributed rather than left blank',
     );
-    assert.deepEqual(versions, [
-      { version: 1 },
-      { version: 2 },
-      { version: 3 },
-      { version: 4 },
-      { version: 5 },
-      { version: 6 },
-      { version: 7 },
-    ]);
+    assert.deepEqual(versions, expectedVersions());
   });
 
   it('widens the ended-reason constraint on a version 4 database with live sessions', () => {
@@ -244,15 +245,7 @@ describe('database migrations', () => {
     assert.deepEqual(upgraded.pragma('foreign_key_check'), []);
     assert.deepEqual(
       upgraded.prepare('SELECT version FROM schema_versions ORDER BY version').all(),
-      [
-        { version: 1 },
-        { version: 2 },
-        { version: 3 },
-        { version: 4 },
-        { version: 5 },
-        { version: 6 },
-        { version: 7 },
-      ],
+      expectedVersions(),
     );
     upgraded.close();
   });

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 import type Database from 'better-sqlite3';
 import { createDatabase } from '../server/database';
 import { TutoringService } from '../server/tutoring-service';
+import { receptionMathsBank } from '../server/content-bank';
 
 /**
  * Starting a session can legitimately answer "nothing to practise right now",
@@ -355,7 +356,7 @@ describe('Reception Maths tutoring vertical slice', () => {
   it('lists the enabled skills with their reviewed question counts', () => {
     const skills = tutor.listSkills();
 
-    assert.equal(skills.length, 3);
+    assert.equal(skills.length, receptionMathsBank.length);
     for (const skill of skills) {
       assert.ok(skill.title.trim());
       assert.ok(skill.questionCount >= 20, `${skill.id}: ${skill.questionCount}`);

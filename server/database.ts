@@ -15,7 +15,8 @@ type Migration = {
   rebuildsTable?: boolean;
 };
 
-const migrations: Migration[] = [
+/** The ordered migration set; exported so tests assert against one source. */
+export const migrations: Migration[] = [
   { version: 1, filename: 'create_tables.sql' },
   { version: 2, filename: '002_mastery_levels.sql' },
   { version: 3, filename: '003_session_completion.sql' },
@@ -23,6 +24,7 @@ const migrations: Migration[] = [
   { version: 5, filename: '005_session_limits.sql', rebuildsTable: true },
   { version: 6, filename: '006_safety_event_detail.sql' },
   { version: 7, filename: '007_parent_controls.sql' },
+  { version: 8, filename: '008_year_groups.sql' },
 ];
 
 export function createDatabase(filename: string): Database.Database {

@@ -44,6 +44,8 @@ An already-secure learner remains secure after one incorrect answer. Two consecu
 
 ## Question selection
 
+Selection is confined to the child's own year group. A Reception child is never offered a Year 3 skill and a Year 3 child is never offered a Reception one; asking for another year group's skill is refused rather than silently redirected. Mastery is held per child and skill, so the two curricula accumulate evidence independently.
+
 The selector chooses the enabled, adult-reviewed question nearest the target difficulty, from within the skill the session was started on. If the target difficulty is exhausted during a session, it selects the nearest remaining difficulty. Ties break on the bank's teaching order (`sequence`) and then on template ID, so selection is reproducible.
 
 A template is not selectable when any of the following holds:

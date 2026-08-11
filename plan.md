@@ -15,7 +15,7 @@ Where this plan disagrees with those documents on their own subject, they win. T
 
 ## Goal
 
-Build an AI Family Tutor as a local-first system using Ollama. **The MVP covers Reception Maths only.** It keeps data on the family device, uses measured model routing and caching, and allows model swaps through a single adapter. Year 3 and English comprehension are the next milestone after a successful Reception pilot; they are not MVP scope.
+Build an AI Family Tutor as a local-first system using Ollama. **The MVP covered Reception Maths only; Year 3 maths was added on 2026-08-11 ahead of the pilot gate, at the owner's decision, because the older child starts Year 3 in September.** It keeps data on the family device, uses measured model routing and caching, and allows model swaps through a single adapter. English comprehension remains the next milestone after a successful pilot and is still out of scope.
 
 ## Non-goals for the MVP
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Local-first, adult-supervised tutoring app (Node + TypeScript + SQLite + Ollama). The current vertical slice is a deterministic Reception Maths session flow:
+Local-first, adult-supervised tutoring app (Node + TypeScript + SQLite + Ollama). It serves two curricula — Reception maths and Year 3 maths — through one deterministic session flow:
 
 ```
 start session -> receive reviewed question -> submit typed answer
@@ -42,7 +42,9 @@ Server config via env vars: `HOST` (default `127.0.0.1`), `PORT` (default `3000`
 - `server/index.ts` — entrypoint; creates the DB, seeds content, starts the HTTP server.
 - `server/app.ts` — Express app; three routes (`POST /api/sessions`, `POST /api/sessions/:id/answers`, `POST /api/sessions/:id/skip`) plus `/health`. All errors funnel through one handler that returns `400 {error: 'invalid_request'}` — never leaks internal error messages to the client.
 - `server/tutoring-service.ts` — the domain core (`TutoringService`). Owns session start/answer/skip, question selection, and mastery recalculation, all via `better-sqlite3` prepared statements and transactions. Public question objects never include `correct_answer` (see `toPublicQuestion`).
-- `server/content-bank.ts` — the adult-reviewed question bank, written out rather than generated. Three Reception Maths skills (`addition-within-5`, `counting-to-10`, `number-recognition`), ≥20 enabled templates each across difficulties 1–3. Every answer is a whole number 0–10 so it can be tapped, and every prompt must read aloud cleanly. `seedInitialContent` upserts it but never re-enables a template an adult disabled. `tests/content-bank.test.ts` enforces these invariants.
+- `server/content-bank.ts` — the adult-reviewed question bank, written out rather than generated. Seven skills across two year groups, 21 enabled templates each spread over difficulties 1–3: Reception (`addition-within-5`, `counting-to-10`, `number-recognition`) and Year 3 (`times-tables`, `place-value-to-1000`, `add-and-subtract`, `fractions-of-amounts`). Every skill declares a `yearGroup` and an `answerEntry`. Reception answers are whole numbers 0–10 so they can be tapped; Year 3 answers are whole numbers of any size, typed on a keypad — marking is an exact string match on a whole number either way. Fraction questions are framed to have whole-number answers so a child never types a remainder. Every prompt must read aloud cleanly. `seedInitialContent` upserts it but never re-enables a template an adult disabled. `tests/content-bank.test.ts` enforces the invariants; `tests/content-answer-keys.test.ts` independently re-derives all 147 answer keys from their prompt text.
+
+**Year groups.** A child's `year_group` is recorded on first sight and changed only by an adult. Selection is confined to the child's own year group — `requireEnabledSkill` refuses another year's skill rather than quietly swapping it, and `tests/year-groups.test.ts` walks a whole sitting for each child to prove no cross-curriculum drift.
 - `server/mastery.ts` — pure function `calculateMastery(gradedResults, previousLevel)`. No I/O; this is the place to reason about mastery-rule changes and is directly unit-tested.
 - `server/database.ts` — opens SQLite, enables foreign keys, and runs an in-process migration runner against `db/migrations/*.sql`, tracked via a `schema_versions` table. Migrations are plain `.sql` files with a numeric-version header entry in the `migrations` array in this file — add new migrations there, not just as new files.
 

@@ -91,6 +91,18 @@
     min-height: 88px;
   }
 
+  /* The answer being typed, shown big so a child can check it before sending. */
+  .typed {
+    min-height: 1.2em;
+    margin: 0 0 0.4rem;
+    font-size: clamp(2.5rem, 9vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  .keys { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
   /* ---- the number pad -------------------------------------------------- */
 
   .pad {
@@ -243,8 +255,8 @@
   <section id="phase-welcome" aria-labelledby="welcome-heading">
     <h2 id="welcome-heading">Who is playing?</h2>
     <div class="row">
-      <button type="button" class="big child" data-child="child-a">🦊 Fox</button>
-      <button type="button" class="big child" data-child="child-b">🐼 Panda</button>
+      <button type="button" class="big child" data-child="child-a" data-year="reception">🦊 Fox</button>
+      <button type="button" class="big child" data-child="child-b" data-year="year3">🐼 Panda</button>
     </div>
   </section>
 
@@ -265,7 +277,9 @@
 
     <p class="hint" id="hint" hidden></p>
 
+    <p class="typed" id="typed" aria-live="polite" hidden></p>
     <ul class="pad" id="pad" aria-label="Choose your answer"></ul>
+    <ul class="pad keys" id="keypad" aria-label="Type your answer" hidden></ul>
 
     <button type="button" class="send waiting" id="send-button">Pick a number</button>
 
@@ -421,6 +435,7 @@ async function run(command) {
         response: await request('/api/sessions', {
           childId: command.childId,
           skillId: command.skillId || SKILL_ID,
+          yearGroup: command.yearGroup,
         }),
       };
     case 'answer':
@@ -499,6 +514,34 @@ function dispatch(event) {
 /* --- rendering ----------------------------------------------------------- */
 
 const pad = $('pad');
+const keypad = $('keypad');
+
+/* Two ways to answer, one rule: building an answer is reversible and only the
+   Send button submits it. Reception taps a number from the row; Year 3 answers
+   run past ten, so they are typed digit by digit. */
+for (const value of ['1','2','3','4','5','6','7','8','9','0']) {
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'num';
+  button.textContent = value;
+  button.dataset.digit = value;
+  button.setAttribute('aria-label', value);
+  item.appendChild(button);
+  keypad.appendChild(item);
+}
+{
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'num rub';
+  button.textContent = '⌫';
+  button.dataset.rubOut = 'yes';
+  button.setAttribute('aria-label', 'Rub out the last digit');
+  item.appendChild(button);
+  keypad.appendChild(item);
+}
+
 for (const value of answerOptions()) {
   const item = document.createElement('li');
   const button = document.createElement('button');
@@ -523,6 +566,12 @@ function render() {
 
   $('notice').textContent = state.notice || '';
   $('prompt').textContent = state.question ? state.question.prompt : '';
+
+  const typing = state.answerEntry === 'keypad';
+  pad.hidden = typing;
+  keypad.hidden = !typing;
+  $('typed').hidden = !typing;
+  $('typed').textContent = state.selected === null ? '' : state.selected;
 
   for (const button of pad.querySelectorAll('.num')) {
     button.setAttribute('aria-pressed', String(button.dataset.value === state.selected));
@@ -577,7 +626,9 @@ document.addEventListener('click', (event) => {
   const target = event.target.closest('button');
   if (!target) return;
 
-  if (target.dataset.child) return dispatch({ type: 'start', childId: target.dataset.child, skillId: SKILL_ID });
+  if (target.dataset.child) return dispatch({ type: 'start', childId: target.dataset.child, skillId: SKILL_ID, yearGroup: target.dataset.year });
+  if (target.dataset.digit) return dispatch({ type: 'digit', value: target.dataset.digit });
+  if (target.dataset.rubOut) return dispatch({ type: 'rub-out' });
   if (target.dataset.value) return dispatch({ type: 'select', value: target.dataset.value });
 
   switch (target.id) {
@@ -600,9 +651,20 @@ let chord = null;
 document.addEventListener('keydown', (event) => {
   if (event.metaKey || event.ctrlKey || event.altKey) return;
 
+  if (state.answerEntry === 'keypad') {
+    if (/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+      return dispatch({ type: 'digit', value: event.key });
+    }
+    if (event.key === 'Backspace') {
+      event.preventDefault();
+      return dispatch({ type: 'rub-out' });
+    }
+  }
+
   const digit = interpretDigitKey(event.key, chord, Date.now());
   chord = digit.chord;
-  if (digit.value !== null) {
+  if (digit.value !== null && state.answerEntry !== 'keypad') {
     event.preventDefault();
     dispatch({ type: 'select', value: digit.value });
     // Pressing a number puts the child (or the adult testing with a keyboard)

@@ -170,6 +170,7 @@ export function initialState() {
     childId: null,
     question: null,
     options: [],
+    answerEntry: 'tap-0-10',
     selected: null,
     busy: false,
     hint: null,
@@ -189,7 +190,14 @@ export function initialState() {
 /** Keeps only what a child may see; drops difficulty, skillId, mastery, … */
 function toChildQuestion(question) {
   if (!question || typeof question.prompt !== 'string') return null;
-  return { id: String(question.id), prompt: question.prompt };
+  return {
+    id: String(question.id),
+    prompt: question.prompt,
+    // Reception taps a number from a row; Year 3 answers run past ten, so they
+    // are typed on a keypad. Anything unrecognised falls back to the tap pad,
+    // which is the safer of the two to show by mistake.
+    answerEntry: question.answerEntry === 'keypad' ? 'keypad' : 'tap-0-10',
+  };
 }
 
 /** A snapshot to come back to if a request fails, without nesting retries. */
@@ -219,7 +227,9 @@ function askQuestion(state, question, notice) {
     ...state,
     phase: 'question',
     question: child,
-    options: answerOptions(),
+    answerEntry: child.answerEntry,
+    // A keypad builds its answer digit by digit, so it starts with no options.
+    options: child.answerEntry === 'keypad' ? [] : answerOptions(),
     selected: null,
     hint: null,
     hintPending: false,
@@ -331,6 +341,42 @@ export function reduce(state, event) {
         command: null,
         speak: null,
         announce: COPY.chosen(value),
+      };
+    }
+
+    /* Keypad entry. Same rule as tapping: building an answer is reversible and
+       only confirm sends it, so a slip is never recorded as evidence. */
+    case 'digit': {
+      if (state.phase !== 'question' || state.busy) return state;
+      if (state.answerEntry !== 'keypad') return state;
+      const digit = String(event.value);
+      if (!/^[0-9]$/.test(digit)) return state;
+      const current = state.selected === null ? '' : state.selected;
+      // Four digits covers every answer in the Year 3 bank with room to spare,
+      // and stops a child filling the display by leaning on a key.
+      if (current.length >= 4) return state;
+      // No leading zeros: "05" and "5" would be the same answer typed two ways,
+      // and only one of them matches the key.
+      const next = current === '0' ? digit : current + digit;
+      return {
+        ...state,
+        selected: next,
+        command: null,
+        speak: null,
+        announce: COPY.chosen(next),
+      };
+    }
+
+    case 'rub-out': {
+      if (state.phase !== 'question' || state.busy) return state;
+      if (state.answerEntry !== 'keypad' || state.selected === null) return state;
+      const shorter = state.selected.slice(0, -1);
+      return {
+        ...state,
+        selected: shorter === '' ? null : shorter,
+        command: null,
+        speak: null,
+        announce: shorter === '' ? COPY.chooseFirst : COPY.chosen(shorter),
       };
     }
 

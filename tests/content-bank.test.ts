@@ -84,12 +84,17 @@ describe('Reception Maths content bank', () => {
     }
   });
 
-  it('answers every question with a single whole number the child can tap', () => {
+  it('answers every question the way its skill can be answered', () => {
+    // Reception taps a number from a row, so its answers must fit 0-10. Year 3
+    // types on a keypad, so its answers only have to be whole and non-negative.
     for (const template of templates) {
+      const skill = receptionMathsBank.find((entry) => entry.id === template.skill_id);
+      assert.ok(skill, `${template.id} belongs to no seeded skill`);
+      const pattern = skill.answerEntry === 'tap-0-10' ? /^(10|[0-9])$/ : /^[0-9]+$/;
       assert.match(
         template.correct_answer,
-        /^(10|[0-9])$/,
-        `${template.id} answer "${template.correct_answer}" is not tappable`,
+        pattern,
+        `${template.id} answer "${template.correct_answer}" cannot be entered with ${skill.answerEntry}`,
       );
     }
   });
@@ -112,7 +117,7 @@ describe('Reception Maths content bank', () => {
     for (const template of templates) {
       assert.equal(template.version, 1, template.id);
       assert.equal(template.reviewed, 1, template.id);
-      assert.ok(template.skill_id.startsWith('reception.'), template.id);
+      assert.match(template.skill_id, /^(reception|year3)\./, template.id);
     }
   });
 

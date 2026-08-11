@@ -108,6 +108,75 @@ describe('child session logic', () => {
     }
   }
 
+  describe('keypad entry for Year 3', () => {
+    function typingSession() {
+      return startedSession({
+        question: { id: 'q-year3', prompt: 'What is 8 times 7?', answerEntry: 'keypad' },
+      });
+    }
+
+    it('builds a multi-digit answer without ever sending it', () => {
+      let state = typingSession();
+      assert.equal(state.answerEntry, 'keypad');
+
+      state = logic.reduce(state, { type: 'digit', value: '5' });
+      state = logic.reduce(state, { type: 'digit', value: '6' });
+
+      assert.equal(state.selected, '56');
+      // The rule that protects a four-year-old protects an eight-year-old too:
+      // typing is reversible, only confirm is not.
+      assert.equal(state.command, null);
+      assert.equal(state.busy, false);
+    });
+
+    it('rubs out the last digit', () => {
+      let state = typingSession();
+      for (const value of ['5', '6']) state = logic.reduce(state, { type: 'digit', value });
+      state = logic.reduce(state, { type: 'rub-out' });
+      assert.equal(state.selected, '5');
+
+      state = logic.reduce(state, { type: 'rub-out' });
+      assert.equal(state.selected, null, 'rubbing out the last digit clears the answer');
+
+      state = logic.reduce(state, { type: 'rub-out' });
+      assert.equal(state.selected, null, 'rubbing out an empty answer is harmless');
+    });
+
+    it('sends the typed answer only on confirm', () => {
+      let state = typingSession();
+      for (const value of ['5', '6']) state = logic.reduce(state, { type: 'digit', value });
+      state = logic.reduce(state, { type: 'confirm' });
+
+      assert.ok(state.command, 'confirm must issue the answer');
+      assert.equal(state.command.kind, 'answer');
+      assert.equal(state.command.answer, '56');
+    });
+
+    it('refuses a leading zero, which would not match the answer key', () => {
+      let state = typingSession();
+      state = logic.reduce(state, { type: 'digit', value: '0' });
+      state = logic.reduce(state, { type: 'digit', value: '7' });
+      assert.equal(state.selected, '7');
+    });
+
+    it('stops a child filling the display by leaning on a key', () => {
+      let state = typingSession();
+      for (const value of ['1', '2', '3', '4', '5', '6']) {
+        state = logic.reduce(state, { type: 'digit', value });
+      }
+      assert.equal(state.selected.length, 4);
+    });
+
+    it('ignores keypad events on a Reception tap question', () => {
+      const state = logic.reduce(startedSession(), { type: 'digit', value: '7' });
+      assert.equal(state.selected, null, 'a tap question must not accept typed digits');
+    });
+
+    it('shows no tap options when the answer is typed', () => {
+      assert.deepEqual(typingSession().options, []);
+    });
+  });
+
   describe('nothing to practise', () => {
     it('ends warmly when every question is inside its re-ask window', () => {
       const state = startedSession({
@@ -280,9 +349,14 @@ describe('child session logic', () => {
 
     it('keeps only the prompt from a question, never its internals', () => {
       const state = startedSession();
-      assert.deepEqual(Object.keys(state.question).sort(), ['id', 'prompt']);
+      // `answerEntry` is a rendering instruction (tap row or keypad), not
+      // information about the child or their progress, and it is never shown as
+      // text — the leak check below still covers everything the child can read.
+      assert.deepEqual(Object.keys(state.question).sort(), ['answerEntry', 'id', 'prompt']);
       assert.equal(state.question.difficulty, undefined);
       assert.equal(state.question.skillId, undefined);
+      assert.equal(state.question.correctAnswer, undefined);
+      assertNoInternals(state, 'question state');
     });
   });
 

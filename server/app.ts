@@ -38,9 +38,13 @@ export function createApp(
     response.json({ status: 'ok' });
   });
 
-  app.get('/api/skills', (_request, response, next) => {
+  app.get('/api/skills', (request, response, next) => {
     try {
-      response.json({ skills: tutor.listSkills() });
+      const yearGroup = request.query.yearGroup;
+      if (yearGroup !== undefined && yearGroup !== 'reception' && yearGroup !== 'year3') {
+        throw new Error('yearGroup must be reception or year3');
+      }
+      response.json({ skills: tutor.listSkills(yearGroup) });
     } catch (error) {
       next(error);
     }
@@ -55,9 +59,14 @@ export function createApp(
       if (skillId !== undefined && typeof skillId !== 'string') {
         throw new Error('skillId must be a string');
       }
+      const yearGroup = request.body?.yearGroup;
+      if (yearGroup !== undefined && yearGroup !== 'reception' && yearGroup !== 'year3') {
+        throw new Error('yearGroup must be reception or year3');
+      }
       const result = tutor.startSession({
         childId: request.body.childId,
         skillId,
+        yearGroup,
       });
       // "Nothing to practise right now" and "that is enough for today" are
       // ordinary states, not failures, so they answer 200 with a message the

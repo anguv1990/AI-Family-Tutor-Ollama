@@ -4,7 +4,13 @@ import {
   calculateMastery,
   type MasteryLevel,
 } from './mastery';
-import { DEFAULT_SKILL_ID, receptionMathsBank } from './content-bank';
+import {
+  DEFAULT_SKILL_BY_YEAR_GROUP,
+  DEFAULT_SKILL_ID,
+  receptionMathsBank,
+  type AnswerEntry,
+  type YearGroup,
+} from './content-bank';
 import { fallbackHintFor } from './ai/hint-service';
 
 type PublicQuestion = {
@@ -12,11 +18,14 @@ type PublicQuestion = {
   skillId: string;
   prompt: string;
   difficulty: number;
+  /** How this skill expects the answer: tapped from 0-10, or typed. */
+  answerEntry: AnswerEntry;
 };
 
 type QuestionRow = {
   id: string;
   skill_id: string;
+  answer_entry?: AnswerEntry;
   version: number;
   prompt: string;
   correct_answer: string;
@@ -176,11 +185,14 @@ export class TutoringService {
    */
   seedInitialContent(): void {
     const insertSkill = this.database.prepare(
-      `INSERT INTO skills (id, title, curriculum_version, enabled)
-       VALUES (?, ?, ?, 1)
+      `INSERT INTO skills
+         (id, title, curriculum_version, year_group, answer_entry, enabled)
+       VALUES (?, ?, ?, ?, ?, 1)
        ON CONFLICT (id) DO UPDATE SET
          title = excluded.title,
-         curriculum_version = excluded.curriculum_version`,
+         curriculum_version = excluded.curriculum_version,
+         year_group = excluded.year_group,
+         answer_entry = excluded.answer_entry`,
     );
 
     const insertTemplate = this.database.prepare(
@@ -199,7 +211,13 @@ export class TutoringService {
 
     const seed = this.database.transaction(() => {
       for (const skill of receptionMathsBank) {
-        insertSkill.run(skill.id, skill.title, skill.curriculumVersion);
+        insertSkill.run(
+            skill.id,
+            skill.title,
+            skill.curriculumVersion,
+            skill.yearGroup,
+            skill.answerEntry,
+          );
         for (const template of skill.templates) {
           insertTemplate.run(
             template.id,
@@ -229,8 +247,19 @@ export class TutoringService {
    * practised earlier, so the caller gets a status and child-facing wording
    * rather than a failure the UI has to dress up as one.
    */
-  startSession(input: { childId: string; skillId?: string }): StartSessionResult {
+  startSession(input: {
+    childId: string;
+    skillId?: string;
+    /** Recorded the first time a child is seen; ignored for a known child. */
+    yearGroup?: YearGroup;
+  }): StartSessionResult {
     if (!input.childId.trim()) throw new Error('childId is required');
+
+    // A child's year group is set once, when they are first seen, and changed
+    // only by an adult on the parent page — never by whatever the browser last
+    // sent, or a mistyped link would quietly move a child's curriculum.
+    this.ensureChild(input.childId, input.yearGroup);
+    const yearGroup = this.getYearGroup(input.childId);
 
     const active = this.findActiveSession(input.childId);
     // A session that already ran past a limit is over, whether or not anyone
@@ -260,7 +289,10 @@ export class TutoringService {
     // a new one so it cannot linger unreachable.
     if (active) this.endSession(active.id, reached ?? 'exhausted');
 
-    const skillId = this.requireEnabledSkill(input.skillId ?? DEFAULT_SKILL_ID);
+    const skillId = this.requireEnabledSkill(
+      input.skillId ?? DEFAULT_SKILL_BY_YEAR_GROUP[yearGroup] ?? DEFAULT_SKILL_ID,
+      yearGroup,
+    );
     const currentMastery = this.getMastery(input.childId, skillId);
 
     // The cap limits new sessions only; resumption above has already returned.
@@ -405,19 +437,56 @@ export class TutoringService {
     return { startedToday, limit, nextAvailableAt };
   }
 
-  /** The skills an adult can start a session on, in curriculum order. */
-  listSkills(): Array<{ id: string; title: string; questionCount: number }> {
+  /**
+   * The skills an adult can start a session on, in curriculum order. Filtered
+   * by year group when one is given, because a Year 3 child should never be
+   * offered Reception counting and a Reception child should never be offered
+   * the eight times table.
+   */
+  listSkills(yearGroup?: YearGroup): Array<{
+    id: string;
+    title: string;
+    yearGroup: YearGroup;
+    answerEntry: AnswerEntry;
+    questionCount: number;
+  }> {
     return this.database
       .prepare(
-        `SELECT s.id, s.title, COUNT(t.id) AS questionCount
+        `SELECT s.id, s.title, s.year_group AS yearGroup,
+                s.answer_entry AS answerEntry, COUNT(t.id) AS questionCount
          FROM skills s
          LEFT JOIN content_templates t
            ON t.skill_id = s.id AND t.reviewed = 1 AND t.enabled = 1
          WHERE s.enabled = 1
-         GROUP BY s.id, s.title
-         ORDER BY s.id`,
+           AND (? IS NULL OR s.year_group = ?)
+         GROUP BY s.id, s.title, s.year_group, s.answer_entry
+         ORDER BY s.year_group, s.id`,
       )
-      .all() as Array<{ id: string; title: string; questionCount: number }>;
+      .all(yearGroup ?? null, yearGroup ?? null) as Array<{
+      id: string;
+      title: string;
+      yearGroup: YearGroup;
+      answerEntry: AnswerEntry;
+      questionCount: number;
+    }>;
+  }
+
+  /** Creates the child on first sight, recording the year group they arrive with. */
+  private ensureChild(childId: string, yearGroup?: YearGroup): void {
+    this.database
+      .prepare(
+        `INSERT INTO children (id, year_group) VALUES (?, ?)
+         ON CONFLICT (id) DO NOTHING`,
+      )
+      .run(childId, yearGroup ?? 'reception');
+  }
+
+  /** The child's recorded year group, defaulting to reception for a new child. */
+  getYearGroup(childId: string): YearGroup {
+    const row = this.database
+      .prepare('SELECT year_group FROM children WHERE id = ?')
+      .get(childId) as { year_group: YearGroup } | undefined;
+    return row?.year_group ?? 'reception';
   }
 
   getSession(input: { sessionId: string }): {
@@ -690,11 +759,19 @@ export class TutoringService {
       ) as QuestionRow | undefined;
   }
 
-  private requireEnabledSkill(skillId: string): string {
+  /**
+   * A skill the child may actually be taught. Asking for another year group's
+   * skill is refused rather than quietly redirected: silently swapping the
+   * subject would look like a bug to the adult who chose it.
+   */
+  private requireEnabledSkill(skillId: string, yearGroup: YearGroup): string {
     const skill = this.database
-      .prepare('SELECT id FROM skills WHERE id = ? AND enabled = 1')
-      .get(skillId) as { id: string } | undefined;
+      .prepare('SELECT id, year_group FROM skills WHERE id = ? AND enabled = 1')
+      .get(skillId) as { id: string; year_group: YearGroup } | undefined;
     if (!skill) throw new Error('Skill not found');
+    if (skill.year_group !== yearGroup) {
+      throw new Error('Skill is not taught in this year group');
+    }
     return skill.id;
   }
 
@@ -863,6 +940,14 @@ export class TutoringService {
       skillId: question.skill_id,
       prompt: question.prompt,
       difficulty: question.difficulty,
+      answerEntry: question.answer_entry ?? this.answerEntryFor(question.skill_id),
     };
+  }
+
+  private answerEntryFor(skillId: string): AnswerEntry {
+    const row = this.database
+      .prepare('SELECT answer_entry FROM skills WHERE id = ?')
+      .get(skillId) as { answer_entry: AnswerEntry } | undefined;
+    return row?.answer_entry ?? 'tap-0-10';
   }
 }
