@@ -1,18 +1,38 @@
 import { createApp } from './app';
 import { createDatabase } from './database';
 import { TutoringService } from './tutoring-service';
+import { loadConfig } from './config';
+import { AiGateway, HintService, OllamaProvider } from './ai';
+import { SqliteCacheStore, SqliteSafetyEventSink } from './ai-stores';
 
-const database = createDatabase(process.env.DB_PATH || './data/tutor.sqlite');
-const tutor = new TutoringService(database);
+const config = loadConfig();
+
+const database = createDatabase(config.databasePath);
+
+// The gateway is wired even when Ollama is not running. Every hint path ends in
+// a deterministic template, so an absent model degrades the experience without
+// breaking the session — and the failure is recorded for an adult to see.
+const gateway = new AiGateway({
+  routes: {
+    'local-fast': {
+      providerId: 'ollama',
+      model: config.flashModel,
+      provider: new OllamaProvider({
+        baseUrl: config.ollamaUrl,
+        model: config.flashModel,
+      }),
+    },
+  },
+  cache: new SqliteCacheStore(database),
+  events: new SqliteSafetyEventSink(database),
+});
+
+const tutor = new TutoringService(database, {
+  hints: new HintService(gateway),
+});
 tutor.seedInitialContent();
 
-const port = Number(process.env.PORT || 3000);
-const host = process.env.HOST || '127.0.0.1';
-
-if (!Number.isInteger(port) || port < 1 || port > 65535) {
-  throw new Error('PORT must be an integer between 1 and 65535');
-}
-
-createApp(tutor).listen(port, host, () => {
-  console.log(`AI Family Tutor listening on http://${host}:${port}`);
+createApp(tutor).listen(config.port, config.host, () => {
+  console.log(`AI Family Tutor listening on http://${config.host}:${config.port}`);
+  console.log(`model: ${config.flashModel} via ${config.ollamaUrl}`);
 });

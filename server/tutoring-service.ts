@@ -5,6 +5,7 @@ import {
   type MasteryLevel,
 } from './mastery';
 import { DEFAULT_SKILL_ID, receptionMathsBank } from './content-bank';
+import { fallbackHintFor } from './ai/hint-service';
 
 type PublicQuestion = {
   id: string;
@@ -63,8 +64,24 @@ const SESSION_TIME_LIMIT_MS = 10 * 60 * 1000;
  */
 const REASK_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+/**
+ * The hint port. Hints are the one place a model touches the child's session,
+ * so the engine depends on this narrow shape rather than on the AI slice: it
+ * can ask for a nudge and can never be handed a mark, a score or a difficulty.
+ */
+export type HintPort = {
+  getHint(request: {
+    questionPrompt: string;
+    skillId: string;
+    difficulty: number;
+    correctAnswer: string;
+    sessionId?: string;
+  }): Promise<{ hint: string; source: 'model' | 'cache' | 'fallback' }>;
+};
+
 export class TutoringService {
   private readonly now: () => Date;
+  private readonly hints?: HintPort;
 
   /**
    * The clock is injectable because the stopping rule is a time comparison, and
@@ -72,9 +89,47 @@ export class TutoringService {
    */
   constructor(
     private readonly database: Database.Database,
-    options: { now?: () => Date } = {},
+    options: { now?: () => Date; hints?: HintPort } = {},
   ) {
     this.now = options.now ?? (() => new Date());
+    this.hints = options.hints;
+  }
+
+  /**
+   * A hint for the question the child is looking at now.
+   *
+   * The answer key is read here and used only to reject a hint that leaks it —
+   * it never leaves the engine. With no hint port wired (no model available)
+   * the child still gets the deterministic template, because a hint button that
+   * can fail is a hint button a four-year-old learns not to trust.
+   */
+  async requestHint(input: { sessionId: string }): Promise<{
+    hint: string;
+    source: 'model' | 'cache' | 'fallback';
+  }> {
+    const session = this.database
+      .prepare(
+        `SELECT child_id, skill_id, current_question_id, started_at, ended_at
+         FROM sessions WHERE id = ?`,
+      )
+      .get(input.sessionId) as SessionRow | undefined;
+    if (!session || session.ended_at || !session.current_question_id) {
+      throw new Error('Active session not found');
+    }
+
+    const question = this.getReviewedQuestion(session.current_question_id);
+
+    if (!this.hints) {
+      return { hint: fallbackHintFor(question.skill_id), source: 'fallback' };
+    }
+
+    return this.hints.getHint({
+      questionPrompt: question.prompt,
+      skillId: question.skill_id,
+      difficulty: question.difficulty,
+      correctAnswer: question.correct_answer,
+      sessionId: input.sessionId,
+    });
   }
 
   /**

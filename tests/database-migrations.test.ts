@@ -108,6 +108,7 @@ describe('database migrations', () => {
       { version: 3 },
       { version: 4 },
       { version: 5 },
+      { version: 6 },
     ]);
   });
 
@@ -242,7 +243,14 @@ describe('database migrations', () => {
     assert.deepEqual(upgraded.pragma('foreign_key_check'), []);
     assert.deepEqual(
       upgraded.prepare('SELECT version FROM schema_versions ORDER BY version').all(),
-      [{ version: 1 }, { version: 2 }, { version: 3 }, { version: 4 }, { version: 5 }],
+      [
+        { version: 1 },
+        { version: 2 },
+        { version: 3 },
+        { version: 4 },
+        { version: 5 },
+        { version: 6 },
+      ],
     );
     upgraded.close();
   });

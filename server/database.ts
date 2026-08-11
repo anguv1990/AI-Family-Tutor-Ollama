@@ -21,6 +21,7 @@ const migrations: Migration[] = [
   { version: 3, filename: '003_session_completion.sql' },
   { version: 4, filename: '004_content_provenance.sql' },
   { version: 5, filename: '005_session_limits.sql', rebuildsTable: true },
+  { version: 6, filename: '006_safety_event_detail.sql' },
 ];
 
 export function createDatabase(filename: string): Database.Database {
