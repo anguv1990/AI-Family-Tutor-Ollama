@@ -16,7 +16,7 @@ function startActive(
   const result = tutor.startSession(input);
   assert.ok(
     result.sessionId && result.question,
-    `expected an active session, got ${result.status}/${result.reason}`,
+    `expected an active session, got ${result.status}`,
   );
   return { ...result, sessionId: result.sessionId, question: result.question };
 }

@@ -43,12 +43,17 @@ type SessionRow = {
   ended_at: string | null;
 };
 
-/** Why a child cannot start practising right now. Neither is an error. */
-export type UnavailableReason = 'no_questions_available' | 'daily_limit_reached';
+/**
+ * Why a child cannot start practising right now. Neither is an error:
+ * `exhausted` means every reviewed question is inside its 24-hour re-ask
+ * window, `daily_limit` means today's session has already happened. They are
+ * separate because they call for different responses from an adult — one needs
+ * more questions in the bank, the other needs nothing at all.
+ */
+export type UnavailableStatus = 'exhausted' | 'daily_limit';
 
 export type StartSessionResult = {
-  status: 'active' | 'unavailable';
-  reason: UnavailableReason | null;
+  status: 'active' | UnavailableStatus;
   /** Child-facing wording. Never a system message. */
   message: string | null;
   /** ISO timestamp the child may start again, when that is knowable. */
@@ -218,10 +223,11 @@ export class TutoringService {
    * refreshed browser tab or a second device cannot strand progress or leave
    * two open sessions competing for the same mastery evidence.
    *
-   * Two outcomes are deliberately *not* errors: the daily cap being reached,
-   * and there being nothing selectable to ask. Both are ordinary states for a
-   * child who practised earlier — the caller gets `status: 'unavailable'` and
-   * child-facing wording rather than a failure the UI has to dress up.
+   * Two outcomes are deliberately *not* errors: the daily cap being reached
+   * (`daily_limit`), and every reviewed question being inside its 24-hour
+   * re-ask window (`exhausted`). Both are ordinary states for a child who
+   * practised earlier, so the caller gets a status and child-facing wording
+   * rather than a failure the UI has to dress up as one.
    */
   startSession(input: { childId: string; skillId?: string }): StartSessionResult {
     if (!input.childId.trim()) throw new Error('childId is required');
@@ -237,7 +243,6 @@ export class TutoringService {
     if (active && !reached && active.current_question_id) {
       return {
         status: 'active',
-        reason: null,
         message: null,
         nextAvailableAt: null,
         sessionId: active.id,
@@ -265,7 +270,7 @@ export class TutoringService {
         input.childId,
         skillId,
         currentMastery,
-        'daily_limit_reached',
+        'daily_limit',
         'That is all the practice for today. See you tomorrow!',
         cap.nextAvailableAt,
       );
@@ -283,7 +288,7 @@ export class TutoringService {
         input.childId,
         skillId,
         currentMastery,
-        'no_questions_available',
+        'exhausted',
         'Nothing new to practise right now. Come back a bit later!',
         null,
       );
@@ -311,7 +316,6 @@ export class TutoringService {
 
     return {
       status: 'active',
-      reason: null,
       message: null,
       nextAvailableAt: null,
       sessionId,
@@ -327,13 +331,12 @@ export class TutoringService {
     childId: string,
     skillId: string,
     mastery: Mastery,
-    reason: UnavailableReason,
+    status: UnavailableStatus,
     message: string,
     nextAvailableAt: string | null,
   ): StartSessionResult {
     return {
-      status: 'unavailable',
-      reason,
+      status,
       message,
       nextAvailableAt,
       sessionId: null,
