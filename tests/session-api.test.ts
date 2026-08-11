@@ -184,6 +184,70 @@ describe('tutoring session API', () => {
     assert.equal(state.question.correctAnswer, undefined);
   });
 
+  it('reports the question limit to the client and refuses further answers', async () => {
+    const startResponse = await fetch(`${baseUrl}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'api-limit-child' }),
+    });
+    const session = (await startResponse.json()) as {
+      sessionId: string;
+      question: { id: string };
+    };
+    const answerKeyFor = (templateId: string): string =>
+      (
+        database
+          .prepare('SELECT correct_answer FROM content_templates WHERE id = ?')
+          .get(templateId) as { correct_answer: string }
+      ).correct_answer;
+
+    let questionId = session.question.id;
+    let result!: {
+      status: string;
+      nextQuestion: { id: string } | null;
+    };
+    for (let answered = 0; answered < 8; answered += 1) {
+      const response = await fetch(
+        `${baseUrl}/api/sessions/${session.sessionId}/answers`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            questionId,
+            answer: answerKeyFor(questionId),
+          }),
+        },
+      );
+      assert.equal(response.status, 200);
+      result = (await response.json()) as typeof result;
+      if (result.nextQuestion) questionId = result.nextQuestion.id;
+    }
+
+    assert.equal(result.status, 'question_limit');
+    assert.equal(result.nextQuestion, null);
+
+    const stateResponse = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}`,
+    );
+    const state = (await stateResponse.json()) as {
+      status: string;
+      question: unknown;
+    };
+    assert.equal(state.status, 'question_limit');
+    assert.equal(state.question, null);
+
+    const rejected = await fetch(
+      `${baseUrl}/api/sessions/${session.sessionId}/answers`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ questionId, answer: '2' }),
+      },
+    );
+    assert.equal(rejected.status, 400);
+    assert.deepEqual(await rejected.json(), { error: 'invalid_request' });
+  });
+
   it('returns a safe client error for an unknown session', async () => {
     const response = await fetch(`${baseUrl}/api/sessions/does-not-exist`);
 

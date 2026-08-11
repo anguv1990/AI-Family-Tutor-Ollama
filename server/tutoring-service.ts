@@ -30,7 +30,7 @@ type Mastery = {
   score: number;
 };
 
-type EndedReason = 'completed' | 'exhausted';
+type EndedReason = 'completed' | 'exhausted' | 'question_limit' | 'time_limit';
 
 type SessionStatus = 'active' | EndedReason;
 
@@ -38,11 +38,44 @@ type SessionRow = {
   child_id: string;
   skill_id: string;
   current_question_id: string | null;
+  started_at: string;
   ended_at: string | null;
 };
 
+/** An active session, reduced to what the stopping rule and selection need. */
+type ActiveSession = {
+  id: string;
+  child_id: string;
+  skill_id: string;
+  current_question_id: string | null;
+  started_at: string;
+};
+
+// The stopping rule from plan.md: a Reception session is a short, bounded
+// sitting, so it ends at whichever of these comes first. Skips deliberately do
+// not count towards the answer limit — a child who skips has not practised.
+const ANSWERED_QUESTION_LIMIT = 8;
+const SESSION_TIME_LIMIT_MS = 10 * 60 * 1000;
+
+/**
+ * Re-ask policy: a template may come back in a later session, but not while
+ * the child can still remember answering it. Per child, and across sessions.
+ */
+const REASK_WINDOW_MS = 24 * 60 * 60 * 1000;
+
 export class TutoringService {
-  constructor(private readonly database: Database.Database) {}
+  private readonly now: () => Date;
+
+  /**
+   * The clock is injectable because the stopping rule is a time comparison, and
+   * a rule that cannot be tested at a chosen moment is a rule nobody can trust.
+   */
+  constructor(
+    private readonly database: Database.Database,
+    options: { now?: () => Date } = {},
+  ) {
+    this.now = options.now ?? (() => new Date());
+  }
 
   /**
    * Loads the reviewed bank. Re-running it refreshes wording, difficulty,
@@ -110,10 +143,14 @@ export class TutoringService {
     if (!input.childId.trim()) throw new Error('childId is required');
 
     const active = this.findActiveSession(input.childId);
+    // A session that already ran past a limit is over, whether or not anyone
+    // came back to it — resuming it would hand back a sitting that should have
+    // stopped, so it is closed with the reason that stopped it.
+    const reached = active ? this.reachedStoppingLimit(active) : undefined;
 
     // A resumed session keeps the skill it was started with; the caller cannot
     // switch skill underneath a session that is already running.
-    if (active?.current_question_id) {
+    if (active && !reached && active.current_question_id) {
       return {
         sessionId: active.id,
         childId: input.childId,
@@ -126,15 +163,16 @@ export class TutoringService {
       };
     }
 
-    // An active session with no current question has nothing left to ask.
-    // Close it before opening a new one so it cannot linger unreachable.
-    if (active) this.endSession(active.id, 'exhausted');
+    // Otherwise the session has nothing left to offer. Close it before opening
+    // a new one so it cannot linger unreachable.
+    if (active) this.endSession(active.id, reached ?? 'exhausted');
 
     const skillId = this.requireEnabledSkill(input.skillId ?? DEFAULT_SKILL_ID);
     const currentMastery = this.getMastery(input.childId, skillId);
     const sessionId = randomUUID();
     const question = this.selectNextQuestion(
       sessionId,
+      input.childId,
       skillId,
       currentMastery.level,
     );
@@ -146,10 +184,17 @@ export class TutoringService {
         .run(input.childId);
       this.database
         .prepare(
-          `INSERT INTO sessions (id, child_id, skill_id, current_question_id)
-           VALUES (?, ?, ?, ?)`,
+          `INSERT INTO sessions
+             (id, child_id, skill_id, current_question_id, started_at)
+           VALUES (?, ?, ?, ?, ?)`,
         )
-        .run(sessionId, input.childId, skillId, question.id);
+        .run(
+          sessionId,
+          input.childId,
+          skillId,
+          question.id,
+          this.timestamp(),
+        );
     });
     create();
 
@@ -280,8 +325,9 @@ export class TutoringService {
       this.database
         .prepare(
           `INSERT INTO attempts
-             (id, session_id, child_id, template_id, template_version, answer, is_correct)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+             (id, session_id, child_id, template_id, template_version, answer,
+              is_correct, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           randomUUID(),
@@ -291,19 +337,14 @@ export class TutoringService {
           question.version,
           normalizedAnswer,
           correct ? 1 : 0,
+          this.timestamp(),
         );
 
       const mastery = this.recalculateMastery(
         session.child_id,
         question.skill_id,
       );
-      const next = this.selectNextQuestion(
-        input.sessionId,
-        session.skill_id,
-        mastery.level,
-      );
-      this.moveSessionToQuestion(input.sessionId, next);
-      const status: SessionStatus = next ? 'active' : 'exhausted';
+      const { next, status } = this.advanceSession(session, mastery.level);
 
       return {
         correct,
@@ -337,8 +378,8 @@ export class TutoringService {
         .prepare(
           `INSERT INTO attempts
              (id, session_id, child_id, template_id, template_version,
-              answer, is_correct, outcome)
-           VALUES (?, ?, ?, ?, ?, '', 0, 'skipped')`,
+              answer, is_correct, outcome, created_at)
+           VALUES (?, ?, ?, ?, ?, '', 0, 'skipped', ?)`,
         )
         .run(
           randomUUID(),
@@ -346,16 +387,11 @@ export class TutoringService {
           session.child_id,
           question.id,
           question.version,
+          this.timestamp(),
         );
 
       const mastery = this.getMastery(session.child_id, question.skill_id);
-      const next = this.selectNextQuestion(
-        input.sessionId,
-        session.skill_id,
-        mastery.level,
-      );
-      this.moveSessionToQuestion(input.sessionId, next);
-      const status: SessionStatus = next ? 'active' : 'exhausted';
+      const { next, status } = this.advanceSession(session, mastery.level);
       return {
         mastery,
         nextQuestion: next ? this.toPublicQuestion(next) : null,
@@ -365,16 +401,67 @@ export class TutoringService {
   }
 
   /**
-   * Nearest difficulty to the child's level, within the session's own skill and
-   * never repeating a question already seen in this session. Ties break on the
+   * The single place a session moves on: it stops first if the stopping rule
+   * has been met, and only then looks for something else to ask. Callers run
+   * this inside the same transaction as the attempt they just recorded, so a
+   * session can never be left half-ended.
+   */
+  private advanceSession(
+    session: ActiveSession,
+    level: MasteryLevel,
+  ): { next: QuestionRow | undefined; status: SessionStatus } {
+    const reached = this.reachedStoppingLimit(session);
+    if (reached) {
+      this.endSession(session.id, reached);
+      return { next: undefined, status: reached };
+    }
+
+    const next = this.selectNextQuestion(
+      session.id,
+      session.child_id,
+      session.skill_id,
+      level,
+    );
+    this.moveSessionToQuestion(session.id, next);
+    return { next, status: next ? 'active' : 'exhausted' };
+  }
+
+  /** The stopping reason this session has already met, if any. */
+  private reachedStoppingLimit(
+    session: Pick<ActiveSession, 'id' | 'started_at'>,
+  ): EndedReason | undefined {
+    // Time is checked first: if ten minutes have passed they passed before
+    // whatever prompted this check, so it is the condition that came first.
+    const elapsed = this.now().getTime() - this.toEpochMs(session.started_at);
+    if (elapsed >= SESSION_TIME_LIMIT_MS) return 'time_limit';
+
+    const answered = this.database
+      .prepare(
+        `SELECT COUNT(*) AS total FROM attempts
+         WHERE session_id = ? AND outcome = 'answered'`,
+      )
+      .get(session.id) as { total: number };
+    return answered.total >= ANSWERED_QUESTION_LIMIT
+      ? 'question_limit'
+      : undefined;
+  }
+
+  /**
+   * Nearest difficulty to the child's level, within the session's own skill,
+   * never repeating a question already seen in this session, and never one this
+   * child answered or skipped in the last twenty-four hours. Ties break on the
    * bank's teaching order, then on ID, so selection is reproducible.
    */
   private selectNextQuestion(
     sessionId: string,
+    childId: string,
     skillId: string,
     level: MasteryLevel,
   ): QuestionRow | undefined {
     const targetDifficulty = { new: 1, learning: 2, secure: 3 }[level];
+    const reaskCutoff = this.timestamp(
+      new Date(this.now().getTime() - REASK_WINDOW_MS),
+    );
     return this.database
       .prepare(
         `SELECT t.id, t.skill_id, t.version, t.prompt, t.correct_answer,
@@ -389,10 +476,21 @@ export class TutoringService {
              SELECT 1 FROM attempts a
              WHERE a.session_id = ? AND a.template_id = t.id
            )
+           AND NOT EXISTS (
+             SELECT 1 FROM attempts a
+             WHERE a.child_id = ? AND a.template_id = t.id
+               AND a.created_at > ?
+           )
          ORDER BY ABS(t.difficulty - ?), t.sequence, t.id
          LIMIT 1`,
       )
-      .get(skillId, sessionId, targetDifficulty) as QuestionRow | undefined;
+      .get(
+        skillId,
+        sessionId,
+        childId,
+        reaskCutoff,
+        targetDifficulty,
+      ) as QuestionRow | undefined;
   }
 
   private requireEnabledSkill(skillId: string): string {
@@ -403,29 +501,25 @@ export class TutoringService {
     return skill.id;
   }
 
-  private findActiveSession(childId: string):
-    | { id: string; skill_id: string; current_question_id: string | null }
-    | undefined {
+  private findActiveSession(childId: string): ActiveSession | undefined {
     return this.database
       .prepare(
-        `SELECT id, skill_id, current_question_id
+        `SELECT id, child_id, skill_id, current_question_id, started_at
          FROM sessions
          WHERE child_id = ? AND ended_at IS NULL
          ORDER BY started_at DESC, rowid DESC
          LIMIT 1`,
       )
-      .get(childId) as
-      | { id: string; skill_id: string; current_question_id: string | null }
-      | undefined;
+      .get(childId) as ActiveSession | undefined;
   }
 
   private getActiveSession(
     sessionId: string,
     questionId: string,
-  ): { child_id: string; skill_id: string } {
+  ): ActiveSession {
     const session = this.database
       .prepare(
-        `SELECT child_id, skill_id, current_question_id, ended_at
+        `SELECT child_id, skill_id, current_question_id, started_at, ended_at
          FROM sessions WHERE id = ?`,
       )
       .get(sessionId) as SessionRow | undefined;
@@ -433,17 +527,31 @@ export class TutoringService {
     if (session.current_question_id !== questionId) {
       throw new Error('Question is not active for this session');
     }
-    return { child_id: session.child_id, skill_id: session.skill_id };
+    return { id: sessionId, ...session };
   }
 
+  /**
+   * Ending clears the current question in the same statement, so an ended
+   * session can never still be pointing at a question a child could answer.
+   */
   private endSession(sessionId: string, reason: EndedReason): void {
     this.database
       .prepare(
         `UPDATE sessions
-         SET ended_at = CURRENT_TIMESTAMP, ended_reason = ?
+         SET ended_at = ?, ended_reason = ?, current_question_id = NULL
          WHERE id = ? AND ended_at IS NULL`,
       )
-      .run(reason, sessionId);
+      .run(this.timestamp(), reason, sessionId);
+  }
+
+  /** SQLite's own CURRENT_TIMESTAMP format, so clock-written values compare
+   * and sort against rows written by the schema defaults. */
+  private timestamp(date: Date = this.now()): string {
+    return date.toISOString().replace('T', ' ').slice(0, 19);
+  }
+
+  private toEpochMs(timestamp: string): number {
+    return Date.parse(`${timestamp.replace(' ', 'T')}Z`);
   }
 
   private getReviewedQuestion(questionId: string): QuestionRow {
@@ -525,10 +633,15 @@ export class TutoringService {
     sessionId: string,
     next: QuestionRow | undefined,
   ): void {
+    // Running out of reviewed content is an ending in its own right, not a
+    // session that silently stops offering questions.
+    if (!next) {
+      this.endSession(sessionId, 'exhausted');
+      return;
+    }
     this.database
       .prepare('UPDATE sessions SET current_question_id = ? WHERE id = ?')
-      .run(next?.id ?? null, sessionId);
-    if (!next) this.endSession(sessionId, 'exhausted');
+      .run(next.id, sessionId);
   }
 
   private toPublicQuestion(question: QuestionRow): PublicQuestion {
