@@ -86,6 +86,19 @@ An adult can correct the evaluation of an answered attempt, with a reason. The r
 
 A wellbeing control rather than a mastery rule, but it decides whether evidence can be gathered at all: a child may start at most one **new** session per calendar day (local time) by default, adjustable per child by the parent from 0 to 10. Resuming a session already in progress is always allowed — the cap limits new sittings, not continuity. Reaching it is a normal state (`daily_limit`), never an error.
 
+## Misconception diagnosis
+
+A wrong answer is also read for *why* it was wrong. The diagnosis is arithmetic,
+not a guess: because the application generates its own questions, their shapes
+are known, so answering one of the two addends to "3 + 2" is recognisably
+counting one group and stopping rather than a random slip.
+
+The pattern is recorded on the attempt and shown to an adult. It is diagnostic
+only — it is worked out after marking and can never change the mark, the score
+or the mastery level. The `Modal_data` curriculum names the patterns worth
+looking for and what an adult should do about each; the child hears simpler
+wording that never contains the answer.
+
 ## Deferred cases
 
 - Ambiguous answers will require an explicit non-graded outcome before they are supported.

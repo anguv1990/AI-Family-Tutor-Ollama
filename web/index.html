@@ -169,6 +169,15 @@
 
   .want { font-size: clamp(1.6rem, 5vh, 3rem); }
 
+  /* Why the answer was wrong, in words a four-year-old can act on. */
+  .feedback-help {
+    font-size: clamp(18px, 3vh, 28px);
+    font-weight: 700;
+    color: var(--ink-soft);
+    max-width: 22ch;
+    margin: 0 auto;
+  }
+
   /* The answer being typed, shown big so a child can check it before sending. */
   .typed {
     min-height: 1.2em;
@@ -390,6 +399,7 @@
   <section id="phase-feedback" hidden>
     <p class="face" id="feedback-face" aria-hidden="true"></p>
     <p class="verdict" id="feedback-title"></p>
+    <p class="feedback-help" id="feedback-help" hidden></p>
     <button type="button" class="big" id="continue-button">Next one 👉</button>
   </section>
 
@@ -758,6 +768,8 @@ function render() {
   if (state.feedback) {
     $('feedback-face').textContent = state.feedback.emoji;
     $('feedback-title').textContent = state.feedback.title;
+    $('feedback-help').textContent = state.feedback.help || '';
+    $('feedback-help').hidden = !state.feedback.help;
   }
 
   if (state.ending) {

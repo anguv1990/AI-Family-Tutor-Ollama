@@ -14,6 +14,7 @@ import {
 } from './content-bank';
 import { fallbackHintFor } from './ai/hint-service';
 import { loadCurriculum, teachingOrder } from './curriculum';
+import { diagnose } from './misconceptions';
 
 type PublicQuestion = {
   id: string;
@@ -659,6 +660,8 @@ export class TutoringService {
     answer: string;
   }): {
     correct: boolean;
+    /** Child-facing help for a wrong answer; never present when correct. */
+    help?: string;
     mastery: Mastery;
     nextQuestion: PublicQuestion | null;
     status: SessionStatus;
@@ -678,13 +681,22 @@ export class TutoringService {
 
     const correct = normalizedAnswer === question.correct_answer;
 
+    // Diagnosis is read off the answer after marking, and can never change it.
+    const diagnosis = correct
+      ? null
+      : diagnose({
+          prompt: question.prompt,
+          correctAnswer: question.correct_answer,
+          givenAnswer: normalizedAnswer,
+        });
+
     return this.database.transaction(() => {
       this.database
         .prepare(
           `INSERT INTO attempts
              (id, session_id, child_id, template_id, template_version, answer,
-              is_correct, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              is_correct, created_at, misconception)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           randomUUID(),
@@ -695,6 +707,7 @@ export class TutoringService {
           normalizedAnswer,
           correct ? 1 : 0,
           this.timestamp(),
+          diagnosis?.pattern ?? null,
         );
 
       const mastery = this.recalculateMastery(
@@ -705,6 +718,7 @@ export class TutoringService {
 
       return {
         correct,
+        ...(diagnosis ? { help: diagnosis.childHelp } : {}),
         mastery,
         nextQuestion: next ? this.toPublicQuestion(next) : null,
         status,

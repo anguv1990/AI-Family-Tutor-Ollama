@@ -98,7 +98,19 @@ export function endingFor(status) {
  * and chosen the next question, so promising another go at the same question
  * would be a lie.
  */
-export function feedbackFor(correct) {
+export function feedbackFor(correct, help) {
+  // `help` explains what went wrong, worked out from the answer the child
+  // actually gave. It never contains the answer, and a correct answer never
+  // carries one — praise with a correction attached is just a correction.
+  if (!correct && typeof help === 'string' && help.trim()) {
+    return {
+      kind: 'try-again',
+      emoji: '💪',
+      title: 'Good try!',
+      help: help.trim(),
+      speech: `Good try. ${help.trim()}`,
+    };
+  }
   return correct
     ? {
         kind: 'correct',
@@ -433,7 +445,7 @@ export function reduce(state, event) {
 
     case 'graded': {
       const response = event.response || {};
-      const feedback = feedbackFor(Boolean(response.correct));
+      const feedback = feedbackFor(Boolean(response.correct), response.help);
       return {
         ...state,
         phase: 'feedback',
