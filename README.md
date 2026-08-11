@@ -20,21 +20,48 @@ leaks the answer is replaced by a deterministic template.
 - npm
 - Ollama for later model-assisted features; it is not required by the current tests
 
+## The two addresses
+
+| | On this Mac | On a tablet or phone |
+|---|---|---|
+| **Child** | <http://127.0.0.1:3000> | `http://<LAN-IP>:3000` |
+| **Parent** | <http://127.0.0.1:3000/parent.html> | `http://<LAN-IP>:3000/parent.html` |
+
+The child page is where a child picks their animal and practises. Each button
+shows the curriculum it uses — Reception, Year 2 or Year 3 — so an adult can
+tell them apart.
+
+The parent page needs the admin secret. It reviews sessions, attempts, mastery
+and safety events; corrects an evaluation and undoes it; sets a child's year
+group and daily practice limit; resets today's practice; and exports or deletes
+a child's data.
+
+Find `<LAN-IP>` with:
+
+```bash
+ipconfig getifaddr en0
+```
+
+At the time of writing this Mac is `192.168.1.107`, so the tablet addresses are
+<http://192.168.1.107:3000> and <http://192.168.1.107:3000/parent.html>. That
+address is assigned by your router and can change after a restart, so check it
+with the command above rather than trusting this line.
+
+The tablet addresses only work when the app is started with `npm run
+start:tablet`; the default bind is loopback and nothing outside this Mac can
+reach it.
+
 ## Run locally
 
 ```bash
 npm install
 npm test
-npm run dev
+npm run dev          # or: node dist/server/index.js after npm run build
 ```
-
-Then open <http://127.0.0.1:3000> for the child interface.
 
 > Reception questions are shown as pictures — countable dots, a number track,
 > or a large numeral — as well as text and read-aloud. A four-year-old who can
 > neither read the prompt nor is listening to it can still answer.
-
-Then open <http://127.0.0.1:3000/parent.html> for the parent controls.
 
 The service binds to `127.0.0.1:3000` by default. Configuration:
 
@@ -154,7 +181,9 @@ Mastery uses the documented `new`, `learning`, and `secure` levels. The persiste
 
 ## Parent controls
 
-<http://127.0.0.1:3000/parent.html> — a plain adult page for reviewing sessions,
+<http://127.0.0.1:3000/parent.html> on this Mac, or
+`http://<LAN-IP>:3000/parent.html` from a tablet — a plain adult page for
+reviewing sessions,
 attempts, mastery and safety events; correcting an evaluation with a reason and
 undoing it again; setting a child's year group and daily practice limit;
 exporting a child's data; permanently deleting it; setting retention; and
@@ -182,8 +211,8 @@ npm run start:tablet
 ```
 
 That reads `.env.local` (not in git), binds to every interface and requires the
-admin secret. Then open `http://<this-mac's-LAN-IP>:3000` on the tablet — find
-the IP with `ipconfig getifaddr en0`.
+admin secret. Then open the tablet addresses from
+[The two addresses](#the-two-addresses) above.
 
 `ADMIN_SECRET` is the parent password. It guards every `/api/parent/*` route —
 the ones that can export or permanently delete a child's data — and the server
