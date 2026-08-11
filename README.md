@@ -253,6 +253,24 @@ failure rate, and gives an accept/reject verdict against the latency budget in
 
 ## Troubleshooting
 
+**No voice — the child stares at a silent screen.** Check, in this order:
+
+1. The iPad's **side switch / Silent mode** and the volume. Speech follows the
+   ringer on some iOS versions.
+2. Open the child page with `?check=speech` on the end, tap a child, and read
+   the small line under the buttons. It reports whether the browser supports
+   speech, how many voices have loaded, which was chosen, and whether speech
+   was unlocked by the tap. `voices 0` means the browser has not loaded any
+   yet; `NOT SUPPORTED` means this browser cannot speak at all.
+3. Tap **🔊 Hear it again**. That is a direct tap, so it works even where
+   automatic speech is blocked. If that speaks and the prompt did not, the
+   browser refused the automatic one.
+
+Safari on iPad only lets speech start inside a tap, so the app speaks
+"Let's begin!" from the tap on the child's own name, which opens the channel
+for every prompt after it. Everything still works with no sound — Reception
+questions are pictures, and the answer is on screen.
+
 **Hints are generic and never mention the question.** The model is unreachable
 or was too slow, and the deterministic template was served instead — by design.
 Check `ollama list` shows the model in `FLASH_MODEL`, and look at the parent

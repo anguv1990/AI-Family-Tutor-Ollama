@@ -169,6 +169,14 @@
 
   .want { font-size: clamp(1.6rem, 5vh, 3rem); }
 
+  /* Only shown with ?check=speech, for an adult working out why it is silent. */
+  .speech-check {
+    font-size: 14px;
+    font-family: ui-monospace, monospace;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
   /* Why the answer was wrong, in words a four-year-old can act on. */
   .feedback-help {
     font-size: clamp(18px, 3vh, 28px);
@@ -409,6 +417,8 @@
 
     <button type="button" class="send waiting" id="send-button">Pick a number</button>
 
+    <p class="speech-check" id="speech-check" hidden></p>
+
     <div class="row secondary">
       <button type="button" class="big" id="hear-button">🔊 Hear it again</button>
       <button type="button" class="big" id="hint-button">💡 Help me</button>
@@ -453,6 +463,7 @@
 <script type="module">
 import {
   answerOptions,
+  COPY,
   initialState,
   interpretDigitKey,
   reduce,
@@ -489,6 +500,7 @@ const PHASES = ['welcome', 'loading', 'question', 'feedback', 'finishing', 'ende
 const speech = {
   supported: typeof window.speechSynthesis !== 'undefined',
   voice: null,
+  primed: false,
 };
 
 function pickLocalVoice() {
@@ -515,16 +527,35 @@ if (speech.supported) {
   });
 }
 
+/**
+ * Opens the speech channel from inside a tap.
+ *
+ * Safari on iPad only lets speech begin in a user gesture, and every prompt
+ * after the first is spoken once a network round trip has finished — by which
+ * time the gesture is over and the request is dropped without an error. The
+ * first thing a child does is tap their own name, so that tap both unlocks
+ * speech and says something out loud.
+ */
+function primeSpeech(text) {
+  if (!speech.supported) return;
+  speech.primed = true;
+  speak(text);
+}
+
 function speak(text) {
   if (!speech.supported || !text) return;
   if (!speech.voice) speech.voice = pickLocalVoice();
-  if (!speech.voice) return;   // degrade silently, never block the session
 
   try {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = speech.voice;
-    utterance.lang = speech.voice.lang || 'en-GB';
+    // A voice may not be chosen: getVoices() is empty until the browser has
+    // loaded them, which on Safari can be after the first prompt is due. The
+    // browser's own default is used then, because a silent screen leaves a
+    // child who cannot read with nothing at all — and the text spoken here is
+    // curriculum wording, never anything about the child.
+    if (speech.voice) utterance.voice = speech.voice;
+    utterance.lang = (speech.voice && speech.voice.lang) || 'en-GB';
     utterance.rate = 0.85;   // slow enough for a four-year-old to follow
     utterance.pitch = 1.05;
     window.speechSynthesis.speak(utterance);
@@ -751,6 +782,30 @@ function renderPicture(visual) {
   );
 }
 
+/**
+ * A silent screen is indistinguishable from a broken one, and audio cannot be
+ * tested from a terminal. `?check=speech` shows an adult what the browser is
+ * actually offering: whether speech exists, how many voices have loaded, and
+ * which one was picked. It stays hidden otherwise — it is not for the child.
+ */
+function renderSpeechCheck() {
+  const node = $('speech-check');
+  if (!params.has('check')) { node.hidden = true; return; }
+  node.hidden = false;
+
+  if (!speech.supported) {
+    node.textContent = 'speech: NOT SUPPORTED by this browser';
+    return;
+  }
+  let all = [];
+  try { all = window.speechSynthesis.getVoices() || []; } catch { all = []; }
+  const local = all.filter((voice) => voice.localService === true);
+  const chosen = speech.voice ? `${speech.voice.name} (${speech.voice.lang})` : 'browser default';
+  node.textContent =
+    `speech: ok | voices ${all.length} (on-device ${local.length}) | ` +
+    `using ${chosen} | primed ${speech.primed}`;
+}
+
 let lastPhase = null;
 
 function render() {
@@ -762,6 +817,7 @@ function render() {
   $('notice').textContent = state.notice || '';
   $('prompt').textContent = state.question ? state.question.prompt : '';
 
+  renderSpeechCheck();
   renderPicture(state.question && state.question.visual);
 
   const typing = state.answerEntry === 'keypad';
@@ -828,6 +884,9 @@ document.addEventListener('click', (event) => {
   // The child buttons now wrap two spans, so a tap can land on a child node.
   const chooser = target.closest ? target.closest('[data-child]') : null;
   if (chooser) {
+    // Inside the tap, before any request: this is the only moment Safari will
+    // let speech start, and it is also the first thing the child hears.
+    primeSpeech(COPY.begin);
     return dispatch({
       type: 'start',
       childId: chooser.dataset.child,
