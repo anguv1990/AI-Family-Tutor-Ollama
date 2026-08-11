@@ -594,7 +594,11 @@ export class TutoringService {
         `SELECT s.id,
                 m.level          AS level,
                 m.next_review_at AS nextReviewAt,
-                COALESCE(MIN(c.teaching_order), 999999) AS teachingOrder
+                -- The *latest* component, not the earliest: a taught skill is
+                -- only ready when its most advanced part is, and taking the
+                -- earliest pulled addition to the front of Reception merely
+                -- because counting the dots is part of answering it.
+                COALESCE(MAX(c.teaching_order), 999999) AS teachingOrder
          FROM skills s
          LEFT JOIN mastery m ON m.skill_id = s.id AND m.child_id = ?
          LEFT JOIN skill_curriculum_map k ON k.skill_id = s.id

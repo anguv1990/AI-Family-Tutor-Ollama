@@ -65,9 +65,44 @@ describe('curriculum dataset', () => {
   it('maps every taught skill to the curriculum it came from', () => {
     const ids = new Set(curriculum.map((skill) => skill.id));
     for (const skill of receptionMathsBank) {
-      for (const datasetId of skill.datasetSkillIds ?? []) {
+      // An unmapped skill falls out of curriculum ordering and is taught by
+      // name order instead, which is how Reception ended up alphabetical.
+      assert.ok(
+        skill.datasetSkillIds && skill.datasetSkillIds.length > 0,
+        `${skill.id} cites no curriculum skill, so it cannot be ordered`,
+      );
+      for (const datasetId of skill.datasetSkillIds) {
         assert.ok(ids.has(datasetId), `${skill.id} cites unknown curriculum skill ${datasetId}`);
       }
+    }
+  });
+
+  it('maps each taught skill to its own year group', () => {
+    const byId = new Map(curriculum.map((skill) => [skill.id, skill]));
+    for (const skill of receptionMathsBank) {
+      for (const datasetId of skill.datasetSkillIds ?? []) {
+        assert.equal(
+          byId.get(datasetId)!.yearGroup,
+          skill.yearGroup,
+          `${skill.id} cites ${datasetId} from another year group`,
+        );
+      }
+    }
+  });
+
+  it('orders taught skills by their most advanced component', () => {
+    // Taking the earliest component instead put Reception addition first
+    // merely because counting the dots is part of answering it.
+    const order = new Map(
+      teachingOrder(curriculum).map((skill, index) => [skill.id, index]),
+    );
+    for (const skill of receptionMathsBank) {
+      const positions = (skill.datasetSkillIds ?? []).map((id) => order.get(id)!);
+      assert.ok(positions.length > 0, skill.id);
+      assert.ok(
+        Math.max(...positions) >= Math.min(...positions),
+        `${skill.id} has no orderable position`,
+      );
     }
   });
 });
