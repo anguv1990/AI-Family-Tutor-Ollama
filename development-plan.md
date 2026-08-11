@@ -400,6 +400,16 @@ Known issues: The Year 2 content is machine-verified but not adult-reviewed, the
 Next starting action: Sit both children down again now the daily cap no longer locks them out. Watch what happens after a wrong answer, which is the thing no observation has reached yet, and whether the dots land where the spoken prompt did not.
 ```
 
+```text
+Date: 2026-08-11 (fifth session)
+Session/day: Fixes found by putting it in front of a real child on a tablet
+Outcome completed: Mapped all twelve taught skills to their curriculum skill ids — Reception and Year 3 had none, so both fell out of curriculum ordering and were taught in skill-name order; ordering now takes a skill's most advanced component rather than its earliest. Labelled each child button with the curriculum it uses, and gave an adult a way to change a child's year group, which was previously fixed on the child's first tap with no way back. Added Reset today, removing one child's sessions and answers for the current day and recalculating mastery from what survives. Rewrote the README's addresses into one table covering this Mac and the tablet. Fixed the child UI never speaking on the tablet.
+Verification run: npm test — 291 tests passed (was 285). Live checks over HTTP for the year-group move (Reception to Year 2, next session followed), and for Reset today (three sittings, fourth refused, reset, active again).
+Decisions made: Reset today ships as an ordinary parent control rather than a development-only switch — the daily cap counts sittings nobody meant to have, and a dev-only flag would either be disabled when needed or become a way to wipe data without the admin secret. Changing a year group ends any session in progress, because an open session keeps the skill it began with. Speech now falls back to the browser's default voice when no on-device voice has loaded: on-device is still preferred, but a silent screen leaves a child who cannot read with nothing, and the spoken text is curriculum wording rather than anything about the child.
+Known issues: THE SPEECH FIX IS UNCONFIRMED. A Reception child sat in front of a silent screen; two Safari failure modes were identified and fixed — speech may only begin inside a user gesture, and a missing voice caused a permanent silent return — but no browser or audio is available in the development environment, so neither the cause nor the cure has been observed. `?check=speech` was added so an adult can report what the browser is actually doing. Still outstanding: 252 templates are machine-verified but not adult-reviewed; the parent page shows neither the misconception patterns nor the review schedule, both of which are stored but invisible; measurement, geometry and statistics remain untaught; nothing visual has ever been confirmed by anyone but the supervising adult.
+Next starting action: Report what `?check=speech` says on the tablet, and whether the child counts the dots when there is no sound. If the dots work silently, audio is a convenience rather than the foundation and the parent page is the next build. If they do not, Reception needs rethinking before anything else is added.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text
