@@ -370,6 +370,16 @@ Known issues: RELEASE-BLOCKING, both needing an adult rather than more code — 
 Next starting action: Sit both children in front of http://127.0.0.1:3000 and watch four things — do they hit the intended number, does the spoken prompt land or do they ignore it, what do they do after a wrong answer, and do they find the skip unaided. Record what happens here before writing any more UI code. Do the visual browser pass and the content read-through first, since both are release-blocking.
 ```
 
+```text
+Date: 2026-08-11 (third session)
+Session/day: First child observation — the assumption everything rests on
+Outcome completed: A four-year-old used the finished UI. Adult's report: "felt really fun and easy access." This is the first real evidence for the risk rated high likelihood / high impact in plan.md — that a Reception child cannot use the interface unaided — and it points the right way. Tap-then-confirm answer entry and spoken prompts did not obstruct a four-year-old.
+Verification run: Observation only, no code changed. Reported by the supervising adult rather than recorded against the four specific questions (did they hit the intended number, did the spoken prompt land, what happened after a wrong answer, did they find skip unaided), so it is an encouraging signal rather than a measurement.
+Decisions made: None yet. The mistap open question stays open until a wrong answer has actually been observed — "fun and easy" does not tell us what happens when the child gets one wrong, which is the moment the design was most uncertain about.
+Known issues: Acceptance criterion 2 requires a child to complete a session with no adult operating the input device, and the pilot exit bar requires ten completed sessions with at least three per child plus a written adult judgement. Neither is met by one happy sitting. The visual browser pass and the adult content read-through remain release-blocking.
+Next starting action: Watch a second sitting for the specifics — especially what the child does after a wrong answer, and whether they find the skip unaided. Record the answers here.
+```
+
 At the end of each session, add a short entry using this format:
 
 ```text

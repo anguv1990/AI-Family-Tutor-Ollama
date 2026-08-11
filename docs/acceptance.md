@@ -35,11 +35,17 @@ Ollama hint, skip, resume, and all four endings.
 confirmed — rendering, focus rings, touch target sizes and actual spoken audio
 are unverified. An adult must do one visual pass before a child sees it.
 
-**2 — Children unaided.** Not verified and not verifiable without the children.
-This is the pilot's central question and the reason the risk register rates
-"a Reception child cannot use the interface unaided" as high/high. The UI is
-built for it — no typing, no reading required, tap-then-confirm, spoken prompts —
-but the claim is untested.
+**2 — Children unaided.** *Early signal positive, criterion not yet met.*
+On 2026-08-11 a four-year-old used the finished UI and the supervising adult
+reported it "felt really fun and easy access" — the first real evidence against
+the risk register's high/high entry, and it points the right way.
+
+It does not yet satisfy this criterion, which requires a child to *complete* a
+session with no adult operating the input device, nor the pilot exit bar in
+`plan.md` (ten completed sessions, at least three per child, plus a written
+adult judgement). One happy sitting is not a measurement, and in particular
+nobody has yet observed what the child does after a **wrong** answer — the
+moment the design was least sure about.
 
 **3 — Mastery-driven selection and corrections.** Automated:
 `tests/mastery.test.ts`, `tests/session-flow.test.ts`,
