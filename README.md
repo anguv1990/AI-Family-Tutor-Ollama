@@ -2,14 +2,17 @@
 
 Local-first, adult-supervised tutoring built with Node, TypeScript, SQLite, and Ollama.
 
-The first vertical slice provides a deterministic Reception Maths session flow:
+It serves two curricula — Reception maths and Year 3 maths — through one
+deterministic session flow:
 
 ```text
-start session -> receive reviewed question -> submit typed answer
+start session -> receive reviewed question -> child selects an answer
 -> mark from answer key -> persist attempt/mastery -> receive next question
 ```
 
-Ollama is not responsible for marking answers. Model-assisted hints and wording will be added through the validated adapter path in a later slice.
+Ollama is never responsible for marking, mastery or difficulty. Its only job is
+optional hints, and a hint that fails its schema, trips safety screening or
+leaks the answer is replaced by a deterministic template.
 
 ## Requirements
 
@@ -27,9 +30,9 @@ npm run dev
 
 Then open <http://127.0.0.1:3000> for the child interface.
 
-> The web interface in `web/` is a **spike**, not the real UI. It exists to test
-> one unvalidated assumption — whether a Reception-age child can actually use
-> this — before more is built on top of it. Expect to throw it away.
+> Reception questions are shown as pictures — countable dots, a number track,
+> or a large numeral — as well as text and read-aloud. A four-year-old who can
+> neither read the prompt nor is listening to it can still answer.
 
 Then open <http://127.0.0.1:3000/parent.html> for the parent controls.
 
@@ -131,13 +134,17 @@ through a skill yesterday meets the 24-hour re-ask window, and a child who has
 already had today's session has done nothing wrong. `sessionId` and `question`
 are `null` in those cases.
 
-Each child may start one new session a day by default. Resuming the session they
-are already in always works; a parent can change the limit from the parent page.
+Each child may practise three sessions a day by default. Only a session they
+actually answered a question in counts, so an abandoned or reloaded sitting
+costs nothing. Resuming the session they are already in always works, and a
+parent can change the limit per child from the parent page.
 
-Questions come from the adult-reviewed bank in `server/content-bank.ts` — three
-Reception Maths skills, at least twenty enabled templates each, every answer a
-whole number from 0 to 10 so it can be tapped rather than typed. A session is
-bound to one skill and selection never crosses into another.
+Questions come from the adult-reviewed bank in `server/content-bank.ts` — seven
+skills across two year groups, 21 enabled templates each. Reception answers are
+whole numbers 0–10 tapped from a row; Year 3 answers are whole numbers of any
+size typed on a keypad. A child is only ever served their own year group's
+skills, a session is bound to one skill, and selection never crosses either
+boundary.
 
 Mastery uses the documented `new`, `learning`, and `secure` levels. The persisted level selects the target question difficulty. See `docs/mastery-rules.md` for the exact evidence, promotion, demotion, and skip rules.
 
