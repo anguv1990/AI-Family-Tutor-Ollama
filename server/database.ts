@@ -29,6 +29,7 @@ export const migrations: Migration[] = [
   { version: 10, filename: '010_question_visuals.sql' },
   { version: 11, filename: '011_curriculum_year2.sql', rebuildsTable: true },
   { version: 12, filename: '012_misconceptions.sql' },
+  { version: 13, filename: '013_spaced_review.sql' },
 ];
 
 export function createDatabase(filename: string): Database.Database {

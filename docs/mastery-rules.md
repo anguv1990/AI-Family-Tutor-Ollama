@@ -86,6 +86,30 @@ An adult can correct the evaluation of an answered attempt, with a reason. The r
 
 A wellbeing control rather than a mastery rule, but it decides whether evidence can be gathered at all: a child may start at most one **new** session per calendar day (local time) by default, adjustable per child by the parent from 0 to 10. Resuming a session already in progress is always allowed — the cap limits new sittings, not continuity. Reaching it is a normal state (`daily_limit`), never an error.
 
+## Spaced review
+
+Each skill carries a next-review date, taken from the curriculum's schedule of
+1, 3, 7, 14 and 30 days. The interval is set by the *trailing* run of correct
+graded answers: one correct brings the skill back tomorrow, two in three days,
+and so on to a month. A single wrong answer returns it to tomorrow, because the
+evidence that it was secure has just been contradicted. Overall score does not
+lengthen the interval — nine right then two wrong is not a skill due in a month.
+
+Like the mastery level, the schedule is derived from the stored evidence rather
+than incremented as it goes, so a parent correction or a retention prune cannot
+leave the two disagreeing.
+
+When an adult does not name a skill, a session opens on:
+
+1. the most overdue practised skill, if any is due;
+2. otherwise the next unstarted skill in curriculum teaching order;
+3. otherwise whichever practised skill comes round soonest.
+
+A skill practised today is therefore not repeated in the next sitting merely
+because it is not yet secure — the child meets new work instead. This is
+separate from the 24-hour rule on individual questions, which stops the same
+*question* recurring and remains in force.
+
 ## Misconception diagnosis
 
 A wrong answer is also read for *why* it was wrong. The diagnosis is arithmetic,

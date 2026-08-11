@@ -5,6 +5,13 @@ import { createDatabase } from '../server/database';
 import { TutoringService } from '../server/tutoring-service';
 import { receptionMathsBank } from '../server/content-bank';
 
+/** Mastery without its review timestamp, which is a clock value, not a rule. */
+function masteryCore(mastery: Record<string, unknown>) {
+  const { nextReviewAt, ...core } = mastery as { nextReviewAt?: unknown };
+  return core;
+}
+
+
 /**
  * Starting a session can legitimately answer "nothing to practise right now",
  * so every test that expects a question narrows the result once, here, rather
@@ -64,7 +71,7 @@ describe('Reception Maths tutoring vertical slice', () => {
     });
 
     assert.equal(result.correct, true);
-    assert.deepEqual(result.mastery, {
+    assert.deepEqual(masteryCore(result.mastery), {
       skillId: 'reception.addition-within-5',
       level: 'learning',
       correctAttempts: 1,
@@ -121,7 +128,7 @@ describe('Reception Maths tutoring vertical slice', () => {
       questionId: session.question.id,
     });
 
-    assert.deepEqual(result.mastery, {
+    assert.deepEqual(masteryCore(result.mastery), {
       skillId: 'reception.addition-within-5',
       level: 'new',
       correctAttempts: 0,

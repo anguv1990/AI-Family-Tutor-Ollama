@@ -92,7 +92,14 @@ describe('session persistence across application restarts', () => {
 
     assert.equal(fresh.resumed, false);
     assert.notEqual(fresh.sessionId, started.sessionId);
-    assert.equal(fresh.mastery.totalAttempts, 1, 'mastery survives the restart');
+
+    // The new sitting may open on a different skill now that review is
+    // scheduled — the skill just practised is not due again today — so
+    // persistence is checked against the skill that was actually practised.
+    const stored = secondDatabase
+      .prepare('SELECT total_attempts FROM mastery WHERE child_id = ? AND skill_id = ?')
+      .get('restart-complete', started.skillId) as { total_attempts: number };
+    assert.equal(stored.total_attempts, 1, 'mastery survives the restart');
     secondDatabase.close();
   });
 });

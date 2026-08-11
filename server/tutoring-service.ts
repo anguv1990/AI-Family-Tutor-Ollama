@@ -15,6 +15,7 @@ import {
 import { fallbackHintFor } from './ai/hint-service';
 import { loadCurriculum, teachingOrder } from './curriculum';
 import { diagnose } from './misconceptions';
+import { isDue, nextReviewFor } from './spaced-review';
 
 type PublicQuestion = {
   id: string;
@@ -44,6 +45,8 @@ type Mastery = {
   correctAttempts: number;
   totalAttempts: number;
   score: number;
+  /** When this skill is next due for review, per the spaced schedule. */
+  nextReviewAt?: string | null;
 };
 
 type EndedReason = 'completed' | 'exhausted' | 'question_limit' | 'time_limit';
@@ -366,7 +369,7 @@ export class TutoringService {
     if (active) this.endSession(active.id, reached ?? 'exhausted');
 
     const skillId = this.requireEnabledSkill(
-      input.skillId ?? DEFAULT_SKILL_BY_YEAR_GROUP[yearGroup] ?? DEFAULT_SKILL_ID,
+      input.skillId ?? this.chooseSkill(input.childId, yearGroup),
       yearGroup,
     );
     const currentMastery = this.getMastery(input.childId, skillId);
@@ -571,6 +574,63 @@ export class TutoringService {
          ON CONFLICT (id) DO NOTHING`,
       )
       .run(childId, yearGroup ?? 'reception', DEFAULT_DAILY_SESSION_LIMIT);
+  }
+
+  /**
+   * Which skill this child should practise now, when an adult has not named one.
+   *
+   * Due review first — the whole point of a spaced schedule is that it decides
+   * what comes back and when — most overdue first. Otherwise the next skill in
+   * curriculum teaching order that they have not made secure, so the
+   * prerequisite graph decides what is met next rather than a hardcoded
+   * default. That default remains as a last resort for a year group whose
+   * skills are all secure.
+   */
+  private chooseSkill(childId: string, yearGroup: YearGroup): string {
+    const now = this.now();
+
+    const candidates = this.database
+      .prepare(
+        `SELECT s.id,
+                m.level          AS level,
+                m.next_review_at AS nextReviewAt,
+                COALESCE(MIN(c.teaching_order), 999999) AS teachingOrder
+         FROM skills s
+         LEFT JOIN mastery m ON m.skill_id = s.id AND m.child_id = ?
+         LEFT JOIN skill_curriculum_map k ON k.skill_id = s.id
+         LEFT JOIN curriculum_skills c ON c.id = k.curriculum_skill_id
+         WHERE s.enabled = 1 AND s.year_group = ?
+         GROUP BY s.id, m.level, m.next_review_at
+         ORDER BY teachingOrder, s.id`,
+      )
+      .all(childId, yearGroup) as Array<{
+      id: string;
+      level: MasteryLevel | null;
+      nextReviewAt: string | null;
+      teachingOrder: number;
+    }>;
+
+    if (candidates.length === 0) {
+      return DEFAULT_SKILL_BY_YEAR_GROUP[yearGroup] ?? DEFAULT_SKILL_ID;
+    }
+
+    // 1. Anything already practised and now due, most overdue first. This is
+    //    what a spaced schedule is for.
+    const due = candidates
+      .filter((skill) => skill.level && isDue(skill.nextReviewAt, now))
+      .sort((a, b) => (a.nextReviewAt ?? '').localeCompare(b.nextReviewAt ?? ''));
+    if (due.length > 0) return due[0].id;
+
+    // 2. Otherwise new work, in curriculum teaching order. A skill practised
+    //    today is deliberately not repeated just because it is not yet secure —
+    //    that is what put the child through the same skill twice in a sitting.
+    const fresh = candidates.find((skill) => !skill.level);
+    if (fresh) return fresh.id;
+
+    // 3. Everything has been practised and nothing is due yet. Take whichever
+    //    comes round soonest rather than refusing to teach anything.
+    return [...candidates]
+      .sort((a, b) => (a.nextReviewAt ?? '').localeCompare(b.nextReviewAt ?? ''))[0].id;
   }
 
   /** The child's recorded year group, defaulting to reception for a new child. */
@@ -950,7 +1010,7 @@ export class TutoringService {
   private getMastery(childId: string, skillId: string): Mastery {
     const stored = this.database
       .prepare(
-        `SELECT level, correct_attempts, total_attempts, score
+        `SELECT level, correct_attempts, total_attempts, score, next_review_at
          FROM mastery WHERE child_id = ? AND skill_id = ?`,
       )
       .get(childId, skillId) as
@@ -959,6 +1019,7 @@ export class TutoringService {
           correct_attempts: number;
           total_attempts: number;
           score: number;
+          next_review_at: string | null;
         }
       | undefined;
     return {
@@ -967,6 +1028,7 @@ export class TutoringService {
       correctAttempts: stored?.correct_attempts ?? 0,
       totalAttempts: stored?.total_attempts ?? 0,
       score: stored?.score ?? 0,
+      nextReviewAt: stored?.next_review_at ?? null,
     };
   }
 
@@ -1000,18 +1062,26 @@ export class TutoringService {
       previousLevel = calculated.level;
     }
 
+    // Derived from the same evidence as the level, in the same place, so a
+    // correction or a prune can never leave the two disagreeing.
+    const now = this.now();
+    const review = nextReviewFor(graded, now);
+
     this.database
       .prepare(
         `INSERT INTO mastery
            (child_id, skill_id, level, correct_attempts, total_attempts,
-            score, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            score, updated_at, review_step, next_review_at, last_practised_at)
+         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?)
          ON CONFLICT (child_id, skill_id) DO UPDATE SET
            level = excluded.level,
            correct_attempts = excluded.correct_attempts,
            total_attempts = excluded.total_attempts,
            score = excluded.score,
-           updated_at = CURRENT_TIMESTAMP`,
+           updated_at = CURRENT_TIMESTAMP,
+           review_step = excluded.review_step,
+           next_review_at = excluded.next_review_at,
+           last_practised_at = excluded.last_practised_at`,
       )
       .run(
         childId,
@@ -1020,8 +1090,11 @@ export class TutoringService {
         calculated.correctAttempts,
         calculated.totalAttempts,
         calculated.score,
+        review.step,
+        review.nextReviewAt.toISOString(),
+        this.timestamp(),
       );
-    return { skillId, ...calculated };
+    return { skillId, ...calculated, nextReviewAt: review.nextReviewAt.toISOString() };
   }
 
   private moveSessionToQuestion(

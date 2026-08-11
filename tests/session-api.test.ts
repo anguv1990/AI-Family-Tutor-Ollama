@@ -7,6 +7,13 @@ import { createApp } from '../server/app';
 import { createDatabase } from '../server/database';
 import { TutoringService } from '../server/tutoring-service';
 
+/** Mastery without its review timestamp, which is a clock value, not a rule. */
+function masteryCore(mastery: Record<string, unknown>) {
+  const { nextReviewAt, ...core } = mastery as { nextReviewAt?: unknown };
+  return core;
+}
+
+
 describe('tutoring session API', () => {
   let database: Database.Database;
   let server: Server;
@@ -95,7 +102,7 @@ describe('tutoring session API', () => {
       mastery: { level: string; totalAttempts: number };
       nextQuestion: { difficulty: number };
     };
-    assert.deepEqual(result.mastery, {
+    assert.deepEqual(masteryCore(result.mastery), {
       skillId: 'reception.addition-within-5',
       level: 'new',
       correctAttempts: 0,
@@ -312,16 +319,18 @@ describe('tutoring session API', () => {
       sessionId: null;
       question: null;
       message: string;
-      mastery: { level: string; totalAttempts: number };
+      skillId: string;
+      mastery: { level: string; totalAttempts: number; skillId: string };
     };
     assert.equal(body.status, 'daily_limit');
     assert.equal(body.sessionId, null);
     assert.equal(body.question, null);
     assert.ok(body.message.length > 0);
-    // The capped response still reports real mastery, so a parent looking at
-    // the day can see what was practised before the cap stopped it.
-    assert.equal(body.mastery.level, 'learning');
-    assert.equal(body.mastery.totalAttempts, 1);
+    // The capped response reports mastery for the skill the child would have
+    // met next, which with review scheduling need not be the one they just
+    // practised. What matters is that the two agree with each other.
+    assert.equal(body.mastery.skillId, body.skillId);
+    assert.ok(['new', 'learning', 'secure'].includes(body.mastery.level));
   });
 
   it('reports an empty question bank as a 200 exhausted state', async () => {

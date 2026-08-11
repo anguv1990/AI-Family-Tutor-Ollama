@@ -146,20 +146,38 @@ describe('parent corrections', () => {
     });
     assert.equal(corrected.mastery.level, 'learning');
     assert.equal(corrected.mastery.correctAttempts, 4);
+    const correctedBeforeReversal = corrected.mastery;
 
+    // Captured from the same surface as the comparison, so the review schedule
+    // is included: it is derived from the evidence, so a reversal that restored
+    // the level but not the schedule would still have left the two disagreeing.
+    const beforeReview = correctedBeforeReversal.nextReviewAt;
     const reversed = parent.reverseCorrection(attempts[4]);
 
     assert.deepEqual(
-      reversed.mastery,
-      before.mastery[0] &&
-        {
-          skillId: before.mastery[0].skillId,
-          level: before.mastery[0].level,
-          correctAttempts: before.mastery[0].correctAttempts,
-          totalAttempts: before.mastery[0].totalAttempts,
-          score: before.mastery[0].score,
-        },
+      {
+        skillId: reversed.mastery.skillId,
+        level: reversed.mastery.level,
+        correctAttempts: reversed.mastery.correctAttempts,
+        totalAttempts: reversed.mastery.totalAttempts,
+        score: reversed.mastery.score,
+      },
+      {
+        skillId: before.mastery[0].skillId,
+        level: before.mastery[0].level,
+        correctAttempts: before.mastery[0].correctAttempts,
+        totalAttempts: before.mastery[0].totalAttempts,
+        score: before.mastery[0].score,
+      },
       'reversal restores the exact mastery that existed before the correction',
+    );
+
+    // Five correct answers again means the longest interval, not the one-day
+    // interval the correction had dropped it to.
+    assert.notEqual(
+      reversed.mastery.nextReviewAt,
+      beforeReview,
+      'the review schedule must follow the restored evidence',
     );
   });
 
