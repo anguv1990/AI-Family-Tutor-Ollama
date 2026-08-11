@@ -4,6 +4,8 @@ import type Database from 'better-sqlite3';
 import { createDatabase } from '../server/database';
 import { TutoringService } from '../server/tutoring-service';
 import { receptionMathsBank } from '../server/content-bank';
+import { createApp } from '../server/app';
+import type { AddressInfo } from 'node:net';
 
 /**
  * Two children, two curricula, one app. The failure that matters is a child
@@ -86,10 +88,18 @@ describe('year groups', () => {
 
   it('lists only the skills for the year group asked for', () => {
     const year3 = tutor.listSkills('year3');
+    const year2 = tutor.listSkills('year2');
     const reception = tutor.listSkills('reception');
 
-    assert.ok(year3.length > 0 && reception.length > 0);
-    assert.equal(year3.length + reception.length, receptionMathsBank.length);
+    assert.ok(year3.length > 0 && year2.length > 0 && reception.length > 0);
+    assert.equal(
+      year3.length + year2.length + reception.length,
+      receptionMathsBank.length,
+    );
+    for (const skill of year2) {
+      assert.equal(skill.yearGroup, 'year2');
+      assert.ok(skill.questionCount >= 20, `${skill.id}: ${skill.questionCount}`);
+    }
     for (const skill of year3) {
       assert.equal(skill.yearGroup, 'year3');
       assert.equal(skill.answerEntry, 'keypad');
@@ -111,6 +121,41 @@ describe('year groups', () => {
     const relisted = tutor.startSession({ childId: 'older', yearGroup: 'reception' });
     assert.equal(tutor.getYearGroup('older'), 'year3');
     if (relisted.skillId) assert.ok(relisted.skillId.startsWith('year3.'));
+  });
+
+  it('accepts every year group the engine teaches, over HTTP', async () => {
+    // The engine and the API each had their own idea of which year groups
+    // exist, and adding Year 2 to one left the other rejecting it.
+    const server = createApp(tutor).listen(0, '127.0.0.1');
+    await new Promise((resolve) => server.once('listening', resolve));
+    const { port } = server.address() as AddressInfo;
+
+    for (const yearGroup of ['reception', 'year2', 'year3'] as const) {
+      const response = await fetch(`http://127.0.0.1:${port}/api/sessions`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ childId: `http-${yearGroup}`, yearGroup }),
+      });
+      assert.equal(response.status, 201, yearGroup);
+      const body = (await response.json()) as { skillId: string };
+      assert.ok(body.skillId.startsWith(yearGroup === 'reception' ? 'reception.' : `${yearGroup}.`));
+
+      const skills = await fetch(
+        `http://127.0.0.1:${port}/api/skills?yearGroup=${yearGroup}`,
+      );
+      assert.equal(skills.status, 200, `skills for ${yearGroup}`);
+      const listed = (await skills.json()) as { skills: unknown[] };
+      assert.ok(listed.skills.length > 0, `no skills listed for ${yearGroup}`);
+    }
+
+    const bogus = await fetch(`http://127.0.0.1:${port}/api/sessions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ childId: 'x', yearGroup: 'year9' }),
+    });
+    assert.equal(bogus.status, 400);
+
+    server.close();
   });
 
   it('keeps mastery separate for each child', () => {

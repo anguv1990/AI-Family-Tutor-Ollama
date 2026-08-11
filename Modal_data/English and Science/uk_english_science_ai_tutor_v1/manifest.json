@@ -1,0 +1,19 @@
+{
+  "name": "UK English & Science AI Tutor Dataset",
+  "version": "1.0",
+  "country": "England",
+  "stages": [
+    "Reception",
+    "Year 2",
+    "Year 3"
+  ],
+  "skill_counts": {
+    "Reception English": 11,
+    "Year 2 English": 20,
+    "Year 3 English": 19,
+    "Reception Science/Understanding the World": 6,
+    "Year 2 Science": 14,
+    "Year 3 Science": 20,
+    "Total": 90
+  }
+}

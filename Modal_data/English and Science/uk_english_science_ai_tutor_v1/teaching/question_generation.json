@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "English": {
+    "reading": [
+      "decode_or_read",
+      "retrieve",
+      "sequence",
+      "infer",
+      "predict",
+      "vocabulary",
+      "explain_evidence"
+    ],
+    "writing": [
+      "oral_rehearsal",
+      "model",
+      "shared_completion",
+      "independent_sentence",
+      "paragraph",
+      "edit"
+    ],
+    "difficulty_rule": "Increase linguistic reasoning/independence before simply increasing text length."
+  },
+  "Science": {
+    "question_types": [
+      "observe",
+      "classify",
+      "predict",
+      "plan_test",
+      "record",
+      "identify_pattern",
+      "conclude",
+      "explain"
+    ],
+    "difficulty_rule": "Move from observation/recall to application, enquiry and evidence-based explanation.",
+    "safety": "Never instruct a child to perform an experiment involving heat, mains electricity, chemicals, sharp tools, ingestion, or other hazardous activities without appropriate adult-led safety controls."
+  },
+  "feedback": {
+    "first_error": "hint_and_retry",
+    "second_error": "scaffold_or_change_representation",
+    "repeated_error": "teach_prerequisite_then_fresh_item"
+  }
+}

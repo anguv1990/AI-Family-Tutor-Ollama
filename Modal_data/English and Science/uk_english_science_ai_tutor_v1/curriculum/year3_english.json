@@ -1,0 +1,627 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "Y3-ENG-R-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Word reading strategies",
+      "learning_objective": "Read most age-appropriate words fluently and use phonics/morphology to tackle unfamiliar words.",
+      "prerequisites": [
+        "Y2-ENG-R-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Read the unfamiliar word and identify a helpful root, prefix or suffix."
+      },
+      "question_generation": {
+        "formats": [
+          "decode",
+          "morphology"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-C-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Retrieval and summarising",
+      "learning_objective": "Retrieve information and identify main ideas across a paragraph or short section.",
+      "prerequisites": [
+        "Y2-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Give the main idea of this paragraph in one sentence."
+      },
+      "question_generation": {
+        "formats": [
+          "retrieval",
+          "main_idea",
+          "short_summary"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-C-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Inference with evidence",
+      "learning_objective": "Infer feelings, thoughts and motives and justify with evidence.",
+      "prerequisites": [
+        "Y2-ENG-C-003"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What does the character probably think? Which words support your answer?"
+      },
+      "question_generation": {
+        "formats": [
+          "inference_evidence",
+          "motive"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-C-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Prediction",
+      "learning_objective": "Predict from details stated and implied.",
+      "prerequisites": [
+        "Y3-ENG-C-002"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Predict the next event and justify it from the text."
+      },
+      "question_generation": {
+        "formats": [
+          "prediction_evidence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-C-004",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Vocabulary in context",
+      "learning_objective": "Work out meanings of unfamiliar words using context, word families and morphology.",
+      "prerequisites": [
+        "Y3-ENG-R-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What does the highlighted word most likely mean? Explain your clue."
+      },
+      "question_generation": {
+        "formats": [
+          "context",
+          "root_word",
+          "prefix_suffix"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-C-005",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Text features",
+      "learning_objective": "Recognise how paragraphs, headings and other organisational features support meaning.",
+      "prerequisites": [
+        "Y3-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why did the writer use this heading?"
+      },
+      "question_generation": {
+        "formats": [
+          "heading",
+          "paragraph",
+          "nonfiction_feature"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Prefixes, suffixes and word families",
+      "learning_objective": "Apply taught spelling patterns, prefixes, suffixes and related word knowledge.",
+      "prerequisites": [
+        "Y2-ENG-W-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Build a new word from the root using the target prefix or suffix."
+      },
+      "question_generation": {
+        "formats": [
+          "word_build",
+          "dictation",
+          "sort"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Homophones and tricky spellings",
+      "learning_objective": "Distinguish selected homophones and spell commonly used words accurately.",
+      "prerequisites": [
+        "Y2-ENG-W-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Choose: Their/There/They're going home."
+      },
+      "question_generation": {
+        "formats": [
+          "homophone_choice",
+          "sentence_dictation"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Plan for purpose",
+      "learning_objective": "Plan writing by discussing models, vocabulary, structure and audience.",
+      "prerequisites": [
+        "Y2-ENG-W-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Who is your reader and what should they know or feel?"
+      },
+      "question_generation": {
+        "formats": [
+          "audience_plan",
+          "structure_plan",
+          "vocabulary_plan"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-004",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Narrative",
+      "learning_objective": "Create settings, characters and plot using paragraphs and increasingly varied language.",
+      "prerequisites": [
+        "Y3-ENG-W-003"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Write a paragraph that introduces a setting using precise details."
+      },
+      "question_generation": {
+        "formats": [
+          "setting",
+          "character",
+          "plot",
+          "dialogue"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-005",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Non-fiction",
+      "learning_objective": "Organise factual writing with appropriate structure and language.",
+      "prerequisites": [
+        "Y3-ENG-W-003"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Write a short information section with a heading and grouped facts."
+      },
+      "question_generation": {
+        "formats": [
+          "report",
+          "explanation",
+          "instructions"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-W-006",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Editing",
+      "topic": "Evaluate and edit",
+      "learning_objective": "Improve vocabulary, grammar, punctuation and clarity after rereading.",
+      "prerequisites": [
+        "Y3-ENG-W-004"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Improve this sentence by replacing one vague word and checking punctuation."
+      },
+      "question_generation": {
+        "formats": [
+          "edit",
+          "proofread",
+          "improve"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-G-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Word classes and sentence structure",
+      "learning_objective": "Use nouns, verbs, adjectives, adverbs and conjunctions purposefully.",
+      "prerequisites": [
+        "Y2-ENG-G-002",
+        "Y2-ENG-G-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Add an adverb to explain how the fox moved."
+      },
+      "question_generation": {
+        "formats": [
+          "identify",
+          "select",
+          "compose"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-G-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Conjunctions and clauses",
+      "learning_objective": "Express time, place and cause using conjunctions, adverbs and prepositions.",
+      "prerequisites": [
+        "Y3-ENG-G-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Extend the sentence to explain when or why it happened."
+      },
+      "question_generation": {
+        "formats": [
+          "extend",
+          "combine",
+          "identify"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-G-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Present perfect",
+      "learning_objective": "Recognise and use the present perfect form appropriately alongside simple past.",
+      "prerequisites": [
+        "Y3-ENG-G-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Choose: 'She went' or 'She has gone' when the result matters now."
+      },
+      "question_generation": {
+        "formats": [
+          "choose_form",
+          "rewrite"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-P-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Speech punctuation foundation",
+      "learning_objective": "Use inverted commas to punctuate direct speech, with appropriate surrounding punctuation.",
+      "prerequisites": [
+        "Y2-ENG-P-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Punctuate: Sam said I am ready"
+      },
+      "question_generation": {
+        "formats": [
+          "edit_speech",
+          "compose_dialogue"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-P-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Apostrophes and sentence punctuation",
+      "learning_objective": "Consolidate apostrophes and accurate sentence punctuation in independent writing.",
+      "prerequisites": [
+        "Y2-ENG-P-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Correct the punctuation in a short paragraph."
+      },
+      "question_generation": {
+        "formats": [
+          "proofread",
+          "apostrophe",
+          "sentence_boundary"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-H-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Handwriting",
+      "topic": "Joined handwriting",
+      "learning_objective": "Develop fluent, legible joined handwriting with consistent sizing and spacing.",
+      "prerequisites": [
+        "Y2-ENG-H-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Copy a short sentence using the taught joins and clear spacing."
+      },
+      "question_generation": {
+        "formats": [
+          "copy",
+          "fluency"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-ENG-SL-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Spoken Language",
+      "topic": "Reasoned discussion",
+      "learning_objective": "Ask relevant questions, build on others' ideas and give reasons for opinions.",
+      "prerequisites": [
+        "Y2-ENG-SL-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Give your opinion, one reason, and one example."
+      },
+      "question_generation": {
+        "formats": [
+          "opinion_reason",
+          "explain",
+          "discussion"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

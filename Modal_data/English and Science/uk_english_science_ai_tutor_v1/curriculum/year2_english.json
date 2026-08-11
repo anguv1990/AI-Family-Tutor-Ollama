@@ -1,0 +1,660 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "Y2-ENG-R-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Phonics decoding",
+      "learning_objective": "Apply secure phonics to decode unfamiliar words accurately and increasingly automatically.",
+      "prerequisites": [
+        "R-ENG-R-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Read a decodable unfamiliar word using its graphemes."
+      },
+      "question_generation": {
+        "formats": [
+          "decode",
+          "blend",
+          "pseudo_word_style"
+        ],
+        "respect_taught_phonics": true
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-R-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Common exception words",
+      "learning_objective": "Read common exception words with increasing automaticity.",
+      "prerequisites": [
+        "Y2-ENG-R-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Read the target common exception word, then use it orally."
+      },
+      "question_generation": {
+        "formats": [
+          "word_card",
+          "sentence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-R-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Fluency",
+      "topic": "Fluent reading",
+      "learning_objective": "Read age-appropriate text accurately, with suitable pace and expression.",
+      "prerequisites": [
+        "Y2-ENG-R-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Read two sentences aloud; pause at punctuation."
+      },
+      "question_generation": {
+        "formats": [
+          "phrase_reading",
+          "punctuation_expression"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-C-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Retrieval",
+      "learning_objective": "Retrieve explicit information from stories, poems and non-fiction.",
+      "prerequisites": [
+        "Y2-ENG-R-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "According to the passage, where did Sam go?",
+        "answer": "Use passage evidence."
+      },
+      "question_generation": {
+        "formats": [
+          "who",
+          "what",
+          "where",
+          "when"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-C-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Sequence and retell",
+      "learning_objective": "Sequence events and retell key points from familiar texts.",
+      "prerequisites": [
+        "Y2-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What happened first, next and last?"
+      },
+      "question_generation": {
+        "formats": [
+          "order_events",
+          "retell"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-C-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Inference",
+      "learning_objective": "Make simple inferences from what characters say and do.",
+      "prerequisites": [
+        "Y2-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "How is the character feeling? What clue tells you?"
+      },
+      "question_generation": {
+        "formats": [
+          "feeling_evidence",
+          "motive"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-C-004",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Prediction",
+      "learning_objective": "Predict what may happen using what has already been read.",
+      "prerequisites": [
+        "Y2-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What might happen next? Give one clue from the text."
+      },
+      "question_generation": {
+        "formats": [
+          "prediction_with_evidence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-C-005",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Vocabulary",
+      "learning_objective": "Discuss and clarify meanings of words, linking new meanings to known vocabulary.",
+      "prerequisites": [
+        "Y2-ENG-C-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What does 'enormous' mean in this sentence?"
+      },
+      "question_generation": {
+        "formats": [
+          "context_meaning",
+          "synonym",
+          "use_word"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-W-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Phonics and spelling patterns",
+      "learning_objective": "Segment spoken words and apply taught spelling patterns and conventions.",
+      "prerequisites": [
+        "R-ENG-W-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Spell a word using the target sound/spelling pattern."
+      },
+      "question_generation": {
+        "formats": [
+          "dictation",
+          "choose_spelling",
+          "word_sort"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-W-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Suffixes",
+      "learning_objective": "Add common suffixes appropriately and notice spelling changes.",
+      "prerequisites": [
+        "Y2-ENG-W-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Add the correct ending to make the new word."
+      },
+      "question_generation": {
+        "formats": [
+          "suffix_choice",
+          "word_family"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-W-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Plan and say sentences",
+      "learning_objective": "Say ideas aloud, sequence them and plan before writing.",
+      "prerequisites": [
+        "R-ENG-W-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Say three sentences for the beginning, middle and end of your story."
+      },
+      "question_generation": {
+        "formats": [
+          "oral_plan",
+          "sequence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-W-004",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Narrative writing",
+      "learning_objective": "Write simple coherent narratives about real or fictional events.",
+      "prerequisites": [
+        "Y2-ENG-W-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Write a short story with a clear beginning, event and ending."
+      },
+      "question_generation": {
+        "formats": [
+          "story_prompt",
+          "picture_sequence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-W-005",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Non-fiction writing",
+      "learning_objective": "Write for simple purposes such as explanations, instructions or information.",
+      "prerequisites": [
+        "Y2-ENG-W-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Write instructions for making a sandwich using ordered steps."
+      },
+      "question_generation": {
+        "formats": [
+          "instructions",
+          "information",
+          "simple_explanation"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-G-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Sentence types",
+      "learning_objective": "Recognise and create statements, questions, exclamations and commands.",
+      "prerequisites": [
+        "R-ENG-W-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Turn 'You are coming' into a question."
+      },
+      "question_generation": {
+        "formats": [
+          "identify",
+          "transform",
+          "compose"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-G-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Nouns, verbs and adjectives",
+      "learning_objective": "Use grammatical vocabulary to identify and choose words that perform different jobs.",
+      "prerequisites": [
+        "Y2-ENG-W-003"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "In 'The small dog ran', which word is the verb?",
+        "answer": "ran"
+      },
+      "question_generation": {
+        "formats": [
+          "identify",
+          "choose",
+          "improve_sentence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-G-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Conjunctions",
+      "learning_objective": "Join and extend ideas using conjunctions such as and, but, because, when and if.",
+      "prerequisites": [
+        "Y2-ENG-G-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Join: 'I wore a coat. It was cold.'",
+        "answer": "I wore a coat because it was cold."
+      },
+      "question_generation": {
+        "formats": [
+          "join",
+          "complete",
+          "choose"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-P-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Sentence punctuation",
+      "learning_objective": "Use capital letters, full stops, question marks and exclamation marks accurately.",
+      "prerequisites": [
+        "Y2-ENG-G-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Add the missing punctuation: Where is my bag"
+      },
+      "question_generation": {
+        "formats": [
+          "edit",
+          "choose_mark"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-P-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Commas and apostrophes",
+      "learning_objective": "Use commas in lists and apostrophes for common contractions and singular possession.",
+      "prerequisites": [
+        "Y2-ENG-P-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Add punctuation: I've got apples pears and bananas."
+      },
+      "question_generation": {
+        "formats": [
+          "list_comma",
+          "contraction",
+          "possession"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-H-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Handwriting",
+      "topic": "Letter size and joins",
+      "learning_objective": "Form letters with appropriate size/orientation and begin using appropriate joins.",
+      "prerequisites": [
+        "R-ENG-W-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Copy the sentence with clear spacing and consistent letter size."
+      },
+      "question_generation": {
+        "formats": [
+          "copy",
+          "target_join"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-ENG-SL-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Spoken Language",
+      "topic": "Discussion and explanation",
+      "learning_objective": "Listen, take turns, ask relevant questions and explain ideas using appropriate vocabulary.",
+      "prerequisites": [
+        "R-ENG-CL-002"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Explain how you solved it, then ask one question about another idea."
+      },
+      "question_generation": {
+        "formats": [
+          "explain",
+          "retell",
+          "question"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

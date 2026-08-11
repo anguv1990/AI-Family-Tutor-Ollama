@@ -13,6 +13,7 @@ import {
   type YearGroup,
 } from './content-bank';
 import { fallbackHintFor } from './ai/hint-service';
+import { loadCurriculum, teachingOrder } from './curriculum';
 
 type PublicQuestion = {
   id: string;
@@ -236,7 +237,50 @@ export class TutoringService {
          visual = excluded.visual`,
     );
 
+    const insertCurriculumSkill = this.database.prepare(
+      `INSERT INTO curriculum_skills
+         (id, stage, year_group, domain, topic, learning_objective,
+          difficulty, teaching_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (id) DO UPDATE SET
+         stage = excluded.stage,
+         year_group = excluded.year_group,
+         domain = excluded.domain,
+         topic = excluded.topic,
+         learning_objective = excluded.learning_objective,
+         difficulty = excluded.difficulty,
+         teaching_order = excluded.teaching_order`,
+    );
+    const insertPrerequisite = this.database.prepare(
+      `INSERT INTO curriculum_prerequisites (skill_id, requires_id)
+       VALUES (?, ?) ON CONFLICT DO NOTHING`,
+    );
+    const mapSkill = this.database.prepare(
+      `INSERT INTO skill_curriculum_map (skill_id, curriculum_skill_id)
+       VALUES (?, ?) ON CONFLICT DO NOTHING`,
+    );
+
     const seed = this.database.transaction(() => {
+      // The curriculum graph first: it is what the taught skills refer back to.
+      const curriculum = teachingOrder(loadCurriculum());
+      curriculum.forEach((skill, order) => {
+        insertCurriculumSkill.run(
+          skill.id,
+          skill.stage,
+          skill.yearGroup,
+          skill.domain,
+          skill.topic,
+          skill.learningObjective,
+          skill.difficulty,
+          order + 1,
+        );
+      });
+      for (const skill of curriculum) {
+        for (const prerequisite of skill.prerequisites) {
+          insertPrerequisite.run(skill.id, prerequisite);
+        }
+      }
+
       for (const skill of receptionMathsBank) {
         insertSkill.run(
             skill.id,
@@ -257,6 +301,9 @@ export class TutoringService {
             skill.licence,
             template.visual ? JSON.stringify(template.visual) : null,
           );
+        }
+        for (const curriculumSkillId of skill.datasetSkillIds ?? []) {
+          mapSkill.run(skill.id, curriculumSkillId);
         }
       }
     });

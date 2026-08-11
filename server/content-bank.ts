@@ -53,7 +53,7 @@ export type TemplateSeed = {
   visual?: Visual;
 };
 
-export type YearGroup = 'reception' | 'year3';
+export type YearGroup = 'reception' | 'year2' | 'year3';
 
 /**
  * How the child gives an answer. Reception answers are whole numbers 0-10 and
@@ -69,12 +69,16 @@ export type SkillSeed = {
   yearGroup: YearGroup;
   answerEntry: AnswerEntry;
   curriculumVersion: string;
+  /** The `Modal_data` curriculum skills this was built from, where it was. */
+  datasetSkillIds?: string[];
   source: string;
   licence: string;
   templates: TemplateSeed[];
 };
 
 const ORIGINAL = 'AI Family Tutor original content';
+const DATASET_SOURCE =
+  'Built to the bounds in Modal_data/Maths/uk_math_ai_tutor_v1 (UK Maths AI Tutor Dataset v1); questions and answer keys computed deterministically here';
 const LICENCE = 'CC0-1.0';
 
 /** Ordered [a, b] addend pairs. Difficulty follows the total: <=3, 4, then 5. */
@@ -342,6 +346,7 @@ const FRACTION_WORDS: Record<string, string> = {
   '1/8': 'one eighth',
   '1/10': 'one tenth',
   '2/3': 'two thirds',
+  '2/4': 'two quarters',
   '3/4': 'three quarters',
   '2/5': 'two fifths',
   '3/10': 'three tenths',
@@ -354,6 +359,154 @@ const fractionTemplates: TemplateSeed[] = FRACTION_FACTS.map(
     if (!words) throw new Error(`no spoken wording for ${numerator}/${denominator}`);
     return {
       id: `year3-fraction-${numerator}-${denominator}-of-${amount}`,
+      prompt: `What is ${words} of ${amount}?`,
+      correctAnswer: String((amount / denominator) * numerator),
+      difficulty,
+      sequence: index + 1,
+    };
+  },
+);
+
+/* --- Year 2 ---------------------------------------------------------------
+ *
+ * Built from the bounds each skill declares in the `Modal_data` curriculum
+ * dataset (`Y2-*` ids below), but the questions and answers are produced here,
+ * deterministically, and every answer is re-derived from its own prompt by
+ * `tests/content-answer-keys.test.ts`. The dataset supplies the curriculum; it
+ * never supplies an answer key.
+ *
+ * Only skills whose answer is a single whole number are built. Measurement,
+ * geometry and statistics need clocks, shapes and charts to ask honestly, and a
+ * badly-faked version of them would teach the wrong thing — they wait for a
+ * slice that can draw.
+ */
+
+/** Y2-NPV-001 — count in steps of 2, 3, 5 and 10 within 100. */
+const YEAR2_STEP_RUNS: Array<[number[], number, 1 | 2 | 3]> = [
+  [[2, 4, 6], 2, 1], [[10, 20, 30], 10, 1], [[5, 10, 15], 5, 1],
+  [[4, 6, 8], 2, 1], [[20, 30, 40], 10, 1], [[15, 20, 25], 5, 1],
+  [[3, 6, 9], 3, 2], [[30, 40, 50], 10, 2], [[25, 30, 35], 5, 2],
+  [[12, 14, 16], 2, 2], [[9, 12, 15], 3, 2], [[45, 50, 55], 5, 2],
+  [[18, 21, 24], 3, 3], [[60, 70, 80], 10, 3], [[65, 70, 75], 5, 3],
+  [[24, 27, 30], 3, 3], [[36, 38, 40], 2, 3], [[80, 85, 90], 5, 3],
+  [[33, 36, 39], 3, 3], [[70, 80, 90], 10, 3], [[44, 46, 48], 2, 3],
+];
+
+const year2CountingTemplates: TemplateSeed[] = YEAR2_STEP_RUNS.map(
+  ([run, step, difficulty], index) => ({
+    id: `y2-count-${step}s-${run[0]}`,
+    prompt: `Count on in ${step}s. ${run.join(', ')}. What comes next?`,
+    correctAnswer: String(run[run.length - 1] + step),
+    difficulty,
+    sequence: index + 1,
+  }),
+);
+
+/** Y2-NPV-002 — tens and ones within 99. */
+const YEAR2_PLACE_VALUE: Array<[number, 'ones' | 'tens', 1 | 2 | 3]> = [
+  [34, 'tens', 1], [27, 'ones', 1], [56, 'tens', 1], [83, 'ones', 1],
+  [45, 'tens', 1], [19, 'ones', 1], [70, 'ones', 2],
+];
+
+/** Y2-NPV-003 — partitioning: 47 = 40 + ? */
+const YEAR2_PARTITIONS: Array<[number, 1 | 2 | 3]> = [
+  [47, 1], [62, 1], [35, 2], [78, 2], [91, 2], [26, 2], [53, 3],
+];
+
+/** Y2-NPV-004 — compare two numbers to 100. */
+const YEAR2_COMPARISONS: Array<[number, number, 'larger' | 'smaller', 1 | 2 | 3]> = [
+  [34, 43, 'larger', 2], [67, 76, 'smaller', 2], [90, 89, 'larger', 3],
+  [55, 45, 'smaller', 3], [28, 82, 'larger', 3], [71, 17, 'smaller', 3],
+  [100, 99, 'larger', 3],
+];
+
+const year2PlaceValueTemplates: TemplateSeed[] = [
+  ...YEAR2_PLACE_VALUE.map(([value, place, difficulty], index) => ({
+    id: `y2-place-${place}-${value}`,
+    prompt: `In the number ${value}, which digit is in the ${place} column?`,
+    correctAnswer: String(place === 'ones' ? value % 10 : Math.floor(value / 10) % 10),
+    difficulty,
+    sequence: index + 1,
+  })),
+  ...YEAR2_PARTITIONS.map(([value, difficulty], index) => ({
+    id: `y2-partition-${value}`,
+    prompt: `${value} is ${Math.floor(value / 10) * 10} add what?`,
+    correctAnswer: String(value % 10),
+    difficulty,
+    sequence: YEAR2_PLACE_VALUE.length + index + 1,
+  })),
+  ...YEAR2_COMPARISONS.map(([left, right, kind, difficulty], index) => ({
+    id: `y2-compare-${left}-${right}`,
+    prompt: `Which number is ${kind}, ${left} or ${right}?`,
+    correctAnswer: String(kind === 'larger' ? Math.max(left, right) : Math.min(left, right)),
+    difficulty,
+    sequence: YEAR2_PLACE_VALUE.length + YEAR2_PARTITIONS.length + index + 1,
+  })),
+];
+
+/** Y2-AS-001 and Y2-AS-003/004 — facts to 20, then mental work within 100. */
+const YEAR2_CALCULATIONS: Array<[number, '+' | '-', number, 1 | 2 | 3]> = [
+  [8, '+', 7, 1], [9, '+', 6, 1], [13, '-', 5, 1], [16, '-', 9, 1],
+  [7, '+', 8, 1], [20, '-', 4, 1], [12, '+', 6, 1],
+  [34, '+', 5, 2], [47, '+', 20, 2], [56, '-', 4, 2], [72, '-', 30, 2],
+  [28, '+', 7, 2], [63, '-', 8, 2], [45, '+', 30, 2],
+  [36, '+', 27, 3], [54, '+', 38, 3], [72, '-', 46, 3], [83, '-', 57, 3],
+  [49, '+', 25, 3], [61, '-', 34, 3], [58, '+', 36, 3],
+];
+
+const year2CalculationTemplates: TemplateSeed[] = YEAR2_CALCULATIONS.map(
+  ([left, operator, right, difficulty], index) => ({
+    id: `y2-calc-${left}-${operator === '+' ? 'plus' : 'minus'}-${right}`,
+    prompt: `What is ${left} ${operator === '+' ? 'add' : 'subtract'} ${right}?`,
+    correctAnswer: String(operator === '+' ? left + right : left - right),
+    difficulty,
+    sequence: index + 1,
+  }),
+);
+
+/** Y2-MD-002 and Y2-MD-003 — the 2, 5 and 10 tables, and dividing by them. */
+const YEAR2_TABLES: Array<[number, number, 1 | 2 | 3]> = [
+  [2, 2, 1], [2, 5, 1], [10, 3, 1], [10, 5, 1], [2, 3, 1], [10, 2, 1], [2, 4, 1],
+  [5, 2, 2], [5, 4, 2], [5, 6, 2], [2, 8, 2], [10, 7, 2], [5, 3, 2], [2, 9, 2],
+];
+
+const YEAR2_DIVISIONS: Array<[number, number, 1 | 2 | 3]> = [
+  [20, 2, 3], [30, 10, 3], [25, 5, 3], [40, 5, 3], [18, 2, 3], [60, 10, 3], [45, 5, 3],
+];
+
+const year2TableTemplates: TemplateSeed[] = [
+  ...YEAR2_TABLES.map(([a, b, difficulty], index) => ({
+    id: `y2-times-${a}-x-${b}`,
+    prompt: `What is ${a} times ${b}?`,
+    correctAnswer: String(a * b),
+    difficulty,
+    sequence: index + 1,
+  })),
+  ...YEAR2_DIVISIONS.map(([total, divisor, difficulty], index) => ({
+    id: `y2-divide-${total}-by-${divisor}`,
+    prompt: `What is ${total} shared into groups of ${divisor}?`,
+    correctAnswer: String(total / divisor),
+    difficulty,
+    sequence: YEAR2_TABLES.length + index + 1,
+  })),
+];
+
+/** Y2-F-001 and Y2-F-002 — unit and non-unit fractions of a quantity. */
+const YEAR2_FRACTIONS: Array<[number, number, number, 1 | 2 | 3]> = [
+  [1, 2, 10, 1], [1, 2, 6, 1], [1, 2, 14, 1], [1, 4, 8, 1], [1, 4, 24, 1],
+  [1, 3, 6, 1], [1, 3, 12, 1],
+  [1, 2, 18, 2], [1, 4, 16, 2], [1, 3, 15, 2], [1, 2, 24, 2], [1, 4, 28, 2],
+  [1, 3, 21, 2], [1, 2, 30, 2],
+  [3, 4, 8, 3], [2, 4, 12, 3], [3, 4, 12, 3], [2, 3, 12, 3], [3, 4, 24, 3],
+  [2, 3, 15, 3], [2, 4, 20, 3],
+];
+
+const year2FractionTemplates: TemplateSeed[] = YEAR2_FRACTIONS.map(
+  ([numerator, denominator, amount, difficulty], index) => {
+    const words = FRACTION_WORDS[`${numerator}/${denominator}`];
+    if (!words) throw new Error(`no spoken wording for ${numerator}/${denominator}`);
+    return {
+      id: `y2-fraction-${numerator}-${denominator}-of-${amount}`,
       prompt: `What is ${words} of ${amount}?`,
       correctAnswer: String((amount / denominator) * numerator),
       difficulty,
@@ -394,6 +547,61 @@ export const receptionMathsBank: SkillSeed[] = [
     source: ORIGINAL,
     licence: LICENCE,
     templates: recognitionTemplates,
+  },
+  {
+    id: 'year2.counting-in-steps',
+    title: 'Counting in 2s, 3s, 5s and 10s',
+    yearGroup: 'year2',
+    answerEntry: 'keypad',
+    curriculumVersion: 'year2-maths-v1',
+    datasetSkillIds: ['Y2-NPV-001'],
+    source: DATASET_SOURCE,
+    licence: LICENCE,
+    templates: year2CountingTemplates,
+  },
+  {
+    id: 'year2.place-value-to-100',
+    title: 'Tens and ones to 100',
+    yearGroup: 'year2',
+    answerEntry: 'keypad',
+    curriculumVersion: 'year2-maths-v1',
+    datasetSkillIds: ['Y2-NPV-002', 'Y2-NPV-003', 'Y2-NPV-004'],
+    source: DATASET_SOURCE,
+    licence: LICENCE,
+    templates: year2PlaceValueTemplates,
+  },
+  {
+    id: 'year2.add-and-subtract',
+    title: 'Adding and subtracting to 100',
+    yearGroup: 'year2',
+    answerEntry: 'keypad',
+    curriculumVersion: 'year2-maths-v1',
+    datasetSkillIds: ['Y2-AS-001', 'Y2-AS-003', 'Y2-AS-004', 'Y2-AS-005'],
+    source: DATASET_SOURCE,
+    licence: LICENCE,
+    templates: year2CalculationTemplates,
+  },
+  {
+    id: 'year2.times-tables',
+    title: 'Times tables: 2, 5 and 10',
+    yearGroup: 'year2',
+    answerEntry: 'keypad',
+    curriculumVersion: 'year2-maths-v1',
+    datasetSkillIds: ['Y2-MD-002', 'Y2-MD-003'],
+    source: DATASET_SOURCE,
+    licence: LICENCE,
+    templates: year2TableTemplates,
+  },
+  {
+    id: 'year2.fractions-of-amounts',
+    title: 'Fractions of amounts',
+    yearGroup: 'year2',
+    answerEntry: 'keypad',
+    curriculumVersion: 'year2-maths-v1',
+    datasetSkillIds: ['Y2-F-001', 'Y2-F-002'],
+    source: DATASET_SOURCE,
+    licence: LICENCE,
+    templates: year2FractionTemplates,
   },
   {
     id: 'year3.times-tables',
@@ -440,5 +648,6 @@ export const receptionMathsBank: SkillSeed[] = [
 /** The skill a child starts on when none is named, per year group. */
 export const DEFAULT_SKILL_BY_YEAR_GROUP: Record<YearGroup, string> = {
   reception: DEFAULT_SKILL_ID,
+  year2: 'year2.add-and-subtract',
   year3: 'year3.times-tables',
 };

@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "R-ENG-CL-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Listening and attention",
+      "learning_objective": "Listen attentively in short conversations, stories and activities and respond appropriately.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "preferred_teaching_mode": [
+        "oral",
+        "play",
+        "story"
+      ],
+      "example": {
+        "prompt": "Listen to a short sentence, then tell me one thing you heard."
+      },
+      "question_generation": {
+        "formats": [
+          "listen_recall",
+          "follow_instruction"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-CL-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Speaking",
+      "learning_objective": "Express ideas in complete spoken phrases and take turns in conversation.",
+      "prerequisites": [
+        "R-ENG-CL-001"
+      ],
+      "difficulty": 1,
+      "preferred_teaching_mode": [
+        "oral",
+        "conversation"
+      ],
+      "example": {
+        "prompt": "Tell me what you would take on a picnic and why."
+      },
+      "question_generation": {
+        "formats": [
+          "describe",
+          "explain",
+          "conversation"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-CL-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Vocabulary",
+      "learning_objective": "Learn and use new vocabulary from stories, experiences and discussion.",
+      "prerequisites": [
+        "R-ENG-CL-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "oral",
+        "story"
+      ],
+      "example": {
+        "prompt": "The puppy is enormous. Does enormous mean very small or very big?",
+        "answer": "very big"
+      },
+      "question_generation": {
+        "formats": [
+          "meaning_from_context",
+          "use_in_sentence",
+          "picture_description"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-R-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Phonological awareness",
+      "learning_objective": "Hear and manipulate sounds in spoken words, including rhyme, syllables and initial sounds.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "preferred_teaching_mode": [
+        "oral",
+        "game"
+      ],
+      "example": {
+        "prompt": "Which rhymes with cat: hat or dog?",
+        "answer": "hat"
+      },
+      "question_generation": {
+        "formats": [
+          "rhyme",
+          "syllable_clap",
+          "initial_sound"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-R-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Grapheme-phoneme correspondence",
+      "learning_objective": "Recognise taught letters or groups of letters and say their sounds.",
+      "prerequisites": [
+        "R-ENG-R-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "phonics",
+        "oral",
+        "visual"
+      ],
+      "example": {
+        "prompt": "What sound does this taught grapheme represent?"
+      },
+      "question_generation": {
+        "formats": [
+          "sound_recall",
+          "sound_sort"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-R-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Blending",
+      "learning_objective": "Blend taught sounds to read simple words.",
+      "prerequisites": [
+        "R-ENG-R-002"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "phonics",
+        "oral",
+        "visual"
+      ],
+      "example": {
+        "prompt": "Blend: c-a-t.",
+        "answer": "cat"
+      },
+      "question_generation": {
+        "formats": [
+          "oral_blend",
+          "printed_word"
+        ],
+        "use_only_taught_gpcs": true
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-R-004",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Common words",
+      "learning_objective": "Read a growing set of familiar/common words appropriate to taught phonics.",
+      "prerequisites": [
+        "R-ENG-R-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "phonics",
+        "reading"
+      ],
+      "example": {
+        "prompt": "Read this familiar word aloud."
+      },
+      "question_generation": {
+        "formats": [
+          "word_card",
+          "sentence_context"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-R-005",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Comprehension",
+      "topic": "Story comprehension",
+      "learning_objective": "Talk about characters, events, settings and simple information in books read together.",
+      "prerequisites": [
+        "R-ENG-CL-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "story",
+        "conversation"
+      ],
+      "example": {
+        "prompt": "Why do you think the character felt happy?"
+      },
+      "question_generation": {
+        "formats": [
+          "who_what_where",
+          "sequence",
+          "prediction",
+          "why"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-W-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Letter formation",
+      "learning_objective": "Form recognisable lower-case and capital letters with developing control.",
+      "prerequisites": [],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "physical",
+        "visual"
+      ],
+      "example": {
+        "prompt": "Practise forming the target letter, starting at the correct point."
+      },
+      "question_generation": {
+        "formats": [
+          "trace",
+          "copy",
+          "independent"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-W-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Segmenting for spelling",
+      "learning_objective": "Hear sounds in simple words and represent them with taught graphemes.",
+      "prerequisites": [
+        "R-ENG-R-002"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "phonics",
+        "oral",
+        "writing"
+      ],
+      "example": {
+        "prompt": "Say 'sun' slowly. What sounds can you hear?"
+      },
+      "question_generation": {
+        "formats": [
+          "segment",
+          "build_word"
+        ],
+        "use_only_taught_gpcs": true
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-ENG-W-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Simple sentences",
+      "learning_objective": "Compose and write short phrases or simple sentences using known sound-letter correspondences.",
+      "prerequisites": [
+        "R-ENG-W-002",
+        "R-ENG-CL-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "oral_rehearsal",
+        "writing"
+      ],
+      "example": {
+        "prompt": "Tell me a sentence about a dog, then write it."
+      },
+      "question_generation": {
+        "formats": [
+          "picture_sentence",
+          "sentence_build"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

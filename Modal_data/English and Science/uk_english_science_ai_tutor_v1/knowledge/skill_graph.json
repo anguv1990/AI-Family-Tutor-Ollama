@@ -1,0 +1,1087 @@
+{
+  "schema_version": "1.0",
+  "nodes": [
+    {
+      "id": "R-ENG-CL-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Listening and attention"
+    },
+    {
+      "id": "R-ENG-CL-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Speaking"
+    },
+    {
+      "id": "R-ENG-CL-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Communication and Language",
+      "topic": "Vocabulary"
+    },
+    {
+      "id": "R-ENG-R-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Phonological awareness"
+    },
+    {
+      "id": "R-ENG-R-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Grapheme-phoneme correspondence"
+    },
+    {
+      "id": "R-ENG-R-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Blending"
+    },
+    {
+      "id": "R-ENG-R-004",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Reading",
+      "topic": "Common words"
+    },
+    {
+      "id": "R-ENG-R-005",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Comprehension",
+      "topic": "Story comprehension"
+    },
+    {
+      "id": "R-ENG-W-001",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Letter formation"
+    },
+    {
+      "id": "R-ENG-W-002",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Segmenting for spelling"
+    },
+    {
+      "id": "R-ENG-W-003",
+      "stage": "Reception",
+      "subject": "English",
+      "domain": "Literacy - Writing",
+      "topic": "Simple sentences"
+    },
+    {
+      "id": "Y2-ENG-R-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Phonics decoding"
+    },
+    {
+      "id": "Y2-ENG-R-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Common exception words"
+    },
+    {
+      "id": "Y2-ENG-R-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Fluency",
+      "topic": "Fluent reading"
+    },
+    {
+      "id": "Y2-ENG-C-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Retrieval"
+    },
+    {
+      "id": "Y2-ENG-C-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Sequence and retell"
+    },
+    {
+      "id": "Y2-ENG-C-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Inference"
+    },
+    {
+      "id": "Y2-ENG-C-004",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Prediction"
+    },
+    {
+      "id": "Y2-ENG-C-005",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Vocabulary"
+    },
+    {
+      "id": "Y2-ENG-W-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Phonics and spelling patterns"
+    },
+    {
+      "id": "Y2-ENG-W-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Suffixes"
+    },
+    {
+      "id": "Y2-ENG-W-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Plan and say sentences"
+    },
+    {
+      "id": "Y2-ENG-W-004",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Narrative writing"
+    },
+    {
+      "id": "Y2-ENG-W-005",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Non-fiction writing"
+    },
+    {
+      "id": "Y2-ENG-G-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Sentence types"
+    },
+    {
+      "id": "Y2-ENG-G-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Nouns, verbs and adjectives"
+    },
+    {
+      "id": "Y2-ENG-G-003",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Conjunctions"
+    },
+    {
+      "id": "Y2-ENG-P-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Sentence punctuation"
+    },
+    {
+      "id": "Y2-ENG-P-002",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Commas and apostrophes"
+    },
+    {
+      "id": "Y2-ENG-H-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Handwriting",
+      "topic": "Letter size and joins"
+    },
+    {
+      "id": "Y2-ENG-SL-001",
+      "stage": "Year 2",
+      "subject": "English",
+      "domain": "Spoken Language",
+      "topic": "Discussion and explanation"
+    },
+    {
+      "id": "Y3-ENG-R-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Word Reading",
+      "topic": "Word reading strategies"
+    },
+    {
+      "id": "Y3-ENG-C-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Retrieval and summarising"
+    },
+    {
+      "id": "Y3-ENG-C-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Inference with evidence"
+    },
+    {
+      "id": "Y3-ENG-C-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Prediction"
+    },
+    {
+      "id": "Y3-ENG-C-004",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Vocabulary in context"
+    },
+    {
+      "id": "Y3-ENG-C-005",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Reading - Comprehension",
+      "topic": "Text features"
+    },
+    {
+      "id": "Y3-ENG-W-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Prefixes, suffixes and word families"
+    },
+    {
+      "id": "Y3-ENG-W-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Spelling",
+      "topic": "Homophones and tricky spellings"
+    },
+    {
+      "id": "Y3-ENG-W-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Plan for purpose"
+    },
+    {
+      "id": "Y3-ENG-W-004",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Narrative"
+    },
+    {
+      "id": "Y3-ENG-W-005",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Composition",
+      "topic": "Non-fiction"
+    },
+    {
+      "id": "Y3-ENG-W-006",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Writing - Editing",
+      "topic": "Evaluate and edit"
+    },
+    {
+      "id": "Y3-ENG-G-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Word classes and sentence structure"
+    },
+    {
+      "id": "Y3-ENG-G-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Conjunctions and clauses"
+    },
+    {
+      "id": "Y3-ENG-G-003",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Grammar",
+      "topic": "Present perfect"
+    },
+    {
+      "id": "Y3-ENG-P-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Speech punctuation foundation"
+    },
+    {
+      "id": "Y3-ENG-P-002",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Punctuation",
+      "topic": "Apostrophes and sentence punctuation"
+    },
+    {
+      "id": "Y3-ENG-H-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Handwriting",
+      "topic": "Joined handwriting"
+    },
+    {
+      "id": "Y3-ENG-SL-001",
+      "stage": "Year 3",
+      "subject": "English",
+      "domain": "Spoken Language",
+      "topic": "Reasoned discussion"
+    },
+    {
+      "id": "R-SCI-UW-001",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Observation and curiosity"
+    },
+    {
+      "id": "R-SCI-UW-002",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Living things"
+    },
+    {
+      "id": "R-SCI-UW-003",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Growth and change"
+    },
+    {
+      "id": "R-SCI-UW-004",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Seasons and weather"
+    },
+    {
+      "id": "R-SCI-UW-005",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Materials"
+    },
+    {
+      "id": "R-SCI-UW-006",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Forces and movement foundations"
+    },
+    {
+      "id": "Y2-SCI-WS-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Questions and observations"
+    },
+    {
+      "id": "Y2-SCI-WS-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Simple tests"
+    },
+    {
+      "id": "Y2-SCI-WS-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Classify and record"
+    },
+    {
+      "id": "Y2-SCI-LH-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Living, dead, never alive"
+    },
+    {
+      "id": "Y2-SCI-LH-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Habitats"
+    },
+    {
+      "id": "Y2-SCI-LH-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Microhabitats"
+    },
+    {
+      "id": "Y2-SCI-LH-004",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Food chains"
+    },
+    {
+      "id": "Y2-SCI-PL-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Seeds and bulbs"
+    },
+    {
+      "id": "Y2-SCI-PL-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Plant needs"
+    },
+    {
+      "id": "Y2-SCI-AN-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Life cycles"
+    },
+    {
+      "id": "Y2-SCI-AN-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Basic needs"
+    },
+    {
+      "id": "Y2-SCI-AN-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Health"
+    },
+    {
+      "id": "Y2-SCI-MAT-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Uses of Everyday Materials",
+      "topic": "Material suitability"
+    },
+    {
+      "id": "Y2-SCI-MAT-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Uses of Everyday Materials",
+      "topic": "Changing shape"
+    },
+    {
+      "id": "Y3-SCI-WS-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Questions and enquiry"
+    },
+    {
+      "id": "Y3-SCI-WS-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Fair tests and measurement"
+    },
+    {
+      "id": "Y3-SCI-WS-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Record and conclude"
+    },
+    {
+      "id": "Y3-SCI-PL-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Plant parts and functions"
+    },
+    {
+      "id": "Y3-SCI-PL-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Requirements for growth"
+    },
+    {
+      "id": "Y3-SCI-PL-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Water transport"
+    },
+    {
+      "id": "Y3-SCI-PL-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Flowering plant life cycle"
+    },
+    {
+      "id": "Y3-SCI-AN-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Nutrition"
+    },
+    {
+      "id": "Y3-SCI-AN-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Skeletons and muscles"
+    },
+    {
+      "id": "Y3-SCI-R-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Rock properties"
+    },
+    {
+      "id": "Y3-SCI-R-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Fossils"
+    },
+    {
+      "id": "Y3-SCI-R-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Soil"
+    },
+    {
+      "id": "Y3-SCI-L-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Need for light"
+    },
+    {
+      "id": "Y3-SCI-L-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Reflection"
+    },
+    {
+      "id": "Y3-SCI-L-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Sun safety"
+    },
+    {
+      "id": "Y3-SCI-L-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Shadows"
+    },
+    {
+      "id": "Y3-SCI-FM-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Pushes and pulls"
+    },
+    {
+      "id": "Y3-SCI-FM-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnetic force"
+    },
+    {
+      "id": "Y3-SCI-FM-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnetic materials"
+    },
+    {
+      "id": "Y3-SCI-FM-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnet poles"
+    }
+  ],
+  "edges": [
+    {
+      "from": "R-ENG-CL-001",
+      "to": "R-ENG-CL-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-CL-001",
+      "to": "R-ENG-CL-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-R-001",
+      "to": "R-ENG-R-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-R-002",
+      "to": "R-ENG-R-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-R-003",
+      "to": "R-ENG-R-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-CL-001",
+      "to": "R-ENG-R-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-R-002",
+      "to": "R-ENG-W-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-W-002",
+      "to": "R-ENG-W-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-CL-002",
+      "to": "R-ENG-W-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-R-003",
+      "to": "Y2-ENG-R-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-R-001",
+      "to": "Y2-ENG-R-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-R-001",
+      "to": "Y2-ENG-R-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-R-003",
+      "to": "Y2-ENG-C-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-001",
+      "to": "Y2-ENG-C-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-001",
+      "to": "Y2-ENG-C-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-001",
+      "to": "Y2-ENG-C-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-001",
+      "to": "Y2-ENG-C-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-W-002",
+      "to": "Y2-ENG-W-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-001",
+      "to": "Y2-ENG-W-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-W-003",
+      "to": "Y2-ENG-W-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-003",
+      "to": "Y2-ENG-W-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-003",
+      "to": "Y2-ENG-W-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-W-003",
+      "to": "Y2-ENG-G-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-003",
+      "to": "Y2-ENG-G-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-G-001",
+      "to": "Y2-ENG-G-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-G-001",
+      "to": "Y2-ENG-P-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-P-001",
+      "to": "Y2-ENG-P-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-W-001",
+      "to": "Y2-ENG-H-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-ENG-CL-002",
+      "to": "Y2-ENG-SL-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-R-003",
+      "to": "Y3-ENG-R-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-001",
+      "to": "Y3-ENG-C-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-C-003",
+      "to": "Y3-ENG-C-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-C-002",
+      "to": "Y3-ENG-C-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-R-001",
+      "to": "Y3-ENG-C-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-C-001",
+      "to": "Y3-ENG-C-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-002",
+      "to": "Y3-ENG-W-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-001",
+      "to": "Y3-ENG-W-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-W-003",
+      "to": "Y3-ENG-W-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-W-003",
+      "to": "Y3-ENG-W-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-W-003",
+      "to": "Y3-ENG-W-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-W-004",
+      "to": "Y3-ENG-W-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-G-002",
+      "to": "Y3-ENG-G-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-G-003",
+      "to": "Y3-ENG-G-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-G-001",
+      "to": "Y3-ENG-G-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-ENG-G-001",
+      "to": "Y3-ENG-G-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-P-001",
+      "to": "Y3-ENG-P-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-P-002",
+      "to": "Y3-ENG-P-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-H-001",
+      "to": "Y3-ENG-H-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-ENG-SL-001",
+      "to": "Y3-ENG-SL-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "R-SCI-UW-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "R-SCI-UW-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "R-SCI-UW-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "R-SCI-UW-005",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "R-SCI-UW-006",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-001",
+      "to": "Y2-SCI-WS-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-001",
+      "to": "Y2-SCI-WS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-001",
+      "to": "Y2-SCI-WS-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-002",
+      "to": "Y2-SCI-LH-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-LH-001",
+      "to": "Y2-SCI-LH-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-LH-002",
+      "to": "Y2-SCI-LH-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-LH-002",
+      "to": "Y2-SCI-LH-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-003",
+      "to": "Y2-SCI-PL-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-PL-001",
+      "to": "Y2-SCI-PL-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-002",
+      "to": "Y2-SCI-PL-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-003",
+      "to": "Y2-SCI-AN-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-LH-002",
+      "to": "Y2-SCI-AN-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-AN-002",
+      "to": "Y2-SCI-AN-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-005",
+      "to": "Y2-SCI-MAT-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-MAT-001",
+      "to": "Y2-SCI-MAT-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-001",
+      "to": "Y3-SCI-WS-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-002",
+      "to": "Y3-SCI-WS-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-WS-003",
+      "to": "Y3-SCI-WS-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-PL-001",
+      "to": "Y3-SCI-PL-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-PL-002",
+      "to": "Y3-SCI-PL-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-WS-002",
+      "to": "Y3-SCI-PL-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-PL-001",
+      "to": "Y3-SCI-PL-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-PL-001",
+      "to": "Y3-SCI-PL-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-AN-002",
+      "to": "Y3-SCI-AN-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-AN-001",
+      "to": "Y3-SCI-AN-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y2-SCI-MAT-001",
+      "to": "Y3-SCI-R-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-R-001",
+      "to": "Y3-SCI-R-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-R-001",
+      "to": "Y3-SCI-R-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-L-001",
+      "to": "Y3-SCI-L-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-L-001",
+      "to": "Y3-SCI-L-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-L-001",
+      "to": "Y3-SCI-L-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-WS-002",
+      "to": "Y3-SCI-L-004",
+      "type": "prerequisite"
+    },
+    {
+      "from": "R-SCI-UW-006",
+      "to": "Y3-SCI-FM-001",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-FM-001",
+      "to": "Y3-SCI-FM-002",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-FM-002",
+      "to": "Y3-SCI-FM-003",
+      "type": "prerequisite"
+    },
+    {
+      "from": "Y3-SCI-FM-002",
+      "to": "Y3-SCI-FM-004",
+      "type": "prerequisite"
+    }
+  ]
+}

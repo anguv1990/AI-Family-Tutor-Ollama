@@ -117,7 +117,7 @@ describe('Reception Maths content bank', () => {
     for (const template of templates) {
       assert.equal(template.version, 1, template.id);
       assert.equal(template.reviewed, 1, template.id);
-      assert.match(template.skill_id, /^(reception|year3)\./, template.id);
+      assert.match(template.skill_id, /^(reception|year2|year3)\./, template.id);
     }
   });
 

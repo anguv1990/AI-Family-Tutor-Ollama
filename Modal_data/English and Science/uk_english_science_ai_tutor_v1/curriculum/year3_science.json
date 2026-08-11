@@ -1,0 +1,666 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "Y3-SCI-WS-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Questions and enquiry",
+      "learning_objective": "Ask relevant questions and choose a suitable simple enquiry.",
+      "prerequisites": [
+        "Y2-SCI-WS-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "How could we investigate whether plants grow differently in light and shade?"
+      },
+      "question_generation": {
+        "formats": [
+          "question",
+          "choose_enquiry"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-WS-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Fair tests and measurement",
+      "learning_objective": "Set up simple comparative/fair tests and make careful observations or measurements.",
+      "prerequisites": [
+        "Y2-SCI-WS-002"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What should stay the same when comparing how far cars roll on two surfaces?"
+      },
+      "question_generation": {
+        "formats": [
+          "variables_foundation",
+          "equipment",
+          "measurement"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-WS-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Record and conclude",
+      "learning_objective": "Record findings in tables/charts/diagrams and use results to draw simple conclusions.",
+      "prerequisites": [
+        "Y2-SCI-WS-003"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "The plant in light grew 8 cm and the plant in darkness grew 2 cm. What does this result suggest?"
+      },
+      "question_generation": {
+        "formats": [
+          "table",
+          "bar_chart",
+          "conclusion",
+          "pattern"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-PL-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Plant parts and functions",
+      "learning_objective": "Identify functions of roots, stem/trunk, leaves and flowers.",
+      "prerequisites": [
+        "Y2-SCI-PL-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Which plant part mainly takes in water from soil?",
+        "answer": "roots"
+      },
+      "question_generation": {
+        "formats": [
+          "match_function",
+          "label",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-PL-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Requirements for growth",
+      "learning_objective": "Explore how air, light, water, nutrients and space affect plant growth.",
+      "prerequisites": [
+        "Y2-SCI-PL-002",
+        "Y3-SCI-WS-002"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Predict what may happen to a plant kept without light and explain why."
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "fair_test",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-PL-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Water transport",
+      "learning_objective": "Investigate how water is transported within plants.",
+      "prerequisites": [
+        "Y3-SCI-PL-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What might coloured water show us when a cut flower is placed in it?"
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "observe",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-PL-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Flowering plant life cycle",
+      "learning_objective": "Understand pollination, seed formation and seed dispersal as parts of flowering plant reproduction.",
+      "prerequisites": [
+        "Y3-SCI-PL-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why is seed dispersal useful to a plant?"
+      },
+      "question_generation": {
+        "formats": [
+          "sequence",
+          "match_process",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-AN-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Nutrition",
+      "learning_objective": "Understand that animals need nutrition and obtain it from food.",
+      "prerequisites": [
+        "Y2-SCI-AN-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why do humans need a varied diet?"
+      },
+      "question_generation": {
+        "formats": [
+          "food_group_foundation",
+          "explain",
+          "healthy_choice"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-AN-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Skeletons and muscles",
+      "learning_objective": "Identify that humans and some animals have skeletons and muscles for support, protection and movement.",
+      "prerequisites": [
+        "Y3-SCI-AN-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Give one job of the skeleton.",
+        "answer": "support, protection or movement"
+      },
+      "question_generation": {
+        "formats": [
+          "function",
+          "label",
+          "compare"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-R-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Rock properties",
+      "learning_objective": "Compare and group rocks based on appearance and simple physical properties.",
+      "prerequisites": [
+        "Y2-SCI-MAT-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Which observations could help us compare two rocks?"
+      },
+      "question_generation": {
+        "formats": [
+          "observe",
+          "classify",
+          "property"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-R-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Fossils",
+      "learning_objective": "Describe in simple terms how fossils can form when living things are trapped within rock.",
+      "prerequisites": [
+        "Y3-SCI-R-001"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Put simple fossil-formation stages in order."
+      },
+      "question_generation": {
+        "formats": [
+          "sequence",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-R-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Rocks",
+      "topic": "Soil",
+      "learning_objective": "Recognise that soils are made from rocks and organic matter.",
+      "prerequisites": [
+        "Y3-SCI-R-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Name two kinds of material that can be part of soil."
+      },
+      "question_generation": {
+        "formats": [
+          "identify",
+          "compare_soils"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-L-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Need for light",
+      "learning_objective": "Recognise that light is needed to see and that darkness is absence of light.",
+      "prerequisites": [],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Can we see an object in complete darkness without a light source?",
+        "answer": "No"
+      },
+      "question_generation": {
+        "formats": [
+          "scenario",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-L-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Reflection",
+      "learning_objective": "Notice that light can be reflected from surfaces.",
+      "prerequisites": [
+        "Y3-SCI-L-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Which type of surface might reflect light well?"
+      },
+      "question_generation": {
+        "formats": [
+          "compare_surface",
+          "predict"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-L-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Sun safety",
+      "learning_objective": "Recognise that sunlight can be dangerous to eyes and learn safe ways to protect them.",
+      "prerequisites": [
+        "Y3-SCI-L-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why should we never look directly at the Sun?"
+      },
+      "question_generation": {
+        "formats": [
+          "safe_choice",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-L-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Light",
+      "topic": "Shadows",
+      "learning_objective": "Understand that shadows form when light is blocked by an opaque object and explore changing shadow size.",
+      "prerequisites": [
+        "Y3-SCI-L-001",
+        "Y3-SCI-WS-002"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What happens to a shadow if an object moves closer to a lamp? Test and describe."
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "test",
+          "pattern"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-FM-001",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Pushes and pulls",
+      "learning_objective": "Compare how objects move on different surfaces and recognise contact forces.",
+      "prerequisites": [
+        "R-SCI-UW-006"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Would a toy car usually roll farther on smooth tile or thick carpet? Why?"
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "compare_surface",
+          "test"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-FM-002",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnetic force",
+      "learning_objective": "Observe that magnets can act at a distance and can attract or repel.",
+      "prerequisites": [
+        "Y3-SCI-FM-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Do two north poles attract or repel?",
+        "answer": "repel"
+      },
+      "question_generation": {
+        "formats": [
+          "attract_repel",
+          "predict",
+          "observe"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-FM-003",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnetic materials",
+      "learning_objective": "Compare materials and identify which are attracted to magnets.",
+      "prerequisites": [
+        "Y3-SCI-FM-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "How could you test whether an object is magnetic?"
+      },
+      "question_generation": {
+        "formats": [
+          "classify",
+          "simple_test",
+          "material"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y3-SCI-FM-004",
+      "stage": "Year 3",
+      "subject": "Science",
+      "domain": "Forces and Magnets",
+      "topic": "Magnet poles",
+      "learning_objective": "Describe magnets as having two poles and predict attraction/repulsion between poles.",
+      "prerequisites": [
+        "Y3-SCI-FM-002"
+      ],
+      "difficulty": 4,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Predict what happens when north and south poles meet.",
+        "answer": "They attract."
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "diagram",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

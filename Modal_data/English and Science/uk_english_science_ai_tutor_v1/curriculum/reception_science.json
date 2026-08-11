@@ -1,0 +1,197 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "R-SCI-UW-001",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Observation and curiosity",
+      "learning_objective": "Explore the natural world, notice details and ask simple questions.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "preferred_teaching_mode": [
+        "hands_on",
+        "outdoors",
+        "conversation"
+      ],
+      "example": {
+        "prompt": "Look closely at a leaf. Tell me two things you notice and one question."
+      },
+      "question_generation": {
+        "formats": [
+          "observe",
+          "wonder",
+          "compare"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-SCI-UW-002",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Living things",
+      "learning_objective": "Notice and describe familiar plants and animals and simple differences between them.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 1,
+      "preferred_teaching_mode": [
+        "hands_on",
+        "pictures",
+        "conversation"
+      ],
+      "example": {
+        "prompt": "How is a bird different from a tree?"
+      },
+      "question_generation": {
+        "formats": [
+          "identify",
+          "compare",
+          "sort"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-SCI-UW-003",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Growth and change",
+      "learning_objective": "Observe simple changes in living things over time.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "hands_on",
+        "story"
+      ],
+      "example": {
+        "prompt": "What might change as a seed grows?"
+      },
+      "question_generation": {
+        "formats": [
+          "sequence",
+          "before_after",
+          "observe_over_time"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-SCI-UW-004",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Seasons and weather",
+      "learning_objective": "Describe familiar weather and seasonal changes.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "outdoors",
+        "conversation"
+      ],
+      "example": {
+        "prompt": "What might you notice outside in winter?"
+      },
+      "question_generation": {
+        "formats": [
+          "season_sort",
+          "weather_observation",
+          "compare"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-SCI-UW-005",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Materials",
+      "learning_objective": "Explore and compare everyday materials using observable properties.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "hands_on"
+      ],
+      "example": {
+        "prompt": "Which object feels rough? Which feels smooth?"
+      },
+      "question_generation": {
+        "formats": [
+          "property_sort",
+          "compare",
+          "simple_test"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "R-SCI-UW-006",
+      "stage": "Reception",
+      "subject": "Science",
+      "domain": "Understanding the World",
+      "topic": "Forces and movement foundations",
+      "learning_objective": "Explore how objects move when pushed, pulled, rolled or dropped.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "hands_on",
+        "play"
+      ],
+      "example": {
+        "prompt": "What happens if you push the toy car harder?"
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "try",
+          "observe"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

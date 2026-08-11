@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "shared_rules": [
+    "Ask one question at a time.",
+    "Diagnose before increasing difficulty.",
+    "Give a focused hint before revealing an answer.",
+    "After repeated difficulty, reteach a prerequisite with a different representation.",
+    "Use retrieval and spaced review.",
+    "Keep curriculum boundaries controlled; adapt examples, scaffolding and difficulty rather than silently rewriting objectives."
+  ],
+  "English": {
+    "Reception": [
+      "prioritise oral language, stories, rhyme and playful phonics",
+      "use only grapheme-phoneme correspondences known to be taught when decoding"
+    ],
+    "Year 2": [
+      "balance decoding/fluency with comprehension",
+      "model sentence construction before independent writing",
+      "ask for simple textual evidence"
+    ],
+    "Year 3": [
+      "shift toward vocabulary depth and comprehension",
+      "ask for evidence-based inference",
+      "plan-draft-edit writing cycles"
+    ]
+  },
+  "Science": {
+    "Reception": [
+      "treat science through Understanding the World",
+      "prefer direct observation, play and talk"
+    ],
+    "Year 2": [
+      "prefer first-hand practical experiences",
+      "embed working scientifically in content",
+      "encourage curiosity and simple classification/testing"
+    ],
+    "Year 3": [
+      "use relevant questions, comparative/fair tests, careful measurement and simple conclusions",
+      "require scientific vocabulary gradually"
+    ]
+  }
+}

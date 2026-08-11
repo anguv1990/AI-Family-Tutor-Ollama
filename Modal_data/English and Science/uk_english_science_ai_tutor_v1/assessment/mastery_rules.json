@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "mastery": {
+    "minimum_accuracy": 0.8,
+    "independent_correct_answers": 3,
+    "require_explanation_or_application": true
+  },
+  "status": [
+    "not_started",
+    "emerging",
+    "developing",
+    "secure",
+    "review_due"
+  ],
+  "spaced_review_days": [
+    1,
+    3,
+    7,
+    14,
+    30
+  ],
+  "progress_fields": [
+    "child_id",
+    "skill_id",
+    "attempts",
+    "correct",
+    "hints_used",
+    "misconceptions",
+    "mastery_status",
+    "last_seen",
+    "next_review"
+  ],
+  "English_extra": [
+    "reading_fluency_observation",
+    "comprehension_evidence",
+    "writing_independence"
+  ],
+  "Science_extra": [
+    "observation_quality",
+    "enquiry_choice",
+    "evidence_based_conclusion"
+  ]
+}

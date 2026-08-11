@@ -4,6 +4,7 @@ import path from 'node:path';
 import { loadConfig, type AppConfig } from './config';
 import type { ParentService } from './parent-service';
 import type { TutoringService } from './tutoring-service';
+import type { YearGroup } from './content-bank';
 
 export type AppOptions = {
   /** Wiring the parent service in enables the /api/parent routes. */
@@ -19,6 +20,20 @@ export type AppOptions = {
 function secretMatches(provided: string, expected: string): boolean {
   const digest = (value: string) => createHash('sha256').update(value).digest();
   return timingSafeEqual(digest(provided), digest(expected));
+}
+
+/**
+ * One list, checked in one place. The year groups were spelled out separately
+ * on two routes, so adding Year 2 to the engine left the API rejecting it.
+ */
+const YEAR_GROUPS = ['reception', 'year2', 'year3'] as const;
+
+function requireYearGroup(value: unknown): YearGroup | undefined {
+  if (value === undefined) return undefined;
+  if (!YEAR_GROUPS.includes(value as YearGroup)) {
+    throw new Error(`yearGroup must be one of ${YEAR_GROUPS.join(', ')}`);
+  }
+  return value as YearGroup;
 }
 
 export function createApp(
@@ -40,10 +55,7 @@ export function createApp(
 
   app.get('/api/skills', (request, response, next) => {
     try {
-      const yearGroup = request.query.yearGroup;
-      if (yearGroup !== undefined && yearGroup !== 'reception' && yearGroup !== 'year3') {
-        throw new Error('yearGroup must be reception or year3');
-      }
+      const yearGroup = requireYearGroup(request.query.yearGroup);
       response.json({ skills: tutor.listSkills(yearGroup) });
     } catch (error) {
       next(error);
@@ -59,10 +71,7 @@ export function createApp(
       if (skillId !== undefined && typeof skillId !== 'string') {
         throw new Error('skillId must be a string');
       }
-      const yearGroup = request.body?.yearGroup;
-      if (yearGroup !== undefined && yearGroup !== 'reception' && yearGroup !== 'year3') {
-        throw new Error('yearGroup must be reception or year3');
-      }
+      const yearGroup = requireYearGroup(request.body?.yearGroup);
       const result = tutor.startSession({
         childId: request.body.childId,
         skillId,

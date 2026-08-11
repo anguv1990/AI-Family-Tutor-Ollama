@@ -1,0 +1,467 @@
+{
+  "schema_version": "1.0",
+  "country": "England",
+  "skills": [
+    {
+      "id": "Y2-SCI-WS-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Questions and observations",
+      "learning_objective": "Ask simple scientific questions and observe closely using simple equipment.",
+      "prerequisites": [
+        "R-SCI-UW-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What question could we ask about which material absorbs most water?"
+      },
+      "question_generation": {
+        "formats": [
+          "ask_question",
+          "observe",
+          "equipment_choice"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-WS-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Simple tests",
+      "learning_objective": "Perform simple comparative tests and describe what was kept the same or changed.",
+      "prerequisites": [
+        "Y2-SCI-WS-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "How could we compare two paper towels fairly?"
+      },
+      "question_generation": {
+        "formats": [
+          "plan_test",
+          "predict",
+          "compare"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-WS-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Working Scientifically",
+      "topic": "Classify and record",
+      "learning_objective": "Identify/classify objects or living things and gather/record simple data.",
+      "prerequisites": [
+        "Y2-SCI-WS-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Choose a useful way to sort these animals and record the groups."
+      },
+      "question_generation": {
+        "formats": [
+          "sort",
+          "table",
+          "tally",
+          "simple_chart"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-LH-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Living, dead, never alive",
+      "learning_objective": "Distinguish things that are living, dead and things that have never been alive.",
+      "prerequisites": [
+        "R-SCI-UW-002"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Is a fallen dead leaf living, dead or never alive?",
+        "answer": "dead"
+      },
+      "question_generation": {
+        "formats": [
+          "classify",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-LH-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Habitats",
+      "learning_objective": "Understand that habitats provide the basic needs of different plants and animals.",
+      "prerequisites": [
+        "Y2-SCI-LH-001"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why is a pond a suitable habitat for a frog?"
+      },
+      "question_generation": {
+        "formats": [
+          "match_habitat",
+          "explain_need"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-LH-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Microhabitats",
+      "learning_objective": "Identify simple microhabitats and organisms that may live there.",
+      "prerequisites": [
+        "Y2-SCI-LH-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What might you find under a damp log, and why?"
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "match",
+          "observe"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-LH-004",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Living Things and Habitats",
+      "topic": "Food chains",
+      "learning_objective": "Describe simple food chains and identify sources of food.",
+      "prerequisites": [
+        "Y2-SCI-LH-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Put in food-chain order: fox, grass, rabbit.",
+        "answer": "grass → rabbit → fox"
+      },
+      "question_generation": {
+        "formats": [
+          "sequence",
+          "missing_link"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-PL-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Seeds and bulbs",
+      "learning_objective": "Observe and describe how seeds and bulbs grow into mature plants.",
+      "prerequisites": [
+        "R-SCI-UW-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Put these stages in order: seed, seedling, mature plant."
+      },
+      "question_generation": {
+        "formats": [
+          "sequence",
+          "observe_over_time"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-PL-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Plants",
+      "topic": "Plant needs",
+      "learning_objective": "Investigate how plants need water, light and suitable temperature to grow and stay healthy.",
+      "prerequisites": [
+        "Y2-SCI-PL-001",
+        "Y2-SCI-WS-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What could we change to test whether light affects a plant?"
+      },
+      "question_generation": {
+        "formats": [
+          "predict",
+          "fair_test",
+          "explain"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-AN-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Life cycles",
+      "learning_objective": "Notice that animals, including humans, have offspring that grow into adults.",
+      "prerequisites": [
+        "R-SCI-UW-003"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "What does a tadpole grow into?",
+        "answer": "frog"
+      },
+      "question_generation": {
+        "formats": [
+          "match_young_adult",
+          "sequence"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-AN-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Basic needs",
+      "learning_objective": "Understand that animals need water, food and air for survival.",
+      "prerequisites": [
+        "Y2-SCI-LH-002"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Name three basic things animals need to survive.",
+        "answer": "water, food and air"
+      },
+      "question_generation": {
+        "formats": [
+          "recall",
+          "scenario"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-AN-003",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Animals Including Humans",
+      "topic": "Health",
+      "learning_objective": "Describe the importance of exercise, suitable food and hygiene for humans.",
+      "prerequisites": [
+        "Y2-SCI-AN-002"
+      ],
+      "difficulty": 3,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why do we wash our hands before eating?"
+      },
+      "question_generation": {
+        "formats": [
+          "explain",
+          "healthy_choice",
+          "sort"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-MAT-001",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Uses of Everyday Materials",
+      "topic": "Material suitability",
+      "learning_objective": "Identify and compare uses of materials based on their properties.",
+      "prerequisites": [
+        "R-SCI-UW-005"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Why might glass be used for a window rather than cardboard?"
+      },
+      "question_generation": {
+        "formats": [
+          "choose_material",
+          "property_reason"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    },
+    {
+      "id": "Y2-SCI-MAT-002",
+      "stage": "Year 2",
+      "subject": "Science",
+      "domain": "Uses of Everyday Materials",
+      "topic": "Changing shape",
+      "learning_objective": "Explore how some solid objects can change shape by squashing, bending, twisting or stretching.",
+      "prerequisites": [
+        "Y2-SCI-MAT-001"
+      ],
+      "difficulty": 2,
+      "preferred_teaching_mode": [
+        "model",
+        "guided_practice",
+        "independent_practice"
+      ],
+      "example": {
+        "prompt": "Which action changes a sponge: squashing, shining or smelling?",
+        "answer": "squashing"
+      },
+      "question_generation": {
+        "formats": [
+          "action_effect",
+          "hands_on_prediction"
+        ]
+      },
+      "misconceptions": [],
+      "mastery": {
+        "minimum_accuracy": 0.8,
+        "independent_correct_answers": 3,
+        "reasoning_or_explanation_required": true
+      }
+    }
+  ]
+}

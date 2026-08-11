@@ -24,6 +24,7 @@ const FRACTION_WORDS: Record<string, [number, number]> = {
   'one eighth': [1, 8],
   'one tenth': [1, 10],
   'two thirds': [2, 3],
+  'two quarters': [2, 4],
   'three quarters': [3, 4],
   'two fifths': [2, 5],
   'three tenths': [3, 10],
@@ -51,6 +52,33 @@ function deriveAnswer(prompt: string): Derivation | undefined {
   const addition = prompt.match(/^What is (\d+) \+ (\d+)\?$/);
   if (addition) {
     return { answer: Number(addition[1]) + Number(addition[2]), shape: 'addition' };
+  }
+
+  const stepped = prompt.match(/^Count on in (\d+)s\. ([\d, ]+)\. What comes next\?$/);
+  if (stepped) {
+    const step = Number(stepped[1]);
+    const run = stepped[2].split(',').map((value) => Number(value.trim()));
+    for (let index = 1; index < run.length; index += 1) {
+      assert.equal(
+        run[index] - run[index - 1],
+        step,
+        `"${prompt}" claims steps of ${step} but the run does not`,
+      );
+    }
+    return { answer: run[run.length - 1] + step, shape: 'count-in-steps' };
+  }
+
+  const partition = prompt.match(/^(\d+) is (\d+) add what\?$/);
+  if (partition) {
+    return { answer: Number(partition[1]) - Number(partition[2]), shape: 'partition' };
+  }
+
+  const shared = prompt.match(/^What is (\d+) shared into groups of (\d+)\?$/);
+  if (shared) {
+    const total = Number(shared[1]);
+    const divisor = Number(shared[2]);
+    assert.equal(total % divisor, 0, `"${prompt}" does not divide exactly`);
+    return { answer: total / divisor, shape: 'sharing' };
   }
 
   const sequence = prompt.match(/^Count (on|back)\. ([\d, ]+)\. What comes next\?$/);
@@ -220,6 +248,9 @@ describe('reviewed answer keys', () => {
       'place-value-step',
       'place-value-digit',
       'fraction-of-amount',
+      'count-in-steps',
+      'partition',
+      'sharing',
     ]) {
       assert.ok(shapes.has(expected), `no ${expected} questions are under review`);
     }
