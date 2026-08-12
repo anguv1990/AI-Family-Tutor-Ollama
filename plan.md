@@ -153,8 +153,43 @@ application stays offline: it never calls out to the internet while a child is
 using it. Local-first is a privacy guarantee about the children, not a
 deployment detail, and fetching at runtime would break it.
 
+### The wrong-answer loop *(decided 2026-08-12, from observation — build first)*
+
+A child observation found that a wrong answer produced "Good try", the question
+disappeared, and nothing was learned. Measuring the diagnosis across the whole
+bank against the wrong answers a child would plausibly give showed why: **979 of
+1241, or 79%, fall through to the generic message.** The twenty misconception
+rules all pass their tests; they simply do not apply often. `number-recognition`
+is generic 96 times in 101, `place-value-to-1000` 102 in 104.
+
+So two separate defects, not one:
+
+- The diagnosis rarely fires, so the specific help mostly is not there to give.
+- Even when it fires, `childHelp` deliberately never contains the answer and the
+  question is then taken away. For a child working alone the loop never closes.
+
+Decided behaviour: **a clue and one more attempt; if still wrong, reveal the
+correct answer with a short explanation.** The child gets to recover on their
+own first, which is where the learning is, but never leaves without knowing the
+answer.
+
+**Only the first attempt is graded.** Mastery must stay an honest record of what
+the child can do unaided, or difficulty targeting and spaced review both drift.
+The retry is stored but ungraded, in the same spirit as a skip.
+
+Note for whoever builds this: `tests/misconceptions.test.ts` has a test named
+`never tells the child the answer`, and `toPublicQuestion` strips
+`correct_answer` by design. The reveal is a deliberate, narrow exception to
+both — it happens only after the second wrong attempt, and it is served by the
+server at that moment rather than by loosening the public question shape. Do not
+"fix" this by exposing the answer key earlier.
+
 ### Ordered slices
 
+0. **The wrong-answer loop above.** Promoted ahead of everything else: it is
+   what the one observed child actually needed, and unlike the rest it does not
+   depend on the verifier. Deterministic first (clue, retry, reveal), with the
+   model's conversational explanation layered on once the flow exists.
 1. **Extract the verifier into production code** (`server/answer-verifier.ts`),
    returning a result rather than asserting, with the existing test importing it
    so the bank stays covered. Everything below is gated on this.
