@@ -100,6 +100,78 @@ Exit condition: each child completes a session without an adult operating the in
 - Add Science templates while retaining the same content-review, validation and safety controls.
 - Add richer local analytics and opt-in encrypted backups.
 
+## Direction change, 2026-08-12 — the self-evolving tutor
+
+The owner reset the end goal. The product is not a reviewed question bank with a
+tutor-shaped wrapper; it is **a tutor a child can learn from with no adult in the
+room**. An adult signs in, hands over the device, and the child works
+unsupervised. That reframes three things.
+
+**A fixed bank cannot get there.** A child who meets the same question twice
+learns that the app repeats; a child who needs more practice runs out. The pool
+has to grow continuously, and the questions have to vary in wording and context,
+not only in numbers.
+
+**The model has to do more than hint.** Agreed roles: explain a wrong answer
+conversationally, choose what to practise next, restyle a verified question into
+a context that suits the child, and write the parent's end-of-day summary.
+
+**Correctness is still not one of those roles.** The Phase 1 rule stands, in a
+sharper form:
+
+> The model may **propose** a question. Only code may **prove** it. A generated
+> item is shown to a child only after a deterministic verifier re-derives its
+> answer from the prompt text and agrees. Anything unprovable is discarded, not
+> shown with a caveat. The model never marks an answer, sets mastery or assigns
+> difficulty.
+
+This is not a compromise between safety and ambition — it is what makes the
+ambition safe. An unverified answer key marks a correct child wrong, and with no
+adult watching, nobody catches it. The verifier already exists: it proves all 252
+current answer keys from prompt text alone, and lives in
+`tests/content-answer-keys.test.ts` because until now the bank was fixed.
+
+### What "self-evolving" means here
+
+All four, in this order of dependency:
+
+1. **Adapts to each child** — difficulty, pace and revisiting follow the
+   individual. Partly built: mastery, spaced review, misconception diagnosis.
+2. **The pool keeps growing** — generated, verified items accumulate, so a child
+   need never meet the same question twice.
+3. **Learns from mistakes** — recorded misconception patterns steer what gets
+   generated next, so a child who reverses subtraction gets targeted work.
+4. **Improves its own explanations** — track which explanations preceded a
+   later correct answer, and prefer those.
+
+### Curriculum sourcing
+
+Pull from Open Government Licence v3 sources (the National Curriculum programmes
+of study are OGL v3, free to reuse and redistribute with attribution) **once, at
+curation time, into the repo**, reviewed before it lands. The running
+application stays offline: it never calls out to the internet while a child is
+using it. Local-first is a privacy guarantee about the children, not a
+deployment detail, and fetching at runtime would break it.
+
+### Ordered slices
+
+1. **Extract the verifier into production code** (`server/answer-verifier.ts`),
+   returning a result rather than asserting, with the existing test importing it
+   so the bank stays covered. Everything below is gated on this.
+2. **Parameterised generators per skill** producing candidate items; every
+   candidate passes the verifier before it is offered. Measures: no repeat within
+   a child's history, and difficulty still deterministic.
+3. **Model restyling** of a verified item's wording — the numbers and answer are
+   fixed by code, the model only redresses the sentence, and the result is
+   re-verified and safety-screened before display.
+4. **Conversational explanation** on a wrong answer, seeded by the existing
+   deterministic misconception diagnosis so the model starts from a correct
+   reading of the error rather than guessing.
+5. **Model-assisted next-skill choice**, proposing within the deterministic
+   rules rather than replacing them.
+6. **Parent day summary** generated from stored evidence.
+7. **Explanation effectiveness tracking** feeding slice 4.
+
 ## Prompt and context engineering
 
 - Use structured prompts: system instructions, task and JSON output schema.

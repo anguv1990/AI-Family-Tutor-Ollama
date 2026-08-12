@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Local-first, adult-supervised tutoring app (Node + TypeScript + SQLite + Ollama). It serves two curricula — Reception maths and Year 3 maths — through one deterministic session flow:
+Local-first tutoring app (Node + TypeScript + SQLite + Ollama). It serves three curricula — Reception, Year 2 and Year 3 maths — through one deterministic session flow:
 
 ```
 start session -> receive reviewed question -> submit typed answer
@@ -12,6 +12,8 @@ start session -> receive reviewed question -> submit typed answer
 ```
 
 Ollama/the model is **not** responsible for marking correctness, mastery, promotion/demotion, or question difficulty — those are deterministic and rule-based (see `docs/mastery-rules.md`). Model-assisted hints are wired (`POST /api/sessions/:id/hint`) but never authoritative: a hint that leaks the answer, fails its schema or trips safety screening is replaced by a deterministic template.
+
+**Direction change, 2026-08-12 — read `plan.md`'s "Direction change" section before adding content or model features.** The goal is now a tutor a child uses with no adult in the room, which means the fixed bank is being replaced by continuously generated questions and the model takes on explanation, restyling, next-skill choice and parent summaries. The rule that survives, in sharper form: **the model may propose a question, only code may prove it.** A generated item reaches a child only after a deterministic verifier re-derives its answer from the prompt text and agrees. The model still never marks. The next slice is extracting that verifier out of `tests/content-answer-keys.test.ts` into `server/answer-verifier.ts`.
 
 ## Commands
 
@@ -21,6 +23,8 @@ npm test        # runs `tsc` build then `node --test dist/tests/*.test.js`
 npm run dev      # ts-node-dev on server/index.ts, live reload
 npm run build    # tsc -> dist/
 npm start        # node dist/server/index.js (run build first)
+npm run benchmark    # tools/benchmark.ts against real Ollama, with an accept/reject decision
+npm run start:tablet # build, then start with .env.local (LAN bind + ADMIN_SECRET) for tablet use
 ```
 
 Run a single test file or test by name (after building, since tests run from compiled `dist/`):
@@ -42,7 +46,12 @@ Server config via env vars: `HOST` (default `127.0.0.1`), `PORT` (default `3000`
 - `server/index.ts` — entrypoint; creates the DB, seeds content, starts the HTTP server.
 - `server/app.ts` — Express app; three routes (`POST /api/sessions`, `POST /api/sessions/:id/answers`, `POST /api/sessions/:id/skip`) plus `/health`. All errors funnel through one handler that returns `400 {error: 'invalid_request'}` — never leaks internal error messages to the client.
 - `server/tutoring-service.ts` — the domain core (`TutoringService`). Owns session start/answer/skip, question selection, and mastery recalculation, all via `better-sqlite3` prepared statements and transactions. Public question objects never include `correct_answer` (see `toPublicQuestion`).
-- `server/content-bank.ts` — the adult-reviewed question bank, written out rather than generated. Seven skills across two year groups, 21 enabled templates each spread over difficulties 1–3: Reception (`addition-within-5`, `counting-to-10`, `number-recognition`) and Year 3 (`times-tables`, `place-value-to-1000`, `add-and-subtract`, `fractions-of-amounts`). Every skill declares a `yearGroup` and an `answerEntry`. Reception answers are whole numbers 0–10 so they can be tapped; Year 3 answers are whole numbers of any size, typed on a keypad — marking is an exact string match on a whole number either way. Fraction questions are framed to have whole-number answers so a child never types a remainder. Every prompt must read aloud cleanly. `seedInitialContent` upserts it but never re-enables a template an adult disabled. `tests/content-bank.test.ts` enforces the invariants; `tests/content-answer-keys.test.ts` independently re-derives all 147 answer keys from their prompt text.
+- `server/content-bank.ts` — the reviewed question bank, currently written out rather than generated (this is what the direction change above replaces). Twelve skills across three year groups, 21 enabled templates each spread over difficulties 1–3: Reception (`addition-within-5`, `counting-to-10`, `number-recognition`), Year 2 (`counting-in-steps`, `place-value-to-100`, `add-and-subtract`, `times-tables`, `fractions-of-amounts`) and Year 3 (`times-tables`, `place-value-to-1000`, `add-and-subtract`, `fractions-of-amounts`). Every skill declares a `yearGroup`, an `answerEntry` and the `datasetSkillIds` it was built from. Reception templates also carry a `visual` (countable dots, a number track, large numerals) for a child who can neither read the prompt nor hear it. Reception answers are whole numbers 0–10 so they can be tapped; Year 3 answers are whole numbers of any size, typed on a keypad — marking is an exact string match on a whole number either way. Fraction questions are framed to have whole-number answers so a child never types a remainder. Every prompt must read aloud cleanly. `seedInitialContent` upserts it but never re-enables a template an adult disabled. `tests/content-bank.test.ts` enforces the invariants; `tests/content-answer-keys.test.ts` independently re-derives all 252 answer keys from their prompt text — a prompt shape it cannot re-derive is a failure, not a skip, which is what stops the bank outgrowing its own verification.
+
+- `server/curriculum.ts` — loads the 75-skill UK maths curriculum graph from `Modal_data/Maths/uk_math_ai_tutor_v1` and refuses to start on a duplicate id, a dangling prerequisite or a cycle. Supplies teaching order only, never an answer key.
+- `server/misconceptions.ts` — pure `diagnose({prompt, correctAnswer, givenAnswer})`, 20 arithmetic patterns keyed to the generated prompt shapes. Runs *after* marking and can never change a mark. Two audiences: `childHelp` never contains the answer, `adultNote` uses teaching language.
+- `server/spaced-review.ts` — review at 1/3/7/14/30 days, derived from the trailing run of correct answers rather than incremented, for the same reason mastery is a fold: a parent correction or retention prune must not desynchronise it.
+- `web/` — no framework and no build step, served by `express.static`. `session-logic.js` is a DOM-free reducer unit-tested under Node (`tests/web-session-logic.test.ts`); `index.html` is the child screen (tap-then-confirm, keypad, `100dvh` so Send never falls below the fold, `speechSynthesis` output only — it never listens); `parent.html`/`parent.js` is the adult page.
 
 **Year groups.** A child's `year_group` is recorded on first sight and changed only by an adult. Selection is confined to the child's own year group — `requireEnabledSkill` refuses another year's skill rather than quietly swapping it, and `tests/year-groups.test.ts` walks a whole sitting for each child to prove no cross-curriculum drift.
 - `server/mastery.ts` — pure function `calculateMastery(gradedResults, previousLevel)`. No I/O; this is the place to reason about mastery-rule changes and is directly unit-tested.
