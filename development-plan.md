@@ -391,7 +391,7 @@ Next starting action: Sit the eight-year-old in front of Panda and watch the key
 ```
 
 ```text
-Date: 2026-08-11 (fourth session)
+Date: 2026-08-11 (fifth session, commits 1fe7e0c–f421a3d)
 Session/day: Adopting the Modal_data curriculum dataset — Year 2, misconceptions and spaced review
 Outcome completed: (1) Imported all 75 curriculum skills and their 84 prerequisite edges as the curriculum backbone, validated acyclic at load, with a map from each taught skill to the curriculum skills it was built from. Added five Year 2 skills (counting in steps, tens and ones, adding and subtracting to 100, the 2/5/10 tables, fractions of amounts) filling the gap between the two children; the bank went from 147 to 252 templates across three year groups. (2) A wrong answer is now diagnosed: twenty deterministic patterns across every question shape, recorded on the attempt for an adult and answered to the child in words that never contain the answer. (3) Spaced review at 1/3/7/14/30 days replaced the flat 24-hour rule, and session start now chooses due work first, then new work in curriculum teaching order.
 Verification run: npm test — 283 tests passed (was 242). All 252 answer keys re-derived independently from their own prompt text. Live HTTP checks for all three year groups and for wrong-answer help. Eight simulated days of practice confirmed skills rotate and intervals stretch.
@@ -401,7 +401,7 @@ Next starting action: Sit both children down again now the daily cap no longer l
 ```
 
 ```text
-Date: 2026-08-11 (fifth session)
+Date: 2026-08-11 (sixth session, commits d2e660d–9246244) — LATEST ENTRY
 Session/day: Fixes found by putting it in front of a real child on a tablet
 Outcome completed: Mapped all twelve taught skills to their curriculum skill ids — Reception and Year 3 had none, so both fell out of curriculum ordering and were taught in skill-name order; ordering now takes a skill's most advanced component rather than its earliest. Labelled each child button with the curriculum it uses, and gave an adult a way to change a child's year group, which was previously fixed on the child's first tap with no way back. Added Reset today, removing one child's sessions and answers for the current day and recalculating mastery from what survives. Rewrote the README's addresses into one table covering this Mac and the tablet. Fixed the child UI never speaking on the tablet.
 Verification run: npm test — 291 tests passed (was 285). Live checks over HTTP for the year-group move (Reception to Year 2, next session followed), and for Reset today (three sittings, fourth refused, reset, active again).
@@ -409,6 +409,15 @@ Decisions made: Reset today ships as an ordinary parent control rather than a de
 Known issues: THE SPEECH FIX IS UNCONFIRMED. A Reception child sat in front of a silent screen; two Safari failure modes were identified and fixed — speech may only begin inside a user gesture, and a missing voice caused a permanent silent return — but no browser or audio is available in the development environment, so neither the cause nor the cure has been observed. `?check=speech` was added so an adult can report what the browser is actually doing. Still outstanding: 252 templates are machine-verified but not adult-reviewed; the parent page shows neither the misconception patterns nor the review schedule, both of which are stored but invisible; measurement, geometry and statistics remain untaught; nothing visual has ever been confirmed by anyone but the supervising adult.
 Next starting action: Report what `?check=speech` says on the tablet, and whether the child counts the dots when there is no sound. If the dots work silently, audio is a convenience rather than the foundation and the parent page is the next build. If they do not, Reception needs rethinking before anything else is added.
 ```
+
+Entries are in order, newest last. Several sessions can share one date, so the
+`Date:` line also carries the session's commit range — that, not the date, is
+what identifies an entry. Move the `— LATEST ENTRY` marker onto the new entry
+when you add one.
+
+At the start of the next session, read the last entry back as a summary before
+doing anything else: what was completed, what was decided, what is outstanding,
+and its `Next starting action`.
 
 At the end of each session, add a short entry using this format:
 
